@@ -35,7 +35,7 @@ export default function Indicator() {
 
   return (
     process.env.NODE_ENV !== "production" && (
-      <div className="absolute bottom-4 right-4 rounded-full bg-orange-600 p-2 text-white">
+      <div className="bottom-4 right-4 rounded-full bg-orange-600 p-2 text-white fixed z-50">
         {sizeText.toUpperCase()}
       </div>
     )
