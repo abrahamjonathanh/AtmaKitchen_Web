@@ -4,13 +4,7 @@ import LogoOrange from "../public/logo/LogoO.svg";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Separator } from "./ui/separator";
 
@@ -23,7 +17,7 @@ export default function Navbar() {
     { title: "Produk", href: "" },
   ];
   return (
-    <nav className="fixed inset-x-0 h-14 border-b border-slate-200 bg-white bg-opacity-85 top-0 z-50 flex items-center">
+    <nav className="fixed inset-x-0 h-14 border-b border-slate-200 bg-white bg-opacity-95 top-0 z-50 flex items-center">
       <MaxWidthWrapper className="flex justify-between">
         <Link href={"/"}>
           <Image src={LogoOrange} alt="AtmaKitchen Logo" />
@@ -36,9 +30,9 @@ export default function Navbar() {
           ))}
         </div>
         <div className="flex gap-4">
-          <Button>
-            <Link href={""}>Masuk</Link>
-          </Button>
+          <Link href={"/login"}>
+            <Button>Masuk</Button>
+          </Link>
           <Sheet>
             <SheetTrigger className="block lg:hidden">
               <Menu />
@@ -57,7 +51,7 @@ export default function Navbar() {
                     </Button>
                   ))}
                   <Button>
-                    <Link href={""}>Masuk</Link>
+                    <Link href={"/login"}>Masuk</Link>
                   </Button>
                 </div>
               </SheetHeader>
