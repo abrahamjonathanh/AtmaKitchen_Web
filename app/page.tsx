@@ -16,6 +16,8 @@ import AyuAvatar from "../public/avatars/Ayu.png";
 import JessicaAvatar from "../public/avatars/Jessica.png";
 import AlbertAvatar from "../public/avatars/Albert.png";
 import GantaAvatar from "../public/avatars/Ganta.png";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import PoinPreview from "../public/images/Preview.png";
 
 export default function Home() {
   const statistics = [
@@ -196,6 +198,30 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+        {/* Poin */}
+        <div className="flex flex-col overflow-hidden">
+          <ContainerScroll
+            titleComponent={
+              <>
+                <h1 className="text-title font-semibold">
+                  Beli. Dapat Poin. <br />
+                  <span className="text-5xl md:text-[6rem] font-extrabold md:font-bold mt-1 leading-none ">
+                    Tukar Reward.
+                  </span>
+                </h1>
+              </>
+            }
+          >
+            <Image
+              src={PoinPreview}
+              alt="hero"
+              height={720}
+              width={1400}
+              className="mx-auto rounded-2xl object-cover h-full object-top"
+              draggable={false}
+            />
+          </ContainerScroll>
         </div>
         {/* CTA */}
         <div className="text-white rounded-3xl bg-gradient-to-br from-orange-600 to-orange-800 p-8 sm:p-16 text-center space-y-8 sm:space-y-8">
