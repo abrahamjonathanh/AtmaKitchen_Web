@@ -56,4 +56,29 @@
   body {
     @apply bg-background text-foreground;
   }
+  p {
+    @apply text-sm sm:text-base;
+  }
+}
+
+@layer components {
+  /* text-h1 */
+  .text-title {
+    @apply text-4xl sm:text-5xl;
+  }
+
+  /* text-h2 */
+  .text-large {
+    @apply text-2xl sm:text-3xl;
+  }
+
+  /* text-h3 */
+  .text-semilarge {
+    @apply text-xl sm:text-2xl font-semibold;
+  }
+
+  /* text-h4 */
+  .text-medium {
+    @apply text-lg sm:text-xl font-semibold;
+  }
 }

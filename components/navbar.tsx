@@ -4,11 +4,17 @@ import LogoOrange from "../public/logo/LogoO.svg";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Separator } from "./ui/separator";
 
-export default function Navbar() {
+export function Navbar() {
   const navbar = [
     { title: "Produk", href: "" },
     { title: "Produk", href: "" },
@@ -60,5 +66,13 @@ export default function Navbar() {
         </div>
       </MaxWidthWrapper>
     </nav>
+  );
+}
+
+export function NavbarDashboard({ title }: { title: string }) {
+  return (
+    <div className="w-full border-b border-slate-200 p-4">
+      <p className="text-semilarge">{title}</p>
+    </div>
   );
 }
