@@ -2,43 +2,49 @@ import Footer from "@/components/footer";
 import { NavbarDashboard } from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import React from "react";
-import { Promo, columns } from "./columns";
+import { Karyawan, columns } from "./columns";
 import { DataTable } from "./data-table";
+import { Metadata } from "next";
 
-async function getData(): Promise<Promo[]> {
+export const metadata: Metadata = {
+  title: "AtmaKitchen | Promo",
+  description: "AtmaKitchen Promo Dashboard",
+};
+
+async function getData(): Promise<Karyawan[]> {
   // Fetch data from your API here.
   return [
     {
       id: 1,
-      promo: "Promo-1",
-      minimum: 10000,
-      poin: 1,
-      status: "Aktif",
+      nama: "Albert",
+      alamat: "Jln. Babarsari No. 81, Yogyakarta",
+      telepon: "08734867348",
+      gaji_harian: 100000,
+      bonus: "",
+      jabatan: "2",
     },
     {
       id: 2,
-      promo: "Promo-2",
-      minimum: 100000,
-      poin: 15,
-      status: "Aktif",
+      nama: "Budi Setiawan",
+      alamat: "Jln. Babarsari No. 81, Yogyakarta",
+      telepon: "08734867348",
+      gaji_harian: 150000,
+      bonus: "150000",
+      jabatan: "2",
     },
     {
       id: 3,
-      promo: "Promo-3",
-      minimum: 500000,
-      poin: 75,
-      status: "Aktif",
-    },
-    {
-      id: 4,
-      promo: "Promo-4",
-      minimum: 1000000,
-      poin: 200,
-      status: "Tidak aktif",
+      nama: "Cindy Yugoslavia",
+      alamat: "Jln. Babarsari No. 81, Yogyakarta",
+      telepon: "08734867348",
+      gaji_harian: 188000,
+      bonus: "",
+      jabatan: "1",
     },
     // ...
   ];
 }
+
 export default async function page() {
   const data = await getData();
   return (
@@ -49,7 +55,7 @@ export default async function page() {
         <Sidebar />
 
         <div className="flex flex-col w-full">
-          <NavbarDashboard title="Promo" />
+          <NavbarDashboard title="Karyawan" />
           <div className="w-full px-4 pl-4 lg:pr-16 py-4">
             {/* <div className="border border-slate-500 border-dashed">
               <p>Content</p> */}

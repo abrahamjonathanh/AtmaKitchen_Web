@@ -78,7 +78,7 @@ export default function Sidebar({ className }: { className?: string }) {
             },
             {
               title: "Karyawan",
-              link: "",
+              link: "/karyawan",
             },
             {
               title: "Penitip",

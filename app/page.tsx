@@ -224,7 +224,7 @@ export default function Home() {
           </ContainerScroll>
         </div>
         {/* CTA */}
-        <div className="text-white rounded-3xl bg-gradient-to-br from-orange-600 to-orange-800 p-8 sm:p-16 text-center space-y-8 sm:space-y-8">
+        <div className="text-white rounded-3xl bg-gradient-to-br from-red-600 to-orange-400 p-8 sm:p-16 text-center space-y-8 sm:space-y-8">
           <div className="space-y-4">
             <p className="text-title font-extrabold ">Tunggu apa lagi? </p>
             <p className="text-sm sm:text-base">
