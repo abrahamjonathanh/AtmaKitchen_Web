@@ -60,7 +60,7 @@ export default function Footer() {
           </div>
         </div>
         {/* Links */}
-        <div className="space-y-8 flex flex-col md:flex-row justify-center items-center xl:items-start xl:space-y-0 xl:w-7/12 ">
+        <div className="space-y-8 flex flex-col md:flex-row justify-center items-center md:items-start md:space-y-0 xl:w-7/12 ">
           {footerData.map((footer, index) => (
             <div
               className="space-y-4 text-center md:text-left md:w-1/4"

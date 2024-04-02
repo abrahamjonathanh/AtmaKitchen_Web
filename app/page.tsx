@@ -18,7 +18,6 @@ import AlbertAvatar from "../public/avatars/Albert.png";
 import GantaAvatar from "../public/avatars/Ganta.png";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import PoinPreview from "../public/images/Preview.png";
-
 export default function Home() {
   const statistics = [
     { title: "Testimoni", count: 203 },

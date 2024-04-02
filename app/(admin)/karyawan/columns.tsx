@@ -17,18 +17,12 @@ import { Badge } from "@/components/ui/badge";
 
 import { useState } from "react";
 import DeleteDialog from "@/components/deleteDialog";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { IKaryawan } from "@/lib/interfaces";
+import { deleteKaryawanById } from "@/lib/api/karyawan";
 
-export type Karyawan = {
-  id: number;
-  nama: string;
-  alamat: string;
-  telepon: string;
-  gaji_harian: string | number;
-  bonus: string | number;
-  jabatan: string;
-};
-
-export const columns: ColumnDef<Karyawan>[] = [
+export const columns: ColumnDef<IKaryawan>[] = [
   {
     accessorKey: "id",
     header: "# ID",
@@ -42,7 +36,7 @@ export const columns: ColumnDef<Karyawan>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Nama Lengkap
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2" size={"12"} />
         </Button>
       );
     },
@@ -73,7 +67,7 @@ export const columns: ColumnDef<Karyawan>[] = [
     },
   },
   {
-    accessorKey: "jabatan",
+    accessorKey: "id_role",
     header: ({ column }) => {
       return (
         <Button
@@ -81,22 +75,23 @@ export const columns: ColumnDef<Karyawan>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Jabatan
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2" size={"12"} />
         </Button>
       );
     },
     cell: ({ row }) => {
       const roleBadges: {
         code: string;
-        variant: "success" | "failed";
-        label: any;
+        variant: "lime" | "sky" | "violet";
+        label: "Owner" | "Manager" | "Admin";
       }[] = [
-        { code: "1", variant: "success", label: "Admin" },
-        { code: "2", variant: "failed", label: "Manager" },
+        { code: "1", variant: "lime", label: "Owner" },
+        { code: "2", variant: "sky", label: "Manager" },
+        { code: "3", variant: "violet", label: "Admin" },
       ];
 
       const roleBadge = roleBadges.find(
-        (badge) => badge.code === row.getValue("jabatan")
+        (badge) => badge.code === row.getValue("id_role")
       );
       return (
         <div className="px-4">
@@ -108,7 +103,21 @@ export const columns: ColumnDef<Karyawan>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const pathname = usePathname();
       const [isOpen, setIsOpen] = useState(false);
+      const [isLoading, setIsLoading] = useState(false);
+
+      const onDeleteHandler = async () => {
+        try {
+          setIsLoading(true);
+          await deleteKaryawanById(row.getValue("id"));
+        } catch (error: any) {
+          console.error("Error deleting karyawan: " + error);
+        } finally {
+          setIsLoading(false); //For stop the loading process
+          setIsOpen(false); // For close the dialog
+        }
+      };
 
       return (
         <>
@@ -121,9 +130,11 @@ export const columns: ColumnDef<Karyawan>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>
-                <Pencil size={"16"} /> Ubah
-              </DropdownMenuItem>
+              <Link href={`${pathname}/${row.getValue("id")}`}>
+                <DropdownMenuItem>
+                  <Pencil size={"16"} /> Ubah
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <Trash2 size={"16"} /> Hapus {row.getValue("id")}
@@ -135,6 +146,8 @@ export const columns: ColumnDef<Karyawan>[] = [
             setIsOpen={setIsOpen}
             title={row.getValue("nama")}
             description="Tindakkan ini tidak dapat diulang ketika anda menekan Hapus."
+            onSubmit={onDeleteHandler}
+            isLoading={isLoading}
           />
         </>
       );

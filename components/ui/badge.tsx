@@ -20,6 +20,15 @@ const badgeVariants = cva(
           "border-transparent bg-yellow-200 text-yellow-600 hover:bg-yellow-200/80",
         failed:
           "border-transparent bg-red-200 text-red-600 hover:bg-red-200/80",
+        lime: "border-transparent bg-lime-200 text-lime-600 hover:bg-lime-200/80",
+        emerald:
+          "border-transparent bg-emerald-200 text-emerald-600 hover:bg-emerald-200/80",
+        sky: "border-transparent bg-sky-200 text-sky-600 hover:bg-sky-200/80",
+        violet:
+          "border-transparent bg-violet-200 text-violet-600 hover:bg-violet-200/80",
+        fuchsia:
+          "border-transparent bg-fuchsia-200 text-fuchsia-600 hover:bg-fuchsia-200/80",
+        rose: "border-transparent bg-rose-200 text-rose-600 hover:bg-rose-200/80",
         outline: "text-foreground",
       },
     },

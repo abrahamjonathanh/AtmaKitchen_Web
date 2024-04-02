@@ -92,8 +92,8 @@ export function NavbarDashboard({ title }: { title: string }) {
                 alt="Default Avatar"
                 className="border rounded-full border-slate-200 w-10"
               />
-              <p className="font-medium">Jeremy</p>
-              <ChevronDown size={"16"} />
+              <p className="font-medium hidden sm:block">Jeremy</p>
+              <ChevronDown size={"16"} className="hidden sm:block" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>

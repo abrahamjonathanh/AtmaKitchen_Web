@@ -23,43 +23,55 @@ import {
 } from "@/components/ui/select";
 
 import React from "react";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
+import Loading from "@/components/ui/loading";
+import { IKaryawan } from "@/lib/interfaces";
 
 const formSchema = z.object({
   nama: z.string().min(1, { message: "Nama tidak boleh kosong" }),
-  gaji_harian: z.string({ required_error: "Gaji Harian tidak boleh kosong" }),
+  gaji_harian: z
+    .string({ required_error: "Gaji Harian tidak boleh kosong" })
+    .min(1, { message: "Gaji Harian tidak boleh kosong" }),
   bonus: z.string().optional(), // Docs: Optional() is used to handle nullable input
   telepon: z
     .string({ required_error: "Telepon tidak boleh kosong" })
     .min(6, { message: "Nomor telepon harus terdiri dari minimal 6 angka" }),
-  id_role: z.string({ required_error: "Jabatan tidak boleh kosong" }),
+  id_role: z
+    .string({ required_error: "Jabatan tidak boleh kosong" })
+    .min(1, { message: "Jabatan tidak boleh kosong" }),
   alamat: z.string().min(1, { message: "Alamat tidak boleh kosong" }),
 });
 
-export default function PromoForm() {
+export default function KaryawanForm({
+  isEditable = false,
+  data,
+  onSubmit,
+  isLoading = false,
+}: {
+  isEditable?: boolean;
+  data?: IKaryawan;
+  onSubmit?: (values: z.infer<typeof formSchema>) => void;
+  isLoading?: boolean;
+}) {
+  console.log(`⚠️ Karyawan editable mode: ${isEditable}`);
   const router = useRouter();
 
   //   Define form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nama: "",
-      gaji_harian: "",
-      bonus: "",
-      telepon: "",
-      alamat: "",
-      id_role: "",
+      nama: isEditable ? data?.nama ?? "" : "",
+      gaji_harian: isEditable ? data?.gaji_harian ?? "" : "",
+      bonus: isEditable ? data?.bonus ?? "" : "",
+      telepon: isEditable ? data?.telepon ?? "" : "",
+      alamat: isEditable ? data?.alamat ?? "" : "",
+      id_role: isEditable ? data?.id_role ?? "" : "",
     },
   });
 
-  //   Submit function
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit!)} className="space-y-6">
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <FormField
@@ -166,8 +178,18 @@ export default function PromoForm() {
           <Button variant={"outline"} onClick={() => router.back()}>
             Batal
           </Button>
-          <Button type="submit" className="flex gap-2">
-            Tambah <Plus size={"16"} />
+          <Button type="submit" className="flex gap-2" disabled={isLoading}>
+            {isLoading ? (
+              <Loading />
+            ) : isEditable ? (
+              <>
+                Ubah <Pencil size={"16"} />
+              </>
+            ) : (
+              <>
+                Tambah <Plus size={"16"} />
+              </>
+            )}
           </Button>
         </div>
       </form>

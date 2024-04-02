@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
+import Loading from "./ui/loading";
 
 export default function DeleteDialog({
   isOpen = false,
@@ -16,12 +17,14 @@ export default function DeleteDialog({
   title = "Title...",
   description = "Dialog description...",
   onSubmit,
+  isLoading = false,
 }: {
   isOpen?: boolean;
   setIsOpen?: Dispatch<SetStateAction<boolean>>;
   title?: string;
   description?: string;
   onSubmit?: () => void;
+  isLoading?: boolean;
 }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -38,8 +41,13 @@ export default function DeleteDialog({
               Batal
             </Button>
           </DialogClose>
-          <Button type="button" variant="default" onClick={onSubmit}>
-            Hapus
+          <Button
+            type="button"
+            variant="default"
+            onClick={onSubmit}
+            disabled={isLoading}
+          >
+            {isLoading ? <Loading title="Deleting..." /> : "Hapus"}
           </Button>
         </DialogFooter>
       </DialogContent>
