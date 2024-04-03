@@ -15,7 +15,7 @@ export default function DeleteDialog({
   isOpen = false,
   setIsOpen,
   title = "Title...",
-  description = "Dialog description...",
+  description = "Tindakkan ini tidak dapat diulang ketika anda menekan Hapus.",
   onSubmit,
   isLoading = false,
 }: {
@@ -28,14 +28,14 @@ export default function DeleteDialog({
 }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md flex flex-col gap-8">
+      <DialogContent className="max-w-sm sm:max-w-md flex flex-col gap-8">
         <DialogHeader>
           <DialogTitle>Hapus {title}</DialogTitle>
           <DialogDescription className="text-slate-500">
             {description}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-end">
+        <DialogFooter className="">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
               Batal

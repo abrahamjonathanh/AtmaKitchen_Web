@@ -56,7 +56,8 @@
   body {
     @apply bg-background text-foreground;
   }
-  p {
+  p,
+  li {
     @apply text-sm sm:text-base;
   }
 }

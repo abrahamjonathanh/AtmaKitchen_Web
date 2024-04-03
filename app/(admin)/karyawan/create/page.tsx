@@ -1,13 +1,12 @@
 "use client";
-import Footer from "@/components/footer";
-import { NavbarDashboard } from "@/components/navbar";
-import Sidebar from "@/components/sidebar";
+
 import React, { useState } from "react";
 import KaryawanForm from "../_components/input-form";
 import { useTitle } from "@/lib/hooks";
 import { IKaryawan } from "@/lib/interfaces";
 import { createKaryawan } from "@/lib/api/karyawan";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
+import DashboardWrapper from "@/components/dashboard-wrapper";
 
 export default function page() {
   useTitle("AtmaKitchen | Karyawan");
@@ -25,22 +24,12 @@ export default function page() {
   };
 
   return (
-    <div>
-      <div className="flex">
-        <Sidebar />
-
-        <div className="flex flex-col w-full">
-          <NavbarDashboard title="Tambah Karyawan" />
-          <div className="w-full px-4 pl-4 lg:pr-16 py-4 space-y-4">
-            <BreadcrumbWithSeparator
-              previousPage={[{ title: "Karyawan", link: "/karyawan" }]}
-              currentPage="Tambah"
-            />
-            <KaryawanForm onSubmit={onCreateHandler} isLoading={isLoading} />
-          </div>
-        </div>
-      </div>
-      <Footer />
-    </div>
+    <DashboardWrapper navTitle="Tambah Karyawan">
+      <BreadcrumbWithSeparator
+        previousPage={[{ title: "Karyawan", link: "/karyawan" }]}
+        currentPage="Tambah"
+      />
+      <KaryawanForm onSubmit={onCreateHandler} isLoading={isLoading} />
+    </DashboardWrapper>
   );
 }

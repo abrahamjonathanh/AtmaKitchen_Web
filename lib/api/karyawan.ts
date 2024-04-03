@@ -22,7 +22,10 @@ export const updateKaryawanById = async (id: number, data: IKaryawan) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.get(`https://fakestoreapi.com/products`);
+    const response = await axios.put(
+      `https://fakestoreapi.com/products/${id}`,
+      data
+    );
 
     // ✅ Use toast when its done
     toast.success("Berhasil mengubah data...");

@@ -45,7 +45,7 @@ const formSchema = z.object({
 export default function KaryawanForm({
   isEditable = false,
   data,
-  onSubmit,
+  onSubmit = (values) => console.log(values),
   isLoading = false,
 }: {
   isEditable?: boolean;
@@ -71,7 +71,10 @@ export default function KaryawanForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit!)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit!)}
+        className="space-y-6 w-full"
+      >
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <FormField

@@ -24,7 +24,7 @@ export function BreadcrumbWithSeparator({
       <BreadcrumbList>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink>
+            <BreadcrumbLink asChild>
               <Link href="/">Beranda</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -33,7 +33,7 @@ export function BreadcrumbWithSeparator({
         {previousPage?.map((data, index) => (
           <BreadcrumbList key={index}>
             <BreadcrumbItem>
-              <BreadcrumbLink>
+              <BreadcrumbLink asChild>
                 <Link href={data.link}>{data.title}</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>

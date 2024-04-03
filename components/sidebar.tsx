@@ -106,7 +106,7 @@ export default function Sidebar({ className }: { className?: string }) {
           icon: <Boxes size={"16"} />,
           link: "",
         },
-        { title: "Resep", icon: <BookOpen size={"16"} />, link: "" },
+        { title: "Resep", icon: <BookOpen size={"16"} />, link: "/resep" },
       ],
     },
     {

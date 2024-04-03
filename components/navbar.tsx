@@ -93,13 +93,13 @@ export function NavbarDashboard({ title }: { title: string }) {
                 className="border rounded-full border-slate-200 w-10"
               />
               <p className="font-medium hidden sm:block">Jeremy</p>
-              <ChevronDown size={"16"} className="hidden sm:block" />
+              <ChevronDown size={"16"} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link href={""}>
+            <Link href={"/profile"}>
               <DropdownMenuItem className="flex gap-2 cursor-pointer">
                 <User2 size={"16"} />
                 Profile
