@@ -28,3 +28,22 @@ export type IProfileAdmin = {
   password?: string;
   confirmPassword?: string;
 };
+
+export type IJabatan = {
+  id: string | number;
+  role: string;
+};
+
+export type IJarakKirim = {
+  id: string | number;
+  nama: string;
+  alamat: {
+    id: string;
+    nama: string;
+    alamat: string;
+    telepon: string;
+  };
+  jarak?: string;
+  harga?: string;
+  status: string;
+};

@@ -7,7 +7,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -21,8 +20,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -50,7 +49,6 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -61,10 +59,10 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex justify-between gap-4 items-center">
         <Input
-          placeholder="Cari berdasarkan nama karyawan..."
-          value={(table.getColumn("nama")?.getFilterValue() as string) ?? ""}
+          placeholder="Cari berdasarkan nama jabatan..."
+          value={(table.getColumn("role")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("nama")?.setFilterValue(event.target.value)
+            table.getColumn("role")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -88,11 +86,7 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={
-                        index > 0 && index < columns.length - 1
-                          ? "w-auto"
-                          : "w-16"
-                      }
+                      className={index === 1 ? "w-auto" : "w-16"}
                     >
                       {header.isPlaceholder
                         ? null
@@ -135,33 +129,6 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <p className="text-slate-500 text-body">
-          Menampilkan {table.getFilteredRowModel().rows.length} dari{" "}
-          {columns.length} data.
-        </p>
-        <div className="flex items-center justify-end space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            className="flex gap-2 items-center"
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeft size={"16"} /> Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            className="flex gap-2 items-center"
-            disabled={!table.getCanNextPage()}
-          >
-            Next <ChevronRight size={"16"} />
-          </Button>
-        </div>
       </div>
     </div>
   );

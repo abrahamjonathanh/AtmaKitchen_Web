@@ -15,7 +15,7 @@ export default function AdminProfileInfo() {
           className="rounded-full border border-slate-200 max-w-20"
         />
         <div className="text-center sm:text-left">
-          <p className="text-medium">John Petra</p>
+          <p className="text-h4">John Petra</p>
           <p className="text-slate-500">john.petra@gmail.com</p>
         </div>
       </div>

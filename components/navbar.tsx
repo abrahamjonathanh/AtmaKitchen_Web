@@ -82,7 +82,7 @@ export function Navbar() {
 export function NavbarDashboard({ title }: { title: string }) {
   return (
     <div className="w-full border-b border-slate-200 p-4 lg:pr-16 flex justify-between items-center max-h-16">
-      <p className="text-semilarge">{title}</p>
+      <p className="text-h3">{title}</p>
       <div className="flex gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

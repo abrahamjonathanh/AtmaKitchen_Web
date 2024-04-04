@@ -7,9 +7,9 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import { Input } from "@/components/ui/input";
@@ -41,7 +41,10 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0, //initial page index
+    pageSize: 10, //default page size
+  });
   const table = useReactTable({
     data,
     columns,
@@ -51,17 +54,24 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state. References: https://tanstack.com/table/latest/docs/guide/pagination
     state: {
       sorting,
       columnFilters,
+      pagination,
     },
+    // initialState: {
+    //   pagination: {
+    //     pageSize: 15,
+    //   },
+    // },
   });
-
+  console.log(table.getPageOptions());
   return (
     <div className="space-y-4">
       <div className="flex justify-between gap-4 items-center">
         <Input
-          placeholder="Cari berdasarkan nama karyawan..."
+          placeholder="Cari berdasarkan nama..."
           value={(table.getColumn("nama")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("nama")?.setFilterValue(event.target.value)
@@ -139,8 +149,8 @@ export function DataTable<TData, TValue>({
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <p className="text-slate-500 text-body">
-          Menampilkan {table.getFilteredRowModel().rows.length} dari{" "}
-          {columns.length} data.
+          Menampilkan {table.getState().pagination.pageSize} dari{" "}
+          {table.getFilteredRowModel().rows.length} data.
         </p>
         <div className="flex items-center justify-end space-x-2">
           <Button

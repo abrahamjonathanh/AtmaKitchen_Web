@@ -45,7 +45,7 @@ export default function ResepDetail({
         className="rounded-lg w-full sm:w-1/2 md:w-1/3"
       />
       <div className="space-y-2">
-        <p className="text-semilarge">{data.title}</p>
+        <p className="text-h3">{data.title}</p>
         <p>
           Untuk membuat {data.title}1 loyang (20x20 cm), dibutuhkan bahan-bahan
           sebagai berikut.

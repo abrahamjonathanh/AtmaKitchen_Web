@@ -68,7 +68,7 @@ export default function AdminProfileForm({
           className="space-y-6 w-full rounded-lg h-max"
         >
           <div className="space-y-4 sm:space-y-2">
-            <p className="text-medium">Biodata Diri</p>
+            <p className="text-h4">Biodata Diri</p>
             <div className="flex items-center gap-4">
               <FormLabel className="w-full sm:w-1/3 hidden sm:block">
                 Nama
@@ -107,7 +107,7 @@ export default function AdminProfileForm({
             </div>
           </div>
           <div className="space-y-4 sm:space-y-2">
-            <p className="text-medium">Informasi Kontak</p>
+            <p className="text-h4">Informasi Kontak</p>
             <div className="flex items-center gap-4">
               <FormLabel className="w-full sm:w-1/3 hidden sm:block">
                 Email
@@ -146,7 +146,7 @@ export default function AdminProfileForm({
             </div>
           </div>
           <div className="space-y-4 sm:space-y-2">
-            <p className="text-medium">Reset Password (Opsional)</p>
+            <p className="text-h4">Reset Password (Opsional)</p>
             <div className="flex items-center gap-4">
               <FormLabel className="w-full sm:w-1/3 hidden sm:block">
                 Password Baru

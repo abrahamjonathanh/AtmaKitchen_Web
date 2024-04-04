@@ -95,8 +95,8 @@ export default function Home() {
             </p>
             <div className="space-y-4">
               <div className="space-y-2">
-                <p className="text-title font-extrabold">Judulnya Apa ya</p>
-                <p className="text-title font-extrabold">Judulnya Apa ya</p>
+                <p className="text-h1 font-extrabold">Judulnya Apa ya</p>
+                <p className="text-h1 font-extrabold">Judulnya Apa ya</p>
               </div>
               <p className="text-slate-500">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
@@ -109,7 +109,7 @@ export default function Home() {
             <div className="flex items-center gap-8 justify-center md:justify-start">
               {statistics.map((data, index) => (
                 <div className="text-center space-y-2" key={index}>
-                  <p className="text-large font-semibold">{data.count}</p>
+                  <p className="text-h2 font-semibold">{data.count}</p>
                   <p className="text-slate-500">{data.title}</p>
                 </div>
               ))}
@@ -126,7 +126,7 @@ export default function Home() {
         {/* Products */}
         <div className="space-y-8 lg:space-y-12">
           <div className="space-y-4 text-center">
-            <p className="text-title font-extrabold">Produk Fresh Kami</p>
+            <p className="text-h1 font-extrabold">Produk Fresh Kami</p>
             <p className="text-slate-500">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non
               rhoncus tellus.
@@ -142,7 +142,7 @@ export default function Home() {
         {/* Proses */}
         <div className="space-y-8 lg:space-y-12">
           <div className="space-y-4 text-center">
-            <p className="text-title font-extrabold">Bagaimana Prosesnya?</p>
+            <p className="text-h1 font-extrabold">Bagaimana Prosesnya?</p>
             <p className="text-slate-500">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non
               rhoncus tellus.
@@ -152,7 +152,7 @@ export default function Home() {
         {/* Testimonial */}
         <div className="space-y-8 lg:space-y-12">
           <div className="space-y-4 text-center">
-            <p className="text-title font-extrabold">Apa Kata Mereka?</p>
+            <p className="text-h1 font-extrabold">Apa Kata Mereka?</p>
             <p className="text-slate-500">
               Pendapat pelanggan tentang menu dan pelayanan kami.
             </p>
@@ -203,7 +203,7 @@ export default function Home() {
           <ContainerScroll
             titleComponent={
               <>
-                <h1 className="text-title font-semibold">
+                <h1 className="text-h1 font-semibold">
                   Beli. Dapat Poin. <br />
                   <span className="text-5xl md:text-[6rem] font-extrabold md:font-bold mt-1 leading-none ">
                     Tukar Reward.
@@ -225,7 +225,7 @@ export default function Home() {
         {/* CTA */}
         <div className="text-white rounded-3xl bg-gradient-to-br from-red-600 to-orange-400 p-8 sm:p-16 text-center space-y-8 sm:space-y-8">
           <div className="space-y-4">
-            <p className="text-title font-extrabold ">Tunggu apa lagi? </p>
+            <p className="text-h1 font-extrabold ">Tunggu apa lagi? </p>
             <p className="text-sm sm:text-base">
               Pesan dan kumpulkan poinmu sekarang!
             </p>

@@ -49,8 +49,8 @@ export default function Sidebar({ className }: { className?: string }) {
           link: "",
         },
         { title: "Produk", icon: <Box size={"16"} />, link: "" },
-        { title: "Promo", icon: <BadgePercent size={"16"} />, link: "" },
-        { title: "Jabatan", icon: <UserCog size={"16"} />, link: "" },
+        { title: "Promo", icon: <BadgePercent size={"16"} />, link: "/promo" },
+        { title: "Jabatan", icon: <UserCog size={"16"} />, link: "/jabatan" },
       ],
     },
     {
@@ -61,7 +61,11 @@ export default function Sidebar({ className }: { className?: string }) {
           icon: <ScrollText size={"16"} />,
           link: "",
         },
-        { title: "Jarak Ongkir", icon: <Truck size={"16"} />, link: "" },
+        {
+          title: "Jarak Kirim",
+          icon: <Truck size={"16"} />,
+          link: "/jarak-kirim",
+        },
       ],
     },
     {
@@ -142,7 +146,7 @@ export default function Sidebar({ className }: { className?: string }) {
           {/* Brand */}
           <Link href={"/"} className="space-y-2 flex flex-col items-center">
             <Image src={Logo} alt="AtmaKitchen Logo" />
-            <p className="text-orange-600 text-medium">AtmaKitchen</p>
+            <p className="text-orange-600 text-h4">AtmaKitchen</p>
           </Link>
 
           {/* Links */}

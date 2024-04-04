@@ -2,10 +2,20 @@
   "extends": "next/core-web-vitals",
   "rules": {
     // ❗Turn it on when you ready to build
-    // "no-unused-vars": [
-    //   "error",
-    //   { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
-    // ],
     "react-hooks/rules-of-hooks": "off"
   }
+
+  // "overrides": [
+  //   {
+  //     "files": [ "app/**/*.tsx" ],
+  //     "rules": {
+  //       // ❗Turn it on when you ready to build
+  //       "no-unused-vars": [
+  //         "error",
+  //         { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
+  //       ],
+  //       "react-hooks/rules-of-hooks": "off"
+  //     }
+  //   }
+  // ]
 }
