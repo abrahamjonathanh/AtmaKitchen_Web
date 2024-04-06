@@ -32,22 +32,7 @@ export default function page() {
     pendapatanBulanIni: 5000000,
     transaksiBulanIni: 10,
   };
-  // ↳ Delete this all
-  // const pageTitle = "AtmaKitchen | Produk Titipan";
-  // const pageDescription = "AtmaKitchen Produk Titipan Dashboard";
 
-  // const [penitipData, setPenitipData] = useState(null);
-  // const [pendapatanBulanIni, setPendapatanBulanIni] = useState(null);
-  // const [transaksiBulanIni, setTransaksiBulanIni] = useState(null);
-
-  // useEffect(() => {
-  //   fetchData().then((result) => {
-  //     setPenitipData(result.penitipData);
-  //     setPendapatanBulanIni(result.pendapatanBulanIni);
-  //     setTransaksiBulanIni(result.transaksiBulanIni);
-  //   });
-  // }, []);
-  // End delete
 
   return (
     <DashboardWrapper navTitle="Detail Penitip">
@@ -55,13 +40,6 @@ export default function page() {
         previousPage={[{ title: "Penitip", link: "/penitip" }]}
         currentPage="Detail"
       />
-
-      {/* ↳ Delete head */}
-      {/* <Head>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-      </Head> */}
-      {/* ↳ End delete */}
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
