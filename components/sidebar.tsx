@@ -86,7 +86,7 @@ export default function Sidebar({ className }: { className?: string }) {
             },
             {
               title: "Penitip",
-              link: "",
+              link: "/penitip",
             },
             {
               title: "Pelanggan",
@@ -103,7 +103,7 @@ export default function Sidebar({ className }: { className?: string }) {
         {
           title: "Bahan Baku",
           icon: <Warehouse size={"16"} />,
-          link: "",
+          link: "/bahan-baku",
         },
         {
           title: "Pemesanan Bahan Baku",

@@ -1,3 +1,4 @@
+// @Nathan
 export type IKaryawan = {
   id?: number;
   nama: string;
@@ -46,4 +47,22 @@ export type IJarakKirim = {
   jarak?: string;
   harga?: string;
   status: string;
+};
+
+// @Jeha
+export type IBahanBaku = {
+  id?: number;
+  nama: string;
+  stok: string;
+  stok_minimum?: string;
+  satuan: string;
+  updated_at: string; //terkahir diperbaharui
+};
+
+export type IPenitip = {
+  id?: string;
+  nama: string;
+  alamat: string;
+  telepon: string;
+  created_at: string; //tanggal bergabung
 };
