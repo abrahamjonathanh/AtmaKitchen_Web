@@ -6,8 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 const formSchema = z.object({
-  email: z.string().min(1, { message: "Email tidak boleh kosong!" }).email({ message: "Email tidak valid" }),
-  password: z.string().min(1, { message: "Password tidak boleh kosong!" }),
+  email: z.string().min(1, { message: "Email tidak boleh kosong!" }).email({ message: "Email tidak valid" })
 });
 
 import { Button } from "@/components/ui/button";
@@ -16,13 +15,13 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Image from "next/image";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
+import {MoveLeft} from "lucide-react";
 
 export default function LoginPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
@@ -37,12 +36,13 @@ export default function LoginPage() {
     <MaxWidthWrapper className="my-4">
       <div className="flex justify-between items-center">
         <div className="w-5/12">
-          <p className="text-3xl font-semibold">Selamat Datang</p>
-          <p className="text-5xl font-extrabold bg-gradient-to-br from-red-600 to-orange-400 text-transparent bg-clip-text mb-8">
-            Atma Kitchen
-          </p>
+          <Button className="mb-4 flex gap-2.5" variant={"outline"}>
+            <MoveLeft />Kembali
+          </Button>
+          <p className="text-3xl font-semibold mb-4">Lupa Password</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-1">
               <FormField
                 control={form.control}
                 name="email"
@@ -56,31 +56,13 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <p className="mt-4 w-full text-right text-sm text-slate-600">
-                <Link href={"/forgot-password"}>Lupa password?</Link>
+              <p className="w-full text-sm text-slate-500">
+                Kami akan mengirimkan One Time Password (OTP) ke email yang anda daftarkan
               </p>
+              </div>
               <Button type="submit" className="w-full">
-                Masuk
+                Kirim OTP
               </Button>
-              <p className="text-sm text-black">
-                Belum punya akun?{" "}
-                <span className="underline">
-                  <Link href={"/register"}>Daftar sekarang.</Link>
-                </span>
-              </p>
             </form>
           </Form>
         </div>
