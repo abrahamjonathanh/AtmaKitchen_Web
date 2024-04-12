@@ -14,6 +14,10 @@ export const toRupiah = (number: number) => {
   }).format(number);
 };
 
+export const toThousand = (number: number) => {
+  return number.toLocaleString("id-ID", { minimumFractionDigits: 0 });
+};
+
 // Utils for convert datetime into indonesian date format
 export const toIndonesiaDate = (
   ISODate: string,

@@ -12,7 +12,7 @@ export default function page() {
   useTitle("AtmaKitchen | Karyawan");
   const [isLoading, setIsLoading] = useState(false);
 
-  const onCreateHandler = async (values: IKaryawan) => {
+  const onCreateHandler = async (values: any) => {
     try {
       setIsLoading(true);
       await createKaryawan(values);

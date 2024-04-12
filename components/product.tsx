@@ -20,12 +20,23 @@ const ProductCard = ({
 }) => {
   return (
     <Link href={""}>
-      <div className="border rounded-lg border-slate-200 flex flex-col">
-        <Image
-          src={image}
-          alt={`Image of ${name}`}
-          className="rounded-t-lg max-h-36 object-cover"
-        />
+      <div className="border rounded-lg border-slate-200 flex flex-col bg-white shadow-md hover:shadow-lg transition-shadow">
+        <div className="max-h-max relative">
+          <Image
+            src={image}
+            alt={`Image of ${name}`}
+            className="rounded-t-lg max-h-36 object-cover"
+          />
+          {/* <div className="relative w-full text-sm text-white">
+            <img
+              src="https://images.tokopedia.net/img/phOWBv/2024/3/28/0473d7a1-cc8a-41fb-aeff-0a7633a445e5.png"
+              className="h-5"
+            />
+            <p className="absolute top-0 bottom-0 text-xs font-semibold px-3">
+              Flash Sale
+            </p>
+          </div> */}
+        </div>
         <div className="p-3 pb-4 space-y-2">
           <div className="space-y-2">
             <p>{name}</p>

@@ -1,12 +1,19 @@
 // @Nathan
 export type IKaryawan = {
-  id?: number;
+  id_karyawan?: number;
   nama: string;
   alamat: string;
   telepon: string;
   gaji_harian: string;
   bonus?: string;
   id_role?: string;
+  akun: {
+    id_akun?: string;
+    role: {
+      id_role: string;
+      role: string;
+    };
+  };
 };
 
 export type IResep = {

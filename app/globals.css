@@ -47,6 +47,12 @@
     --input: 12 6.5% 15.1%;
     --ring: 20.5 90.2% 48.2%;
   }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 @layer base {

@@ -24,7 +24,7 @@ import { deleteKaryawanById } from "@/lib/api/karyawan";
 
 export const columns: ColumnDef<IKaryawan>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "id_karyawan",
     header: "# ID",
   },
   {
@@ -41,12 +41,17 @@ export const columns: ColumnDef<IKaryawan>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="px-4 font-medium">{row.getValue("nama")}</div>
+      <div className="px-4 font-medium w-full">{row.getValue("nama")}</div>
     ),
   },
   {
     accessorKey: "alamat",
-    header: () => <div>Alamat</div>,
+    header: () => <div className="line-clamp-1">Alamat</div>,
+    cell: ({ row }) => {
+      return (
+        <div className="line-clamp-2 max-w-80">{row.getValue("alamat")}</div>
+      );
+    },
   },
   {
     accessorKey: "gaji_harian",
@@ -67,7 +72,8 @@ export const columns: ColumnDef<IKaryawan>[] = [
     },
   },
   {
-    accessorKey: "id_role",
+    accessorKey: "role",
+    accessorFn: (row) => row.akun.role.id_role,
     header: ({ column }) => {
       return (
         <Button
@@ -83,15 +89,17 @@ export const columns: ColumnDef<IKaryawan>[] = [
       const roleBadges: {
         code: string;
         variant: "lime" | "sky" | "violet";
-        label: "Owner" | "Manager" | "Admin";
+        label: "Owner" | "Manager" | "Admin" | "Customer" | "Driver";
       }[] = [
         { code: "1", variant: "lime", label: "Owner" },
         { code: "2", variant: "sky", label: "Manager" },
         { code: "3", variant: "violet", label: "Admin" },
+        { code: "4", variant: "violet", label: "Customer" },
+        { code: "5", variant: "violet", label: "Driver" },
       ];
 
       const roleBadge = roleBadges.find(
-        (badge) => badge.code === row.getValue("id_role")
+        (badge) => badge.code == row.getValue("role")
       );
       return (
         <div className="px-4">
@@ -110,7 +118,7 @@ export const columns: ColumnDef<IKaryawan>[] = [
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          await deleteKaryawanById(row.getValue("id"));
+          await deleteKaryawanById(row.getValue("id_karyawan"));
         } catch (error: any) {
           console.error("Error deleting karyawan: " + error);
         } finally {
@@ -130,14 +138,14 @@ export const columns: ColumnDef<IKaryawan>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`${pathname}/${row.getValue("id")}`}>
+              <Link href={`${pathname}/${row.getValue("id_karyawan")}`}>
                 <DropdownMenuItem>
                   <Pencil size={"16"} /> Ubah
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Trash2 size={"16"} /> Hapus {row.getValue("id")}
+                <Trash2 size={"16"} /> Hapus {row.getValue("id_karyawan")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -1,60 +1,31 @@
 import React from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { Metadata } from "next";
 import { IKaryawan } from "@/lib/interfaces";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
-
-export const metadata: Metadata = {
-  title: "AtmaKitchen | Karyawan",
-  description: "AtmaKitchen Karyawan Dashboard",
-};
+import { getAllKaryawan } from "@/lib/api/karyawan";
 
 async function getData(): Promise<IKaryawan[]> {
   // Fetch data from your API here.
   return [
     {
-      id: 1,
-      nama: "Albert",
-      alamat: "Jln. Babarsari No. 81, Yogyakarta",
-      telepon: "08734867348",
-      gaji_harian: "100000",
-      bonus: "",
-      id_role: "2",
+      id_karyawan: 1,
+      nama: "Agus",
+      alamat: "Jln. Babarsari",
+      gaji_harian: "10000",
+      telepon: "012912598",
+      akun: { role: { id_role: "1", role: "Admin" } },
     },
-    {
-      id: 2,
-      nama: "Budi Setiawan",
-      alamat: "Jln. Babarsari No. 81, Yogyakarta",
-      telepon: "08734867348",
-      gaji_harian: "150000",
-      bonus: "150000",
-      id_role: "2",
-    },
-    {
-      id: 3,
-      nama: "Cindy Yugoslavia",
-      alamat: "Jln. Babarsari No. 81, Yogyakarta",
-      telepon: "08734867348",
-      gaji_harian: "188000",
-      bonus: "",
-      id_role: "1",
-    },
-    {
-      id: 4,
-      nama: "Gerald",
-      alamat: "Jln. Babarsari No. 81, Yogyakarta",
-      telepon: "08734867348",
-      gaji_harian: "188000",
-      bonus: "",
-      id_role: "3",
-    },
-    // ...
   ];
 }
 
 export default async function page() {
+  // Turn on this when you're running local database server
+  // const response = await getAllKaryawan();
+  // const data = response?.data.data;
+
+  // Turn on this when you're offline from database server
   const data = await getData();
 
   return (

@@ -13,7 +13,7 @@ export default function page({ params }: { params: { id: number } }) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const onUpdateHandler = async (values: IKaryawan) => {
+  const onUpdateHandler = async (values: any) => {
     try {
       setIsLoading(true);
       await updateKaryawanById(params.id, values);
@@ -39,6 +39,13 @@ export default function page({ params }: { params: { id: number } }) {
           gaji_harian: "1000",
           id_role: "2",
           telepon: "1825912",
+          akun: {
+            id_akun: "1",
+            role: {
+              id_role: "3",
+              role: "admin",
+            },
+          },
         }}
         onSubmit={onUpdateHandler}
         isLoading={isLoading}
