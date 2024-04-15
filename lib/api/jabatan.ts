@@ -1,33 +1,14 @@
 "use client";
+
 import axios from "axios";
-import { IKaryawan } from "../interfaces";
+import { IJabatan } from "../interfaces";
 import { fetcher } from "../utils";
 import useSWR from "swr";
 import { toast } from "sonner";
 
-// getAllKaryawan pakai yg dibawah ya :)
-// export const getAllKaryawan = async () => {
-//   try {
-//     // Boiler template for fetching api
-//     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-//     // Add BASE_API to your .env file. Example: BASE_API=http://127.0.0.1:8000/api
-//     const response = await axios.get(`${process.env.BASE_API}/karyawan`);
-//     // const response = await axios.get(`https://fakestoreapi.com/products`);
-
-//     console.log(response.data);
-//     // ✅ Use toast when its done
-//     // toast.success("Berhasil mendapatkan data...");
-
-//     return response;
-//   } catch (error) {
-//     // toast.error("Oh no! terjadi kesalahan...");
-//     // throw error;
-//   }
-// };
-
-export const getAllKaryawan = () => {
-  let { data, error, isLoading } = useSWR(
-    `${process.env.BASE_API}/karyawan`,
+export const getAllJabatan = () => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/role`,
     fetcher
   );
 
@@ -35,16 +16,22 @@ export const getAllKaryawan = () => {
     toast.warning("Database is down! Switching to fakeAPI");
     data = [
       {
-        id_karyawan: 1,
-        nama: "Sample Agus",
-        alamat: "Jln. Babarsari",
-        gaji_harian: "10000",
-        telepon: "012912598",
-        akun: {
-          email: "emailags@gmail.com",
-          role: { id_role: "1", role: "Admin" },
-        },
+        id: 1,
+        role: "Customer",
       },
+      {
+        id: 2,
+        role: "Admin",
+      },
+      {
+        id: 3,
+        role: "Manager",
+      },
+      {
+        id: 4,
+        role: "Owner",
+      },
+      // ...
     ];
   }
 
@@ -52,30 +39,22 @@ export const getAllKaryawan = () => {
     data: data,
     isLoading,
     isError: error,
+    isValidating,
   };
 };
 
-export const getKaryawanById = (id: number) => {
+export const getJabatanById = (id: number) => {
   let { data, error, isLoading, isValidating } = useSWR(
-    `${process.env.BASE_API}/karyawan/${id}`,
-    fetcher
+    `${process.env.BASE_API}/role/${id}`,
+    fetcher,
+    { suspense: true }
   );
 
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
     data = {
-      nama: "budi",
-      alamat: "Jln babarsari",
-      gaji_harian: "1000",
-      id_role: "2",
-      telepon: "1825912",
-      akun: {
-        id_akun: "1",
-        role: {
-          id_role: "3",
-          role: "admin",
-        },
-      },
+      id: 1,
+      role: "Customer",
     };
   }
 
@@ -87,11 +66,11 @@ export const getKaryawanById = (id: number) => {
   };
 };
 
-export const createKaryawan = async (data: IKaryawan) => {
+export const createJabatan = async (data: IJabatan) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.post(`${process.env.BASE_API}/karyawan`, data);
+    const response = await axios.post(`${process.env.BASE_API}/role`, data);
 
     // Check if the database down
     if (response.status === 500) {
@@ -122,41 +101,12 @@ export const createKaryawan = async (data: IKaryawan) => {
   }
 };
 
-// export const getKaryawanById = async (id: number) => {
-//   try {
-//     const response = await axios.get(`${process.env.BASE_API}/karyawan/${id}`);
-
-//     // Check if the database down
-//     if (response.status === 500) {
-//       // toast.warning("Database shutdown! Switching to fakeAPI");
-//       return {
-//         nama: "budi",
-//         alamat: "Jln babarsari",
-//         gaji_harian: "1000",
-//         id_role: "2",
-//         telepon: "1825912",
-//         akun: {
-//           id_akun: "1",
-//           role: {
-//             id_role: "3",
-//             role: "admin",
-//           },
-//         },
-//       };
-//     }
-
-//     return response;
-//   } catch (error) {
-//     // toast.error("Oh no! terjadi kesalahan...");
-//   }
-// };
-
-export const updateKaryawanById = async (id: number, data: IKaryawan) => {
+export const updateJabatanById = async (id: number, data: IJabatan) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
     const response = await axios.put(
-      `${process.env.BASE_API}/karyawan/${id}`,
+      `${process.env.BASE_API}/role/${id}`,
       data
     );
 
@@ -189,13 +139,11 @@ export const updateKaryawanById = async (id: number, data: IKaryawan) => {
   }
 };
 
-export const deleteKaryawanById = async (id: number) => {
+export const deleteJabatanById = async (id: number) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.delete(
-      `${process.env.BASE_API}/karyawan/${id}`
-    );
+    const response = await axios.delete(`${process.env.BASE_API}/role/${id}`);
 
     if (response.status === 500) {
       toast.warning("Database shutdown! Switching to fakeAPI");

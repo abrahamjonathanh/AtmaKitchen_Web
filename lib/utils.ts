@@ -1,9 +1,16 @@
+import axios from "axios";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+// Utils for SWR
+export const fetcher = async (url: string) => {
+  const response = await axios.get(url);
+  return response.data.data;
+};
 
 // Utils for convert number into Rupiah currency
 export const toRupiah = (number: number) => {

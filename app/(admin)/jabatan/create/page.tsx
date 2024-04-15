@@ -1,20 +1,29 @@
-"use client";
+"use client"; // // Copy this for create, update, delete
+import { useSWRConfig } from "swr"; // // Copy this for create, update, delete
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 import React, { useState } from "react";
 import JabatanForm from "../_components/input-form";
 import { useTitle } from "@/lib/hooks";
-import { deleteKaryawanById } from "@/lib/api/karyawan";
+import { useRouter } from "next/navigation";
+import { createJabatan } from "@/lib/api/jabatan";
 
 export default function page() {
   useTitle("AtmaKitchen | Jabatan");
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
+  const router = useRouter(); // // Copy this for create, update, delete
+  const [isLoading, setIsLoading] = useState(false); // // Copy this for create, update, delete
 
+  // Create handler
   const onCreateHandler = async (values: any) => {
     try {
       setIsLoading(true);
-      await deleteKaryawanById(1);
-      console.log(values);
+      const response = await createJabatan(values);
+
+      if (response?.status === 200 || response?.status === 201) {
+        mutate("/jabatan"); // For auto refresh
+        router.push("/jabatan"); // For redirect route
+      }
     } catch (error: any) {
       console.error("Error creating jabatan: ", error);
     } finally {

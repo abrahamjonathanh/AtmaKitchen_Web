@@ -1,19 +1,45 @@
 // @Nathan
 export type IKaryawan = {
   id_karyawan?: number;
+  email?: string;
+  password?: string;
   nama: string;
   alamat: string;
   telepon: string;
   gaji_harian: string;
   bonus?: string;
   id_role?: string;
+  id_akun?: string;
   akun: {
+    email?: string;
+    password?: string;
     id_akun?: string;
+    id_role?: string;
     role: {
       id_role: string;
       role: string;
     };
   };
+};
+
+// {
+//     "email": "budi3@gmail.com",
+//     "password": "r12345",
+//     "nama": "Boedi",
+//     "telepon": "0812581725",
+//     "gaji_harian": 150000,
+//     "alamat": "Jln. Kaliurang",
+//     "id_role": 3
+// }
+export type IKaryawanPUT = {
+  email: string;
+  password?: string;
+  nama: string;
+  telepon: string;
+  gaji_harian: string;
+  bonus?: string;
+  alamat: string;
+  id_role: string;
 };
 
 export type IResep = {

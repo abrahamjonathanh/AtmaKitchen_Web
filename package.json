@@ -41,12 +41,14 @@
     "react-hook-form": "^7.50.1",
     "sharp": "^0.33.2",
     "sonner": "^1.4.41",
+    "swr": "^2.2.5",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.20.1",
+    "@types/axios": "^0.14.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
