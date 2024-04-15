@@ -73,3 +73,48 @@ export type IPenitip = {
   telepon: string;
   created_at: string; //tanggal bergabung
 };
+
+export type IPengeluaranLainnya = {
+  id_pengeluaran_lainnya: number;
+  karyawan: IKaryawan;
+  nama: string;
+  biaya: string;
+  tanggal: string;
+  kategori: string;
+};
+
+export interface IPelanggan {
+  id_pelanggan: number;
+  akun: {
+    id_akun?: string;
+    email: string;
+    };
+  nama: string;
+  tgl_lahir: string;
+  status: string;
+}
+
+export interface IPesanan {
+  id_pesanan: string;
+  id_metode_pembayaran: number;
+  id_pelanggan: number;
+  tgl_order: string;
+  total_diskon_poin: number;
+  total_pesanan: number;
+  total_setelah_diskon: number;
+  total_dibayarkan: number;
+  total_tip: number;
+  verified_at: string | null;
+}
+
+export interface IRiwayatPesanan extends IPesanan {
+  id_status_pesanan: number;
+  id_karyawan: number;
+  status: string;
+  produk: {
+    id: number;
+    nama: string;
+    harga: number;
+  }[];
+}
+

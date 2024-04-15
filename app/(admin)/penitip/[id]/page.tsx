@@ -7,19 +7,6 @@ import { Phone, MapPin, TrendingDown, TrendingUp } from "lucide-react";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
-// ↳ Pindahkan ini ke dalam page
-// export const fetchData = async () => {
-//   return {
-//     penitipData: {
-//       nama: "Celine Carolina",
-//       telepon: "082719282715",
-//       alamat: "Jln. Magelang Timur No 817",
-//       tanggalBergabung: "2024-04-06T07:15:59Z",
-//     },
-//     pendapatanBulanIni: 5000000,
-//     transaksiBulanIni: 10,
-//   };
-// };
 
 export default function page() {
   const data = {
