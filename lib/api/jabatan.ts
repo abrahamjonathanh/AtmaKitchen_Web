@@ -16,19 +16,19 @@ export const getAllJabatan = () => {
     toast.warning("Database is down! Switching to fakeAPI");
     data = [
       {
-        id: 1,
+        id_role: 1,
         role: "Customer",
       },
       {
-        id: 2,
+        id_role: 2,
         role: "Admin",
       },
       {
-        id: 3,
+        id_role: 3,
         role: "Manager",
       },
       {
-        id: 4,
+        id_role: 4,
         role: "Owner",
       },
       // ...

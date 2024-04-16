@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 // @Nathan
 export type IKaryawan = {
   id_karyawan?: number;
@@ -114,7 +116,7 @@ export interface IPelanggan {
   akun: {
     id_akun?: string;
     email: string;
-    };
+  };
   nama: string;
   tgl_lahir: string;
   status: string;
@@ -141,6 +143,6 @@ export interface IRiwayatPesanan extends IPesanan {
     id: number;
     nama: string;
     harga: number;
+    images: HTMLImageElement | StaticImageData;
   }[];
 }
-

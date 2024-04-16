@@ -9,7 +9,7 @@ import Loading from "@/components/ui/loading";
 
 export default function page() {
   const { data, isLoading, isValidating } = getAllJabatan();
-
+  console.log(isValidating);
   return (
     <DashboardWrapper navTitle="Jabatan">
       <BreadcrumbWithSeparator currentPage="Jabatan" />
