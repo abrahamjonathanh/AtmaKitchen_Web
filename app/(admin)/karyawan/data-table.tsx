@@ -42,6 +42,11 @@ export function DataTable<TData, TValue>({
     []
   );
 
+  // const [pagination, setPagination] = React.useState({
+  //   pageIndex: 0, //initial page index
+  //   pageSize: 7, //default page size
+  // });
+
   const table = useReactTable({
     data,
     columns,
@@ -52,6 +57,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     state: {
+      // pagination,
       sorting,
       columnFilters,
     },
@@ -79,7 +85,7 @@ export function DataTable<TData, TValue>({
           <Plus className="text-white" size={"16"} />
         </Link>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border w-auto max-w-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -88,11 +94,11 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={
-                        index > 0 && index < columns.length - 1
-                          ? "w-auto"
-                          : "w-16"
-                      }
+                      // className={
+                      //   index > 0 && index < columns.length - 1
+                      //     ? "w-auto"
+                      //     : "w-16"
+                      // }
                     >
                       {header.isPlaceholder
                         ? null
@@ -129,7 +135,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Data tidak ditemukan.
                 </TableCell>
               </TableRow>
             )}
@@ -139,8 +145,7 @@ export function DataTable<TData, TValue>({
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <p className="text-slate-500 text-body">
-          Menampilkan {table.getFilteredRowModel().rows.length} dari{" "}
-          {columns.length} data.
+          Menampilkan 10 dari {table.getFilteredRowModel().rows.length} data.
         </p>
         <div className="flex items-center justify-end space-x-2">
           <Button

@@ -28,6 +28,8 @@ import Loading from "@/components/ui/loading";
 import { IKaryawan } from "@/lib/interfaces";
 
 const formSchema = z.object({
+  email: z.string().email().optional(),
+  password: z.string().optional(),
   nama: z.string().min(1, { message: "Nama tidak boleh kosong" }),
   gaji_harian: z
     .string({ required_error: "Gaji Harian tidak boleh kosong" })
@@ -49,7 +51,7 @@ export default function KaryawanForm({
   isLoading = false,
 }: {
   isEditable?: boolean;
-  data?: IKaryawan;
+  data?: IKaryawan | null;
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   isLoading?: boolean;
 }) {
@@ -60,12 +62,14 @@ export default function KaryawanForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      email: isEditable ? data?.akun?.email ?? "" : "",
+      password: isEditable ? data?.akun?.password ?? "" : "",
       nama: isEditable ? data?.nama ?? "" : "",
-      gaji_harian: isEditable ? data?.gaji_harian ?? "" : "",
-      bonus: isEditable ? data?.bonus ?? "" : "",
+      gaji_harian: isEditable ? data?.gaji_harian.toString() ?? "" : "",
+      bonus: isEditable ? data?.bonus?.toString() ?? "" : "",
       telepon: isEditable ? data?.telepon ?? "" : "",
       alamat: isEditable ? data?.alamat ?? "" : "",
-      id_role: isEditable ? data?.id_role ?? "" : "",
+      id_role: isEditable ? data?.akun?.id_role?.toString() ?? "" : "",
     },
   });
 
@@ -76,6 +80,40 @@ export default function KaryawanForm({
         className="space-y-6 w-full"
       >
         <div className="space-y-4">
+          {!isEditable && (
+            <div className="flex flex-col md:flex-row gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Email..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Password..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
           <div className="flex flex-col md:flex-row gap-4">
             <FormField
               control={form.control}
@@ -152,8 +190,10 @@ export default function KaryawanForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="1">Admin</SelectItem>
+                    <SelectItem value="1">Owner</SelectItem>
                     <SelectItem value="2">Manajer Operasional</SelectItem>
+                    <SelectItem value="3">Admin</SelectItem>
+                    <SelectItem value="5">Driver</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

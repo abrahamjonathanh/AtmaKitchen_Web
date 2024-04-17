@@ -1,12 +1,47 @@
+import { StaticImageData } from "next/image";
+
 // @Nathan
 export type IKaryawan = {
-  id?: number;
+  id_karyawan?: number;
+  email?: string;
+  password?: string;
   nama: string;
   alamat: string;
   telepon: string;
   gaji_harian: string;
   bonus?: string;
   id_role?: string;
+  id_akun?: string;
+  akun: {
+    email?: string;
+    password?: string;
+    id_akun?: string;
+    id_role?: string;
+    role: {
+      id_role: string;
+      role: string;
+    };
+  };
+};
+
+// {
+//     "email": "budi3@gmail.com",
+//     "password": "r12345",
+//     "nama": "Boedi",
+//     "telepon": "0812581725",
+//     "gaji_harian": 150000,
+//     "alamat": "Jln. Kaliurang",
+//     "id_role": 3
+// }
+export type IKaryawanPUT = {
+  email: string;
+  password?: string;
+  nama: string;
+  telepon: string;
+  gaji_harian: string;
+  bonus?: string;
+  alamat: string;
+  id_role: string;
 };
 
 export type IResep = {
@@ -49,6 +84,18 @@ export type IJarakKirim = {
   status: string;
 };
 
+// @yori
+export type IProduk = {
+  id_produk: string | number;
+  nama: string;
+  id_kategori: string;
+  id_penitip: string | number | null;
+  kapasitas: string;
+  ukuran: string;
+  harga: string;
+  image: [];
+};
+
 // @Jeha
 export type IBahanBaku = {
   id?: number;
@@ -67,14 +114,47 @@ export type IPenitip = {
   created_at: string; //tanggal bergabung
 };
 
-// @yori
-export type IProduk = {
-  id_produk: string | number;
+export type IPengeluaranLainnya = {
+  id_pengeluaran_lainnya: number;
+  karyawan: IKaryawan;
   nama: string;
-  id_kategori: string;
-  id_penitip: string | number | null;
-  kapasitas: string;
-  ukuran: string;
-  harga: string;
-  image: [];
+  biaya: string;
+  tanggal: string;
+  kategori: string;
 };
+
+export interface IPelanggan {
+  id_pelanggan: number;
+  akun: {
+    id_akun?: string;
+    email: string;
+  };
+  nama: string;
+  tgl_lahir: string;
+  status: string;
+}
+
+export interface IPesanan {
+  id_pesanan: string;
+  id_metode_pembayaran: number;
+  id_pelanggan: number;
+  tgl_order: string;
+  total_diskon_poin: number;
+  total_pesanan: number;
+  total_setelah_diskon: number;
+  total_dibayarkan: number;
+  total_tip: number;
+  verified_at: string | null;
+}
+
+export interface IRiwayatPesanan extends IPesanan {
+  id_status_pesanan: number;
+  id_karyawan: number;
+  status: string;
+  produk: {
+    id: number;
+    nama: string;
+    harga: number;
+    images: HTMLImageElement | StaticImageData;
+  }[];
+}
