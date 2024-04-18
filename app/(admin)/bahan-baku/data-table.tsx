@@ -7,6 +7,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -20,8 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { buttonVariants } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -49,6 +50,7 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -127,12 +129,38 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Data tidak ditemukan.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+      </div>
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
+        <p className="text-slate-500 text-body">
+          Menampilkan 10 dari {table.getFilteredRowModel().rows.length} data.
+        </p>
+        <div className="flex items-center justify-end space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            className="flex gap-2 items-center"
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft size={"16"} /> Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            className="flex gap-2 items-center"
+            disabled={!table.getCanNextPage()}
+          >
+            Next <ChevronRight size={"16"} />
+          </Button>
+        </div>
       </div>
     </div>
   );

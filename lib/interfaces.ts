@@ -86,7 +86,7 @@ export type IJarakKirim = {
 
 // @Jeha
 export type IBahanBaku = {
-  id?: number;
+  id_bahan_baku?: number;
   nama: string;
   stok: string;
   stok_minimum?: string;
@@ -95,7 +95,7 @@ export type IBahanBaku = {
 };
 
 export type IPenitip = {
-  id?: string;
+  id_penitip?: string;
   nama: string;
   alamat: string;
   telepon: string;
@@ -144,5 +144,6 @@ export interface IRiwayatPesanan extends IPesanan {
     nama: string;
     harga: number;
     images: HTMLImageElement | StaticImageData;
+    jumlah: number;
   }[];
 }

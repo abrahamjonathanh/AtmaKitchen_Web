@@ -29,7 +29,7 @@ import { deletePenitipById } from "@/lib/api/penitip";
 
 export const columns: ColumnDef<IPenitip>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "id_penitip",
     header: "# ID",
   },
   {
@@ -104,12 +104,12 @@ export const columns: ColumnDef<IPenitip>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`${pathname}/${row.getValue("id")}`}>
+              <Link href={`${pathname}/${row.getValue("id_penitip")}`}>
                 <DropdownMenuItem>
                   <Search size={"16"} /> Lihat Detail
                 </DropdownMenuItem>
               </Link>
-              <Link href={`${pathname}/edit/${row.getValue("id")}`}>
+              <Link href={`${pathname}/edit/${row.getValue("id_penitip")}`}>
                 <DropdownMenuItem>
                   <Pencil size={"16"} /> Ubah
                 </DropdownMenuItem>

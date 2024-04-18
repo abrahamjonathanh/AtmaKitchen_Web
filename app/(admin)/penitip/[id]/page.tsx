@@ -1,12 +1,16 @@
 "use client";
+import { useSWRConfig } from "swr";
+import { getPenitipById, updatePenitipById } from "@/lib/api/penitip";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import ProdukList from "./_components/produk-list";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 import InfoCard from "./_components/info-card";
+import Loading from "@/components/ui/loading";
+import { useRouter } from "next/navigation";
 import { Phone, MapPin, TrendingDown, TrendingUp } from "lucide-react";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-
+import { useTitle } from "@/lib/hooks";
 
 export default function page() {
   const data = {
@@ -19,22 +23,6 @@ export default function page() {
     pendapatanBulanIni: 5000000,
     transaksiBulanIni: 10,
   };
-  // ↳ Delete this all
-  // const pageTitle = "AtmaKitchen | Produk Titipan";
-  // const pageDescription = "AtmaKitchen Produk Titipan Dashboard";
-
-  // const [penitipData, setPenitipData] = useState(null);
-  // const [pendapatanBulanIni, setPendapatanBulanIni] = useState(null);
-  // const [transaksiBulanIni, setTransaksiBulanIni] = useState(null);
-
-  // useEffect(() => {
-  //   fetchData().then((result) => {
-  //     setPenitipData(result.penitipData);
-  //     setPendapatanBulanIni(result.pendapatanBulanIni);
-  //     setTransaksiBulanIni(result.transaksiBulanIni);
-  //   });
-  // }, []);
-  // End delete
 
   return (
     <DashboardWrapper navTitle="Detail Penitip">
@@ -42,13 +30,6 @@ export default function page() {
         previousPage={[{ title: "Penitip", link: "/penitip" }]}
         currentPage="Detail"
       />
-
-      {/* ↳ Delete head */}
-      {/* <Head>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-      </Head> */}
-      {/* ↳ End delete */}
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">

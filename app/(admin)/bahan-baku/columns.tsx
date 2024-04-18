@@ -22,7 +22,7 @@ import { deleteBahanBakuById } from "@/lib/api/bahanbaku";
 
 export const columns: ColumnDef<IBahanBaku>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "id_bahan_baku",
     header: "# ID",
   },
   {
