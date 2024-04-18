@@ -1,23 +1,43 @@
 "use client";
-import React from "react";
+import { useSWRConfig } from "swr";
+import { useRouter } from "next/navigation";
+
+import React, { useState } from "react";
 import LoginImage from "../../../public/images/Login.png";
+import Loading from "@/components/ui/loading";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+
+import { login } from "@/lib/api/auth";
+
 const formSchema = z.object({
-  email: z.string().min(1, { message: "Email tidak boleh kosong!" }).email({ message: "Email tidak valid" }),
+  email: z
+    .string()
+    .min(1, { message: "Email tidak boleh kosong!" })
+    .email({ message: "Email tidak valid" }),
   password: z.string().min(1, { message: "Password tidak boleh kosong!" }),
 });
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Image from "next/image";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,10 +47,20 @@ export default function LoginPage() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsLoading(true);
+      const response = await login(values);
+
+      if (response?.status === 200 || response?.status === 201) {
+        router.push("/"); // For redirect route
+      }
+    } catch (error: any) {
+      console.error("Error creating akun: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+    // console.log(values);
   }
 
   return (
@@ -63,7 +93,11 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -72,8 +106,8 @@ export default function LoginPage() {
               <p className="mt-4 w-full text-right text-sm text-slate-600">
                 <Link href={"/forgot-password"}>Lupa password?</Link>
               </p>
-              <Button type="submit" className="w-full">
-                Masuk
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? <Loading /> : <>Masuk</>}
               </Button>
               <p className="text-sm text-black">
                 Belum punya akun?{" "}
@@ -85,7 +119,11 @@ export default function LoginPage() {
           </Form>
         </div>
         <div className="w-1/2">
-          <Image src={LoginImage} alt="Login" className="w-full h-full object-cover rounded-3xl" />
+          <Image
+            src={LoginImage}
+            alt="Login"
+            className="w-full h-full object-cover rounded-3xl"
+          />
         </div>
       </div>
     </MaxWidthWrapper>

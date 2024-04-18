@@ -96,6 +96,15 @@ export type IProduk = {
   image: [];
 };
 
+export type IAkun = {
+  nama: string;
+  email: string;
+  password: string;
+  nama_alamat: string;
+  alamat: string;
+  telepon: string;
+};
+
 // @Jeha
 export type IBahanBaku = {
   id?: number;

@@ -132,7 +132,7 @@ export default function ProdukForm({
                 </FormItem>
               )}
             />
-            <p className="text-slate-500">
+            <p className="text-body text-slate-500">
               Besar file: maksimum 10.000.000 bytes (10 Megabytes). Ekstensi
               file yang diperbolehkan: .JPG .JPEG .PNG. Maksimal unggah 5 foto
               per produk.

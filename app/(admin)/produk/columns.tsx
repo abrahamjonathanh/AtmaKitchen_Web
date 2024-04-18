@@ -20,7 +20,7 @@ import DeleteDialog from "@/components/deleteDialog";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IProduk } from "@/lib/interfaces";
-import { deleteKaryawanById } from "@/lib/api/karyawan";
+import { deleteProdukById } from "@/lib/api/produk";
 
 export const columns: ColumnDef<IProduk>[] = [
   {
@@ -41,8 +41,15 @@ export const columns: ColumnDef<IProduk>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="px-4 font-medium">{row.getValue("nama")}</div>
+      <div className="px-4 font-medium">
+        {row.getValue("nama")} {row.getValue("ukuran")}
+      </div>
     ),
+  },
+  {
+    accessorKey: "ukuran",
+    header: () => {},
+    cell: () => {},
   },
   {
     accessorKey: "Ready_Stock",
@@ -109,12 +116,12 @@ export const columns: ColumnDef<IProduk>[] = [
         try {
           setIsLoading(true);
           console.log("hit");
-          // await deleteKaryawanById(row.getValue("id"));
+          await deleteProdukById(row.getValue("id"));
         } catch (error: any) {
           console.error("Error deleting karyawan: " + error);
         } finally {
-          setIsLoading(false); //For stop the loading process
-          setIsOpen(false); // For close the dialog
+          setIsLoading(false);
+          setIsOpen(false);
         }
       };
 
