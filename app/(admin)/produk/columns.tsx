@@ -42,24 +42,19 @@ export const columns: ColumnDef<IProduk>[] = [
     },
     cell: ({ row }) => (
       <div className="px-4 font-medium">
-        {row.getValue("nama")} {row.getValue("ukuran")}
+        {row.getValue("nama")} {row.original.ukuran}
       </div>
     ),
-  },
-  {
-    accessorKey: "ukuran",
-    header: () => {},
-    cell: () => {},
   },
   {
     accessorKey: "Ready_Stock",
     header: () => <div>Ready Stock</div>,
   },
   {
-    accessorKey: "harga",
+    accessorKey: "harga_jual",
     header: () => <div>Harga</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("harga"));
+      const amount = parseFloat(row.getValue("harga_jual"));
 
       return <div>{toRupiah(amount)}</div>;
     },
@@ -79,20 +74,22 @@ export const columns: ColumnDef<IProduk>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Jabatan
+          Kategori
           <ArrowUpDown className="ml-2" size={"12"} />
         </Button>
       );
     },
     cell: ({ row }) => {
       const roleBadges: {
-        code: string;
-        variant: "outline" | "sky" | "lime";
+        code: number;
+        variant: "violet" | "sky" | "lime";
         label: "Kue" | "Minuman" | "Roti";
       }[] = [
-        { code: "1", variant: "outline", label: "Kue" },
-        { code: "2", variant: "sky", label: "Minuman" },
-        { code: "3", variant: "lime", label: "Roti" },
+        { code: 1, variant: "violet", label: "Kue" },
+        { code: 2, variant: "sky", label: "Roti" },
+        { code: 3, variant: "lime", label: "Minuman" },
+        // { code: "4", variant: "lime", label: "Titipan" },
+        // { code: "5", variant: "lime", label: "Hampers" },
       ];
 
       const roleBadge = roleBadges.find(
@@ -157,6 +154,9 @@ export const columns: ColumnDef<IProduk>[] = [
           />
         </>
       );
+    },
+    header: () => {
+      return <div className="w-10"></div>;
     },
   },
 ];

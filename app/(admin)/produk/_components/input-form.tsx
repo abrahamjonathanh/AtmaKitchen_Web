@@ -29,12 +29,13 @@ import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import NotAvailable from "@/public/products/Not Available.png";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   id_produk: z.string().optional(),
   nama: z.string().min(1, { message: "Nama produk tidak boleh kosong" }),
   ukuran: z.string().min(1, { message: "Ukuran tidak boleh kosong" }),
-  harga: z.string().min(1, { message: "Harga tidak boleh kosong" }),
+  harga_jual: z.string().min(1, { message: "Harga tidak boleh kosong" }),
   kapasitas: z.string().min(1, {
     message: "Kapasitas produksi setiap hari tidak boleh kosong",
   }),
@@ -66,7 +67,7 @@ export default function ProdukForm({
       nama: isEditable ? data?.nama ?? "" : "",
       kapasitas: isEditable ? data?.kapasitas ?? "" : "",
       ukuran: isEditable ? data?.ukuran ?? "" : "",
-      harga: isEditable ? data?.harga ?? "" : "",
+      harga_jual: isEditable ? data?.harga_jual ?? "" : "",
       id_kategori: isEditable ? data?.id_kategori ?? "" : "",
     },
   });
@@ -175,7 +176,7 @@ export default function ProdukForm({
               <div className="flex flex-col md:flex-row gap-4 items-end">
                 <FormField
                   control={form.control}
-                  name="harga"
+                  name="harga_jual"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Harga</FormLabel>
@@ -216,12 +217,16 @@ export default function ProdukForm({
                   )}
                 />
               </div>
-              <Switch
-                checked={isTitipan}
-                onCheckedChange={() => {
-                  setIsTitipan(!isTitipan);
-                }}
-              />
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={isTitipan}
+                  onCheckedChange={() => {
+                    setIsTitipan(!isTitipan);
+                  }}
+                  id="isTitipanMode"
+                />
+                <Label htmlFor="isTitipanMode">Produk Titipan</Label>
+              </div>
               {isTitipan ? (
                 <FormField
                   control={form.control}

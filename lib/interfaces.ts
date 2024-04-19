@@ -92,7 +92,7 @@ export type IProduk = {
   id_penitip: string | number | null;
   kapasitas: string;
   ukuran: string;
-  harga: string;
+  harga_jual: string;
   image: [];
 };
 
