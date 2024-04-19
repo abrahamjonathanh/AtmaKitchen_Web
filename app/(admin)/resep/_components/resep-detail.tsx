@@ -7,15 +7,25 @@ import { Pencil } from "lucide-react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import Brownies from "@/public/products/Brownies.png";
 
 export default function ResepDetail({
   data,
 }: {
   data: {
     id: number;
-    title: string;
-    image: HTMLImageElement | StaticImageData;
+    nama: string;
+    ukuran: string;
+    images: {
+      image: string;
+    }[];
+    // | HTMLImageElement
+    // | StaticImageData;
     resep: {
+      id_bahan_baku: {
+        satuan: string;
+        nama: string;
+      };
       id: number;
       nama: string;
       jumlah: number;
@@ -39,21 +49,25 @@ export default function ResepDetail({
   };
   return (
     <div className="flex flex-col gap-4 sm:flex-row">
+      {/* <p>{data.resep[0].id}</p> */}
       <Image
-        src={data.image}
-        alt={data.title}
+        src={data.images[0].image || Brownies}
+        alt={data.nama}
         className="rounded-lg w-full sm:w-1/2 md:w-1/3"
+        width={"720"}
+        height={"720"}
       />
       <div className="space-y-2">
-        <p className="text-h3">{data.title}</p>
+        <p className="text-h3">{data.nama}</p>
         <p>
-          Untuk membuat {data.title}1 loyang (20x20 cm), dibutuhkan bahan-bahan
-          sebagai berikut.
+          Untuk membuat {data.nama} 1 loyang ({data.ukuran}), dibutuhkan
+          bahan-bahan sebagai berikut.
         </p>
         <ul className="list-decimal list-inside">
           {data.resep.map((bahan, index) => (
             <li key={index}>
-              {bahan.nama} {bahan.jumlah} {bahan.satuan}
+              {bahan.id_bahan_baku.nama} {bahan.jumlah}{" "}
+              {bahan.id_bahan_baku.satuan}
             </li>
           ))}
         </ul>
@@ -76,7 +90,7 @@ export default function ResepDetail({
         <DeleteDialog
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          title={`Hapus ${data.title}`}
+          title={`Hapus ${data.nama}`}
           isLoading={isLoading}
           onSubmit={onDeleteHandler}
         />

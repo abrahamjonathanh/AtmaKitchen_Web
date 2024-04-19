@@ -124,7 +124,12 @@ export interface IPelanggan {
 
 export interface IPesanan {
   id_pesanan: string;
-  id_metode_pembayaran: number;
+  id_metode_pembayaran?:
+    | number
+    | {
+        id_metode_pembayaran?: number;
+        nama: string;
+      };
   id_pelanggan: number;
   tgl_order: string;
   total_diskon_poin: number;
@@ -133,6 +138,28 @@ export interface IPesanan {
   total_dibayarkan: number;
   total_tip: number;
   verified_at: string | null;
+  pelanggan?: {
+    id_pelanggan: number;
+    id_akun?: number;
+    nama: string;
+    tgl_lahir?: string;
+    telepon?: string;
+  };
+  status_pesanan?: {
+    id_status_pesanan: number;
+    id_karyawan: number;
+    status: string;
+  }[];
+  pengiriman?: {
+    id_pengiriman: number;
+    id_kategori_pengiriman?: number;
+    id_kurir?: number;
+    jarak?: number;
+    harga: number;
+    nama: string;
+    telepon: string;
+    alamat: string;
+  };
 }
 
 export interface IRiwayatPesanan extends IPesanan {

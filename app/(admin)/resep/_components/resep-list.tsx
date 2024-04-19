@@ -1,36 +1,36 @@
 "use client";
 import ResepCard from "./resep-card";
-import LapisLegit from "../../../../public/products/Lapis legit.png";
-import LapisSurabaya from "../../../../public/products/Lapis surabaya.png";
-import Brownies from "../../../../public/products/Brownies.png";
-import Mandarin from "../../../../public/products/Mandarin.png";
-import Spikoe from "../../../../public/products/Spikoe.png";
-import RotiSosis from "../../../../public/products/Roti sosis.png";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { getAllResep } from "@/lib/api/resep";
+import Loading from "@/components/ui/loading";
 export default function ResepList() {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredResep, setFilteredResep] = useState([]);
 
-  const resep = [
-    { id: 1, title: "Lapis Legit", image: LapisLegit },
-    { id: 2, title: "Lapis Surabaya", image: LapisSurabaya },
-    { id: 3, title: "Brownies", image: Brownies },
-    { id: 4, title: "Mandarin", image: Mandarin },
-    { id: 5, title: "Spikoe", image: Spikoe },
-    { id: 6, title: "Roti Sosis", image: RotiSosis },
-  ];
+  const { data, isLoading, isValidating } = getAllResep();
 
-  const filteredResep = resep.filter((item) =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Perform filtering only when data changes or searchQuery changes
+  useMemo(() => {
+    if (data && searchQuery) {
+      setFilteredResep(
+        data.filter((item: any) =>
+          item.nama.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredResep(data || []); // Set filteredResep to data if available
+    }
+  }, [data, searchQuery]);
+  console.log(filteredResep);
 
-  return (
+  return data && !isLoading && !isValidating ? (
     <div className="space-y-4">
       <div className="flex justify-between gap-4 items-center">
         <Input
@@ -52,8 +52,8 @@ export default function ResepList() {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {filteredResep.length ? (
-          filteredResep.map((data, index) => (
-            <ResepCard {...data} key={index} />
+          filteredResep.map((dataResep, index) => (
+            <ResepCard data={dataResep} key={index} />
           ))
         ) : (
           // Handling not found result
@@ -61,5 +61,7 @@ export default function ResepList() {
         )}
       </div>
     </div>
+  ) : (
+    <Loading />
   );
 }
