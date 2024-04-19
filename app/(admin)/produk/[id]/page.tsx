@@ -39,7 +39,7 @@ export default function page({ params }: { params: { id: number } }) {
           id_penitip: null,
           kapasitas: "20",
           ukuran: "20x20",
-          harga: "500000",
+          harga_jual: "500000",
           image: [],
         }}
         // onSubmit={onUpdateHandler}
