@@ -84,6 +84,27 @@ export type IJarakKirim = {
   status: string;
 };
 
+// @yori
+export type IProduk = {
+  id_produk: string | number;
+  nama: string;
+  id_kategori: string;
+  id_penitip: string | number | null;
+  kapasitas: string;
+  ukuran: string;
+  harga: string;
+  image: [];
+};
+
+export type IAkun = {
+  nama: string;
+  email: string;
+  password: string;
+  nama_alamat: string;
+  alamat: string;
+  telepon: string;
+};
+
 // @Jeha
 export type IBahanBaku = {
   id?: number;
