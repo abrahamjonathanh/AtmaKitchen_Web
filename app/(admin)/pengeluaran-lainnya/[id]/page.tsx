@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import PengeluaranLainnyaForm from "../_components/input-form";
 import { useTitle } from "@/lib/hooks";
-import { IPengeluaranLainnya } from "@/lib/interfaces";
 import { updatePengeluaranLainnyaById } from "@/lib/api/pengeluaranlainnya";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
@@ -27,7 +26,9 @@ export default function page({ params }: { params: { id: number } }) {
   return (
     <DashboardWrapper navTitle="Ubah pengeluaran lainnya">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Pengeluaran Lainnya", link: "/pengeluaran-lainnya" }]}
+        previousPage={[
+          { title: "Pengeluaran Lainnya", link: "/pengeluaran-lainnya" },
+        ]}
         currentPage="Ubah"
       />
 
@@ -37,9 +38,9 @@ export default function page({ params }: { params: { id: number } }) {
           id_pengeluaran_lainnya: params.id,
           nama: "listrik",
           biaya: "1000",
-          tanggal: "2024-04-13", 
+          tanggal: "2024-04-13",
           kategori: "Pengeluaran",
-          karyawan: { 
+          karyawan: {
             id_karyawan: 1,
             nama: "Linda",
             alamat: "Jl. Anggur",

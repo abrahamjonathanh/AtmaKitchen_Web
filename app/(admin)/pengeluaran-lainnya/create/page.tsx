@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import PengeluaranLainnyaForm from "../_components/input-form";
 import { useTitle } from "@/lib/hooks";
-import { IPengeluaranLainnya } from "@/lib/interfaces";
 import { createPengeluaranLainnya } from "@/lib/api/pengeluaranlainnya";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
@@ -26,10 +25,15 @@ export default function page() {
   return (
     <DashboardWrapper navTitle="Tambah Pengeluaran Lainnya">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Pengeluaran Lainnya", link: "/pengeluaran-lainnya" }]}
+        previousPage={[
+          { title: "Pengeluaran Lainnya", link: "/pengeluaran-lainnya" },
+        ]}
         currentPage="Tambah"
       />
-      <PengeluaranLainnyaForm onSubmit={onCreateHandler} isLoading={isLoading} />
+      <PengeluaranLainnyaForm
+        onSubmit={onCreateHandler}
+        isLoading={isLoading}
+      />
     </DashboardWrapper>
   );
 }

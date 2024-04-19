@@ -107,7 +107,7 @@ export type IAkun = {
 
 // @Jeha
 export type IBahanBaku = {
-  id?: number;
+  id_bahan_baku?: number;
   nama: string;
   stok: string;
   stok_minimum?: string;
@@ -116,11 +116,20 @@ export type IBahanBaku = {
 };
 
 export type IPenitip = {
-  id?: string;
+  id_penitip?: string;
   nama: string;
   alamat: string;
   telepon: string;
   created_at: string; //tanggal bergabung
+  produk: {
+    id_produk: number;
+    id_kategori: number;
+    id_penitip: string;
+    nama: string;
+    kapasitas: number;
+    ukuran: string;
+    harga_jual: number;
+  }[];
 };
 
 export type IPengeluaranLainnya = {
@@ -145,7 +154,12 @@ export interface IPelanggan {
 
 export interface IPesanan {
   id_pesanan: string;
-  id_metode_pembayaran: number;
+  id_metode_pembayaran?:
+    | number
+    | {
+        id_metode_pembayaran?: number;
+        nama: string;
+      };
   id_pelanggan: number;
   tgl_order: string;
   total_diskon_poin: number;
@@ -154,6 +168,28 @@ export interface IPesanan {
   total_dibayarkan: number;
   total_tip: number;
   verified_at: string | null;
+  pelanggan?: {
+    id_pelanggan: number;
+    id_akun?: number;
+    nama: string;
+    tgl_lahir?: string;
+    telepon?: string;
+  };
+  status_pesanan?: {
+    id_status_pesanan: number;
+    id_karyawan: number;
+    status: string;
+  }[];
+  pengiriman?: {
+    id_pengiriman: number;
+    id_kategori_pengiriman?: number;
+    id_kurir?: number;
+    jarak?: number;
+    harga: number;
+    nama: string;
+    telepon: string;
+    alamat: string;
+  };
 }
 
 export interface IRiwayatPesanan extends IPesanan {
@@ -165,5 +201,14 @@ export interface IRiwayatPesanan extends IPesanan {
     nama: string;
     harga: number;
     images: HTMLImageElement | StaticImageData;
+    jumlah: number;
   }[];
 }
+
+export interface IProduct {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+}
+

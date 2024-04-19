@@ -124,8 +124,10 @@ export default function BahanBakuForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="kg">Kg</SelectItem>
-                      <SelectItem value="liter">Liter</SelectItem>
+                      <SelectItem value="gr">gram</SelectItem>
+                      <SelectItem value="butir">butir</SelectItem>
+                      <SelectItem value="ml">ml</SelectItem>
+                      <SelectItem value="buah">buah</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -1,6 +1,144 @@
+"use client";
 import axios from "axios";
 import { toast } from "sonner";
+import useSWR from "swr";
+import { fetcher } from "../utils";
+import Brownies from "@/public/products/Brownies.png";
+
 // TODO: Make Resep Interface
+export const getAllResep = () => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/resep`,
+    fetcher
+  );
+
+  // Ini kondisi kalau databasenya error atau mati. Di pastikan dulu sudah tidak loading lagi (!isLoading) dan terjadi error (error). Itu alasan kenapa muncul !isLoading && error.
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+
+    // Ini data dummy nya, disesuaikan sama hasil API nya, ceritanya ini bohongan, kalau databasenya mati, biar nanti dia balikin data "palsu"
+    data = [
+      {
+        id: 1,
+        title: "Lapis Legit",
+        image: "https://via.placeholder.com/640x480.png/0033bb?text=impedit",
+      },
+      {
+        id: 3,
+        title: "Lapis Surabaya",
+        image: "https://via.placeholder.com/640x480.png/0033bb?text=impedit",
+      },
+      {
+        id: 5,
+        title: "Brownies",
+        image: "https://via.placeholder.com/640x480.png/0033bb?text=impedit",
+      },
+      {
+        id: 7,
+        title: "Mandarin",
+        image: "https://via.placeholder.com/640x480.png/0033bb?text=impedit",
+      },
+      {
+        id: 9,
+        title: "Spikoe",
+        image: "https://via.placeholder.com/640x480.png/0033bb?text=impedit",
+      },
+    ];
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};
+
+export const getResepById = (id: number) => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/resep/${id}`,
+    fetcher
+  );
+
+  // Ini kondisi kalau databasenya error atau mati. Di pastikan dulu sudah tidak loading lagi (!isLoading) dan terjadi error (error). Itu alasan kenapa muncul !isLoading && error.
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+
+    // Ini data dummy nya, disesuaikan sama hasil API nya, ceritanya ini bohongan, kalau databasenya mati, biar nanti dia balikin data "palsu"
+    data = {
+      id_produk: id,
+      nama: "Brownies",
+      ukuran: "20x20",
+      images: Brownies,
+      resep: [
+        {
+          id_bahan_baku: {
+            id_bahan_baku: 1,
+            nama: "Coklat batang",
+            satuan: "gr",
+          },
+          jumlah: 250,
+        },
+        {
+          id_bahan_baku: {
+            id_bahan_baku: 2,
+            nama: "Butter",
+            satuan: "gr",
+          },
+          jumlah: 100,
+        },
+        {
+          id_bahan_baku: {
+            id_bahan_baku: 3,
+            nama: "Minyak goreng",
+            satuan: "ml",
+          },
+          jumlah: 50,
+        },
+        {
+          id_bahan_baku: {
+            id_bahan_baku: 4,
+            nama: "Telur",
+            satuan: "butir",
+          },
+          jumlah: 6,
+        },
+        {
+          id_bahan_baku: {
+            id_bahan_baku: 5,
+            nama: "Gula pasir",
+            satuan: "gr",
+          },
+          jumlah: 200,
+        },
+        {
+          id_bahan_baku: {
+            id_bahan_baku: 5,
+            nama: "Tepung terigu",
+            satuan: "gr",
+          },
+          jumlah: 150,
+        },
+        {
+          id_bahan_baku: {
+            id_bahan_baku: 5,
+            nama: "Coklat bubuk",
+            satuan: "gr",
+          },
+          jumlah: 60,
+        },
+      ],
+    };
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};
+
 export const deleteResepById = async (id: number) => {
   try {
     // Boiler template for fetching api

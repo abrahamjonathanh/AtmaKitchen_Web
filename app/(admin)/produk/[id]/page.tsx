@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import ProdukForm from "../_components/input-form";
 import { useTitle } from "@/lib/hooks";
 import { IProduk } from "@/lib/interfaces";
-import { updateKaryawanById } from "@/lib/api/karyawan";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 
@@ -13,16 +12,16 @@ export default function page({ params }: { params: { id: number } }) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const onUpdateHandler = async (values: IProduk) => {
-    try {
-      setIsLoading(true);
-      // await updateProdukById(params.id, values);
-    } catch (error: any) {
-      console.error("Error updating produk: ", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const onUpdateHandler = async (values: IProduk) => {
+  //   try {
+  //     setIsLoading(true);
+  //     // await updateProdukById(params.id, values);
+  //   } catch (error: any) {
+  //     console.error("Error updating produk: ", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <DashboardWrapper navTitle="Ubah Produk">

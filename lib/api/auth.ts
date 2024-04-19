@@ -2,8 +2,8 @@
 
 import axios from "axios";
 import { IAkun } from "../interfaces";
-import { fetcher } from "../utils";
-import useSWR from "swr";
+// import { fetcher } from "../utils";
+// import useSWR from "swr";
 import { toast } from "sonner";
 
 export const register = async (data: IAkun) => {

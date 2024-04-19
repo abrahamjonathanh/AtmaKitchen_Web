@@ -4,30 +4,29 @@ import { DataTable } from "./data-table";
 import { IPelanggan } from "@/lib/interfaces";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
-import { getAllPelanggan } from "@/lib/api/pelanggan";
-
+// import { getAllPelanggan } from "@/lib/api/pelanggan";
 
 async function getData(): Promise<IPelanggan[]> {
   // Dummy data for pengeluaran lainnya
   return [
-      {
-        id_pelanggan: 1,
-        nama: "Sasa",
-        tgl_lahir: "1990-01-01",
-        status: "1",
-        akun:{
-          email: "sasa@gmail.com",
-        }
+    {
+      id_pelanggan: 1,
+      nama: "Sasa",
+      tgl_lahir: "1990-01-01",
+      status: "1",
+      akun: {
+        email: "sasa@gmail.com",
       },
-      {
-        id_pelanggan: 2,
-        nama: "Sisi",
-        tgl_lahir: "1995-05-15",
-        status: "1",
-        akun:{
-          email: "sisi@gmail.com",
-        }
+    },
+    {
+      id_pelanggan: 2,
+      nama: "Sisi",
+      tgl_lahir: "1995-05-15",
+      status: "1",
+      akun: {
+        email: "sisi@gmail.com",
       },
+    },
   ];
 }
 

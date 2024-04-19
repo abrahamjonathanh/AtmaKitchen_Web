@@ -59,7 +59,7 @@ export default function Sidebar({ className }: { className?: string }) {
         {
           title: "Pesanan",
           icon: <ScrollText size={"16"} />,
-          link: "",
+          link: "/pesanan",
         },
         {
           title: "Jarak Kirim",
@@ -78,7 +78,7 @@ export default function Sidebar({ className }: { className?: string }) {
           more: [
             {
               title: "Semua Akun",
-              link: "",
+              link: "/akun",
             },
             {
               title: "Karyawan",
@@ -90,7 +90,7 @@ export default function Sidebar({ className }: { className?: string }) {
             },
             {
               title: "Pelanggan",
-              link: "",
+              link: "/pelanggan",
             },
           ],
         },

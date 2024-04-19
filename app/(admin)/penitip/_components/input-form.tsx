@@ -47,7 +47,7 @@ export default function PenitipForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id: isEditable ? data?.id ?? "" : "",
+      id: isEditable ? data?.id_penitip ?? "" : "",
       nama: isEditable ? data?.nama ?? "" : "",
       alamat: isEditable ? data?.alamat ?? "" : "",
       telepon: isEditable ? data?.telepon ?? "" : "",

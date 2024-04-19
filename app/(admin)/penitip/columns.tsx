@@ -26,10 +26,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IPenitip } from "@/lib/interfaces";
 import { deletePenitipById } from "@/lib/api/penitip";
+import { mutate } from "swr";
 
 export const columns: ColumnDef<IPenitip>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "id_penitip",
     header: "# ID",
   },
   {
@@ -84,7 +85,12 @@ export const columns: ColumnDef<IPenitip>[] = [
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          await deletePenitipById(row.getValue("id"));
+          const response = await deletePenitipById(row.getValue("id_penitip"));
+
+          // Auto refresh data when success.
+          if (response?.status == 200 || response?.status == 201) {
+            mutate("/penitip"); // For auto refresh
+          }
         } catch (error: any) {
           console.error("Error deleting penitip: " + error);
         } finally {
@@ -104,12 +110,12 @@ export const columns: ColumnDef<IPenitip>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`${pathname}/${row.getValue("id")}`}>
+              <Link href={`${pathname}/${row.getValue("id_penitip")}`}>
                 <DropdownMenuItem>
                   <Search size={"16"} /> Lihat Detail
                 </DropdownMenuItem>
               </Link>
-              <Link href={`${pathname}/edit/${row.getValue("id")}`}>
+              <Link href={`${pathname}/edit/${row.getValue("id_penitip")}`}>
                 <DropdownMenuItem>
                   <Pencil size={"16"} /> Ubah
                 </DropdownMenuItem>
