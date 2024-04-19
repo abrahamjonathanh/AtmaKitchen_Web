@@ -26,6 +26,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IPenitip } from "@/lib/interfaces";
 import { deletePenitipById } from "@/lib/api/penitip";
+import { mutate } from "swr";
 
 export const columns: ColumnDef<IPenitip>[] = [
   {
@@ -84,7 +85,12 @@ export const columns: ColumnDef<IPenitip>[] = [
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          await deletePenitipById(row.getValue("id"));
+          const response = await deletePenitipById(row.getValue("id_penitip"));
+
+          // Auto refresh data when success.
+          if (response?.status == 200 || response?.status == 201) {
+            mutate("/penitip"); // For auto refresh
+          }
         } catch (error: any) {
           console.error("Error deleting penitip: " + error);
         } finally {

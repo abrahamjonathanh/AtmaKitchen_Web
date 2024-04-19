@@ -90,7 +90,7 @@ export default function Sidebar({ className }: { className?: string }) {
             },
             {
               title: "Pelanggan",
-              link: "",
+              link: "/pelanggan",
             },
           ],
         },

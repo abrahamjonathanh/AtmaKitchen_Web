@@ -50,6 +50,34 @@ export const createBahanBaku = async (data: IBahanBaku) => {
   }
 };
 
+export const getBahanBakuById = (id:number) => {
+  let { data, error, isLoading , isValidating} = useSWR(
+    `${process.env.BASE_API}/bahan-baku/${id}`,
+    fetcher
+  );
+
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+    data = [
+      {
+        id: 1,
+        nama: "Tepung Terigu",
+        stok: "100",
+        stok_minimum: "10",
+        satuan: "kg",
+        updated_at: "2024-04-04T10:00:00Z",
+      },
+    ];
+    
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};
 // update
 export const updateBahanBakuById = async (id: number, data: IBahanBaku) => {
   try {

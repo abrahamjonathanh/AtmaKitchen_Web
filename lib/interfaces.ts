@@ -100,6 +100,15 @@ export type IPenitip = {
   alamat: string;
   telepon: string;
   created_at: string; //tanggal bergabung
+  produk: {
+    id_produk: number;
+    id_kategori: number;
+    id_penitip: string;
+    nama: string;
+    kapasitas: number;
+    ukuran: string;
+    harga_jual: number;
+  }[];
 };
 
 export type IPengeluaranLainnya = {
@@ -147,3 +156,11 @@ export interface IRiwayatPesanan extends IPesanan {
     jumlah: number;
   }[];
 }
+
+export interface IProduct {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+}
+
