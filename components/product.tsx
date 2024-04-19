@@ -12,7 +12,7 @@ const ProductCard = ({
   price = 300000,
   link = "",
 }: {
-  image?: HTMLImageElement | StaticImageData;
+  image?: string | HTMLImageElement | StaticImageData;
   name?: string;
   variant?: string;
   price?: number | string;
@@ -26,6 +26,8 @@ const ProductCard = ({
             src={image}
             alt={`Image of ${name}`}
             className="rounded-t-lg max-h-36 object-cover"
+            width={"460"}
+            height={"460"}
           />
           {/* <div className="relative w-full text-sm text-white">
             <img

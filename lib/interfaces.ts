@@ -107,7 +107,7 @@ export type IAkun = {
 
 // @Jeha
 export type IBahanBaku = {
-  id?: number;
+  id_bahan_baku?: number;
   nama: string;
   stok: string;
   stok_minimum?: string;
@@ -116,11 +116,20 @@ export type IBahanBaku = {
 };
 
 export type IPenitip = {
-  id?: string;
+  id_penitip?: string;
   nama: string;
   alamat: string;
   telepon: string;
   created_at: string; //tanggal bergabung
+  produk: {
+    id_produk: number;
+    id_kategori: number;
+    id_penitip: string;
+    nama: string;
+    kapasitas: number;
+    ukuran: string;
+    harga_jual: number;
+  }[];
 };
 
 export type IPengeluaranLainnya = {
@@ -192,5 +201,14 @@ export interface IRiwayatPesanan extends IPesanan {
     nama: string;
     harga: number;
     images: HTMLImageElement | StaticImageData;
+    jumlah: number;
   }[];
 }
+
+export interface IProduct {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+}
+

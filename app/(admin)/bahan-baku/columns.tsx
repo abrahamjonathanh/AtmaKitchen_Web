@@ -22,7 +22,7 @@ import { deleteBahanBakuById } from "@/lib/api/bahanbaku";
 
 export const columns: ColumnDef<IBahanBaku>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "id_bahan_baku",
     header: "# ID",
   },
   {
@@ -92,7 +92,7 @@ export const columns: ColumnDef<IBahanBaku>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`${pathname}/edit/${row.getValue("id")}`}>
+              <Link href={`${pathname}/edit/${row.getValue("id_bahan_baku")}`}>
                 <DropdownMenuItem>
                   <Pencil size={"16"} /> Ubah
                 </DropdownMenuItem>

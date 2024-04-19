@@ -1,4 +1,5 @@
 "use client";
+import { getPenitipById, updatePenitipById } from "@/lib/api/penitip";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import ProdukList from "./_components/produk-list";
 import DashboardWrapper from "@/components/dashboard-wrapper";
@@ -6,35 +7,23 @@ import InfoCard from "./_components/info-card";
 import { Phone, MapPin, TrendingDown, TrendingUp } from "lucide-react";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useTitle } from "@/lib/hooks";
+import Loading from "@/components/ui/loading";
 
+export default function page({ params }: { params: { id: string } }) {
+  // const data = {
+  //   penitipData: {
+  //     nama: "Celine Carolina",
+  //     telepon: "082719282715",
+  //     alamat: "Jln. Magelang Timur No 817",
+  //     tanggalBergabung: "2024-04-06T07:15:59Z",
+  //   },
+  //   pendapatanBulanIni: 5000000,
+  //   transaksiBulanIni: 10,
+  // };
 
-export default function page() {
-  const data = {
-    penitipData: {
-      nama: "Celine Carolina",
-      telepon: "082719282715",
-      alamat: "Jln. Magelang Timur No 817",
-      tanggalBergabung: "2024-04-06T07:15:59Z",
-    },
-    pendapatanBulanIni: 5000000,
-    transaksiBulanIni: 10,
-  };
-  // ↳ Delete this all
-  // const pageTitle = "AtmaKitchen | Produk Titipan";
-  // const pageDescription = "AtmaKitchen Produk Titipan Dashboard";
-
-  // const [penitipData, setPenitipData] = useState(null);
-  // const [pendapatanBulanIni, setPendapatanBulanIni] = useState(null);
-  // const [transaksiBulanIni, setTransaksiBulanIni] = useState(null);
-
-  // useEffect(() => {
-  //   fetchData().then((result) => {
-  //     setPenitipData(result.penitipData);
-  //     setPendapatanBulanIni(result.pendapatanBulanIni);
-  //     setTransaksiBulanIni(result.transaksiBulanIni);
-  //   });
-  // }, []);
-  // End delete
+  const { data, isLoading } = getPenitipById(params.id);
+  console.log(data);
 
   return (
     <DashboardWrapper navTitle="Detail Penitip">
@@ -43,34 +32,24 @@ export default function page() {
         currentPage="Detail"
       />
 
-      {/* ↳ Delete head */}
-      {/* <Head>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-      </Head> */}
-      {/* ↳ End delete */}
-
       <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-          {data.penitipData && (
-            <>
+        {data && !isLoading ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
               <InfoCard>
-                <p className="text-large font-semibold">
-                  {data.penitipData.nama}
-                </p>
+                <p className="text-large font-semibold">{data.nama}</p>
 
                 <div className="space-y-1">
                   <div className="flex items-start xl:items-center">
                     <Phone size={16} className="mr-2" />
-                    <p>{data.penitipData.telepon}</p>
+                    <p>{data.telepon}</p>
                   </div>
                   <div className="flex items-start xl:items-center">
                     <MapPin size={16} className="mr-2" />
-                    <p>{data.penitipData.alamat}</p>
+                    <p>{data.alamat}</p>
                   </div>
                   <p className="text-slate-500 text-body">
-                    Tanggal bergabung:{" "}
-                    {toIndonesiaDate(data.penitipData.tanggalBergabung)}
+                    Tanggal bergabung: {toIndonesiaDate(data.created_at)}
                   </p>
                 </div>
               </InfoCard>
@@ -108,10 +87,12 @@ export default function page() {
                   Transaksi bulan ini menurun 5,22% dari bulan lalu.
                 </p>
               </InfoCard>
-            </>
-          )}
-        </div>
-        <ProdukList />
+            </div>
+          </>
+        ) : (
+          <Loading />
+        )}
+        {data && !isLoading && <ProdukList data={data.produk} />}
       </div>
     </DashboardWrapper>
   );
