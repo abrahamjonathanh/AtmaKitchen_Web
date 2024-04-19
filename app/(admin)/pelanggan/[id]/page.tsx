@@ -71,16 +71,16 @@ export default function PelangganDetailPage() {
     },
   ]);
 
-  const [selectedPesanan, setSelectedPesanan] =
-    useState<IRiwayatPesanan | null>(null);
+  // const [selectedPesanan, setSelectedPesanan] =
+  //   useState<IRiwayatPesanan | null>(null);
 
-  const showDetailPesanan = (pesanan: IRiwayatPesanan) => {
-    setSelectedPesanan(pesanan);
-  };
+  // const showDetailPesanan = (pesanan: IRiwayatPesanan) => {
+  //   setSelectedPesanan(pesanan);
+  // };
 
-  const handleCloseDialog = () => {
-    setSelectedPesanan(null);
-  };
+  // const handleCloseDialog = () => {
+  //   setSelectedPesanan(null);
+  // };
 
   return (
     <DashboardWrapper navTitle={`Detail Pelanggan - ${pelanggan.nama}`}>

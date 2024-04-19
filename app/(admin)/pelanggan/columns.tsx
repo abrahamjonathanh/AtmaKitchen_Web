@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Pencil, Trash2, Clock } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Trash2, Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 import { useState } from "react";
@@ -47,9 +46,7 @@ export const columns: ColumnDef<IPelanggan>[] = [
   {
     accessorKey: "tgl_lahir",
     header: "Tanggal Lahir",
-    cell: ({ row }) => (
-      <div className="px-4">{row.getValue("tgl_lahir")}</div>
-    ),
+    cell: ({ row }) => <div className="px-4">{row.getValue("tgl_lahir")}</div>,
   },
   {
     accessorKey: "status",
@@ -72,7 +69,6 @@ export const columns: ColumnDef<IPelanggan>[] = [
       }[] = [
         { code: "1", variant: "lime", label: "Aktif" },
         { code: "2", variant: "sky", label: "Tidak Aktif" },
-      
       ];
 
       const statusBadge = statusBadges.find(

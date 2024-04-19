@@ -4,7 +4,6 @@ import { toRupiah } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ProductCart from "./_components/product_cart";
-import { deleteKaryawanById } from "@/lib/api/karyawan";
 import ProductRecommendation from "../../_components/recommendation-product";
 import UserWrapper from "@/components/user-wrapper";
 import { useTitle } from "@/lib/hooks";

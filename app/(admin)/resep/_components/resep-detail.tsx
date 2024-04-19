@@ -4,7 +4,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { deleteResepById } from "@/lib/api/resep";
 import { cn } from "@/lib/utils";
 import { Pencil } from "lucide-react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import Brownies from "@/public/products/Brownies.png";

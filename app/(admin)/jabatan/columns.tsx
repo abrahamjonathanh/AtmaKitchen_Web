@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import DeleteDialog from "@/components/deleteDialog";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { IJabatan } from "@/lib/interfaces";
 import { deleteJabatanById } from "@/lib/api/jabatan";
 
@@ -48,7 +48,7 @@ export const columns: ColumnDef<IJabatan>[] = [
       const pathname = usePathname();
       const [isOpen, setIsOpen] = useState(false);
       const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
-      const router = useRouter(); // // Copy this for create, update, delete
+      // const router = useRouter(); // // Copy this for create, update, delete
       const [isLoading, setIsLoading] = useState(false); // // Copy this for create, update, delete
 
       const onDeleteHandler = async () => {

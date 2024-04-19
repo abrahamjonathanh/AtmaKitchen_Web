@@ -24,7 +24,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import Image from "next/image";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { MoveLeft } from "lucide-react";

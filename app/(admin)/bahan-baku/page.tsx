@@ -4,15 +4,15 @@ import { IBahanBaku } from "@/lib/interfaces";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 
-function getStatus(stok: number, stok_minimum: number): string {
-  if (stok <= 0) {
-    return "Habis";
-  } else if (stok < stok_minimum) {
-    return "Akan Habis";
-  } else {
-    return "Mencukupi";
-  }
-}
+// function getStatus(stok: number, stok_minimum: number): string {
+//   if (stok <= 0) {
+//     return "Habis";
+//   } else if (stok < stok_minimum) {
+//     return "Akan Habis";
+//   } else {
+//     return "Mencukupi";
+//   }
+// }
 
 async function getData(): Promise<IBahanBaku[]> {
   const data: IBahanBaku[] = [
