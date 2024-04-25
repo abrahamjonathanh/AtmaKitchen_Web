@@ -52,7 +52,7 @@ export default function LoginPage() {
       const response = await login(values);
 
       if (response?.status === 200 || response?.status === 201) {
-        router.push("/"); // For redirect route
+        router.push("/karyawan"); // For redirect route
       }
     } catch (error: any) {
       console.error("Error creating akun: ", error);

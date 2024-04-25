@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Loading from "@/components/ui/loading";
-import { IJarakKirim } from "@/lib/interfaces";
+import { IPengiriman } from "@/lib/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,18 +28,18 @@ export default function JarakKirimForm({
   isLoading = false,
 }: {
   isEditable?: boolean;
-  data?: IJarakKirim;
+  data?: IPengiriman;
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   isLoading?: boolean;
 }) {
   console.log(`⚠️ Jarak Kirim editable mode: ${isEditable}`);
   const router = useRouter();
-
+  console.log(data);
   //   Define form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      jarak: isEditable ? data?.jarak ?? "" : "",
+      jarak: isEditable ? data?.jarak.toString() ?? "" : "",
     },
   });
 
@@ -47,12 +47,10 @@ export default function JarakKirimForm({
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 flex-col lg:flex-row">
         <div className="border border-slate-200 rounded-lg p-4 lg:w-2/3">
-          <p className="text-slate-500">{data?.alamat.nama}</p>
+          <p className="text-slate-500">{data?.nama}</p>
           <p className="text-large">{data?.nama}</p>
-          <p>{data?.alamat.telepon}</p>
-          <p className="overflow-ellipsis line-clamp-2">
-            {data?.alamat.alamat}
-          </p>
+          <p>{data?.telepon}</p>
+          <p className="overflow-ellipsis line-clamp-2">{data?.alamat}</p>
         </div>
         <div className="lg:w-1/3 border borderslate-200 rounded-lg p-4">
           <p className="text-slate-500">Ongkos Kirim</p>

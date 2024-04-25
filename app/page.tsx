@@ -1,5 +1,5 @@
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import HeroImage from "../public/images/Hero.png";
 import Image from "next/image";
@@ -18,6 +18,7 @@ import AlbertAvatar from "../public/avatars/Albert.png";
 import GantaAvatar from "../public/avatars/Ganta.png";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import PoinPreview from "../public/images/Preview.png";
+import { cn } from "@/lib/utils";
 export default function Home() {
   const statistics = [
     { title: "Testimoni", count: 203 },
@@ -103,9 +104,15 @@ export default function Home() {
                 eu dolor vel lorem fringilla auctor nec id dolor.
               </p>
             </div>
-            <Button className="flex items-center gap-2 mx-auto md:mx-0">
+            <Link
+              className={cn(
+                buttonVariants(),
+                "flex items-center gap-2 mx-auto md:mx-0 w-max"
+              )}
+              href={"/u/produk"}
+            >
               Pesan Sekarang <MoveRight width={16} />
-            </Button>
+            </Link>
             <div className="flex items-center gap-8 justify-center md:justify-start">
               {statistics.map((data, index) => (
                 <div className="text-center space-y-2" key={index}>

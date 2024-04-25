@@ -12,9 +12,6 @@ const ProdukList = ({
     kapasitas: number;
     harga_jual: string;
     id_penitip?: string;
-    thumbnail: {
-      image: string;
-    };
   }[];
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,9 +42,10 @@ const ProdukList = ({
             // <p>{product.thumbnail.image}</p>
             <ProductCard
               key={index}
-              name={product.nama}
-              price={product.harga_jual}
-              image={product.thumbnail.image}
+              // product={product}
+              // name={product.nama}
+              // price={product.harga_jual}
+              // image={product.thumbnail.image}
             />
           ))
         ) : (

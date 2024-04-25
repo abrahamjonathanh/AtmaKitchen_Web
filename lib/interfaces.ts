@@ -33,16 +33,6 @@ export type IKaryawan = {
 //     "alamat": "Jln. Kaliurang",
 //     "id_role": 3
 // }
-export type IKaryawanPUT = {
-  email: string;
-  password?: string;
-  nama: string;
-  telepon: string;
-  gaji_harian: string;
-  bonus?: string;
-  alamat: string;
-  id_role: string;
-};
 
 export type IResep = {
   id: string;
@@ -71,17 +61,29 @@ export type IJabatan = {
 };
 
 export type IJarakKirim = {
-  id: string | number;
-  nama: string;
-  alamat: {
-    id: string;
+  id_pesanan: string;
+  pengiriman: {
+    id_pengiriman: string;
     nama: string;
     alamat: string;
+    jarak: number;
+    harga: number;
     telepon: string;
+    label?: string;
   };
-  jarak?: string;
-  harga?: string;
-  status: string;
+  status_pesanan_latest: {
+    status: string;
+  };
+};
+
+export type IPengiriman = {
+  id_pengiriman: string;
+  nama: string;
+  alamat: string;
+  jarak: number;
+  harga: number;
+  telepon: string;
+  label?: string;
 };
 
 // @yori
@@ -93,7 +95,8 @@ export type IProduk = {
   kapasitas: string;
   ukuran: string;
   harga_jual: string;
-  image: [];
+  image: HTMLImageElement[] | StaticImageData[];
+  link?: string;
 };
 
 export type IAkun = {
@@ -205,10 +208,9 @@ export interface IRiwayatPesanan extends IPesanan {
   }[];
 }
 
-export interface IProduct {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-}
-
+// export interface IProduct {
+//   id: number;
+//   title: string;
+//   price: number;
+//   image: string;
+// }

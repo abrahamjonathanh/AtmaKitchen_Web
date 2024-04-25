@@ -32,7 +32,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DefaultAvatar from "../public/avatars/Default.png";
-import Sidebar from "./sidebar";
 import { cn } from "@/lib/utils";
 import {
   HoverCard,
@@ -43,8 +42,21 @@ import { Input } from "./ui/input";
 import { useRouter } from "next/navigation";
 import UserSidebar from "./user-sidebar";
 import { Notifications } from "./notification";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Sidebar } from "./sidebar";
 
 export function Navbar() {
+  // let user = null;
+  // try {
+  //   user = JSON.parse(localStorage.getItem("user")!);
+  // } catch (error) {
+  //   console.error("Error parsing user data from localStorage:", error);
+  // }
+
+  // const auth = user;
+
+  // console.log(auth);
+
   const navbar = [
     { title: "Produk", href: "" },
     { title: "Produk", href: "" },
@@ -100,6 +112,16 @@ export function Navbar() {
 }
 
 export function NavbarDashboard({ title }: { title: string }) {
+  // let user = null;
+  // try {
+  //   user = JSON.parse(localStorage.getItem("user")!);
+  // } catch (error) {
+  //   console.error("Error parsing user data from localStorage:", error);
+  // }
+
+  // const auth = user;
+
+  // console.log(auth);
   return (
     <div className="w-full border-b border-slate-200 p-4 lg:pr-16 flex justify-between items-center max-h-16">
       <p className="text-h3">{title}</p>
@@ -107,12 +129,14 @@ export function NavbarDashboard({ title }: { title: string }) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant={"ghost"} className="space-x-2 p-1">
-              <Image
-                src={DefaultAvatar}
-                alt="Default Avatar"
-                className="border rounded-full border-slate-200 w-10"
-              />
-              <p className="font-medium hidden sm:block">Jeremy</p>
+              <Avatar>
+                <AvatarImage
+                  src={"https://github.com/shadcn.png"}
+                  className="border rounded-full border-slate-200 w-10"
+                />
+                <AvatarFallback>AK</AvatarFallback>
+              </Avatar>
+              <p className="font-medium hidden sm:block">{"Tester"}</p>
               <ChevronDown size={"16"} />
             </Button>
           </DropdownMenuTrigger>
@@ -154,6 +178,17 @@ export function NavbarDashboard({ title }: { title: string }) {
 }
 
 export function NavbarUser() {
+  // let user = null;
+  // try {
+  //   user = JSON.parse(localStorage.getItem("user")!);
+  // } catch (error) {
+  //   console.error("Error parsing user data from localStorage:", error);
+  // }
+
+  // const auth = user;
+
+  // console.log(auth);
+
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
@@ -162,7 +197,7 @@ export function NavbarUser() {
 
     const encodedQuery = encodeURI(searchQuery);
 
-    router.push(`/search?q=${encodedQuery}`);
+    router.push(`/u/produk/search?q=${encodedQuery}`);
   };
   return (
     <MaxWidthWrapper className="flex justify-between items-center border-b border-slate-200 max-h-16 py-4 inset-x-0 sticky top-0 z-50 overflow-y-hidden bg-white bg-opacity-95 gap-4">

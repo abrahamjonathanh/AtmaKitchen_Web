@@ -1,55 +1,58 @@
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Brownies from "@/public/products/Brownies.png";
 import { Badge } from "./ui/badge";
-import { cn, toRupiah } from "@/lib/utils";
+import { categoryBadge, cn, toRupiah } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
+import { IProduk } from "@/lib/interfaces";
 
 const ProductCard = ({
-  image = Brownies,
-  name = "Brownies",
-  variant = "PO",
-  price = 300000,
-  link = "",
+  product = {
+    nama: "Brownies",
+    harga_jual: "500000",
+    id_kategori: "1",
+    id_penitip: null,
+    id_produk: 1,
+    image: [Brownies],
+    kapasitas: "20",
+    ukuran: "20x20 cm",
+    link: "",
+  },
+  className,
 }: {
-  image?: string | HTMLImageElement | StaticImageData;
-  name?: string;
-  variant?: string;
-  price?: number | string;
-  link?: string;
+  product?: IProduk;
+  className?: string;
 }) => {
   return (
-    <Link href={""}>
-      <div className="border rounded-lg border-slate-200 flex flex-col bg-white shadow-md hover:shadow-lg transition-shadow">
+    <Link href={`/u/produk/${product.id_produk}`}>
+      <div
+        className={cn(
+          "border rounded-lg border-slate-200 flex flex-col bg-white shadow-md hover:shadow-lg transition-shadow max-w-full sm:max-w-56 md:max-w-full",
+          className
+        )}
+      >
         <div className="max-h-max relative">
           <Image
-            src={image}
-            alt={`Image of ${name}`}
+            src={product.image[0]}
+            alt={`Image of ${product.nama}`}
             className="rounded-t-lg max-h-36 object-cover"
             width={"460"}
             height={"460"}
           />
-          {/* <div className="relative w-full text-sm text-white">
-            <img
-              src="https://images.tokopedia.net/img/phOWBv/2024/3/28/0473d7a1-cc8a-41fb-aeff-0a7633a445e5.png"
-              className="h-5"
-            />
-            <p className="absolute top-0 bottom-0 text-xs font-semibold px-3">
-              Flash Sale
-            </p>
-          </div> */}
         </div>
         <div className="p-3 pb-4 space-y-2">
           <div className="space-y-2">
-            <p>{name}</p>
-            <Badge variant={"outline"}>{variant}</Badge>
+            <p>
+              {product.nama} {product.ukuran}
+            </p>
+            <Badge {...categoryBadge(product.id_kategori)} />
             <p className="font-semibold text-orange-600">
-              {toRupiah(parseInt(price.toString()))}
+              {toRupiah(parseInt(product.harga_jual.toString()))}
             </p>
           </div>
-          {link.length > 0 ? (
+          {product.link! ? (
             <Link
-              href={link}
+              href={product.link!}
               className={cn(buttonVariants({ variant: "outline" }), "w-full")}
             >
               Lihat Detail

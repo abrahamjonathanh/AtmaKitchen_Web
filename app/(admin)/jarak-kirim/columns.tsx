@@ -24,11 +24,12 @@ import { Badge } from "@/components/ui/badge";
 
 export const columns: ColumnDef<IJarakKirim>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "id_pesanan",
     header: "# ID",
   },
   {
     accessorKey: "nama",
+    accessorFn: (row) => row.pengiriman?.nama,
     header: ({ column }) => {
       return (
         <Button
@@ -46,7 +47,7 @@ export const columns: ColumnDef<IJarakKirim>[] = [
   },
   {
     accessorKey: "alamat",
-    accessorFn: (row) => row.alamat.alamat,
+    accessorFn: (row) => row.pengiriman?.alamat,
     header: ({ column }) => {
       return (
         <Button
@@ -62,6 +63,8 @@ export const columns: ColumnDef<IJarakKirim>[] = [
   },
   {
     accessorKey: "jarak",
+    accessorFn: (row) => row.pengiriman?.jarak,
+
     header: ({ column }) => {
       return (
         <Button
@@ -81,6 +84,8 @@ export const columns: ColumnDef<IJarakKirim>[] = [
   },
   {
     accessorKey: "harga",
+    accessorFn: (row) => row.pengiriman?.harga,
+
     header: ({ column }) => {
       return (
         <Button
@@ -100,6 +105,8 @@ export const columns: ColumnDef<IJarakKirim>[] = [
   },
   {
     accessorKey: "status",
+    accessorFn: (row) => row.status_pesanan_latest?.status,
+
     header: ({ column }) => {
       return (
         <Button
@@ -117,7 +124,7 @@ export const columns: ColumnDef<IJarakKirim>[] = [
       return (
         <div className="px-4">
           {amount ? (
-            <Badge variant={"success"}>Selesai</Badge>
+            <Badge variant={"success"}>{row.getValue("status")}</Badge>
           ) : (
             <Badge variant={"alert"}>Menunggu</Badge>
           )}
@@ -135,7 +142,7 @@ export const columns: ColumnDef<IJarakKirim>[] = [
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          await deleteKaryawanById(row.getValue("id"));
+          await deleteKaryawanById(row.getValue("id_pesanan"));
         } catch (error: any) {
           console.error("Error deleting jabatan: " + error);
         } finally {
@@ -155,7 +162,9 @@ export const columns: ColumnDef<IJarakKirim>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`${pathname}/${row.getValue("id")}`}>
+              <Link
+                href={`${pathname}/${row.original.pengiriman.id_pengiriman}`}
+              >
                 <DropdownMenuItem>
                   <Truck size={"16"} /> Atur Jarak Kirim
                 </DropdownMenuItem>

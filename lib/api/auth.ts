@@ -56,7 +56,14 @@ export const login = async (data: { email: string; password: string }) => {
     }
 
     localStorage.setItem("accessToken", response.data.data.access_token);
-    localStorage.setItem("akun", JSON.stringify(response.data.data.akun));
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        user: response.data.data.user,
+        akun: response.data.data.akun,
+      })
+    );
 
     // ✅ Use toast when its done
     toast.success(response?.data?.message);

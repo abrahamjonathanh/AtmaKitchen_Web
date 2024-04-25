@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ProductCart from "./_components/product_cart";
 import ProductRecommendation from "../../_components/recommendation-product";
-import UserWrapper from "@/components/user-wrapper";
 import { useTitle } from "@/lib/hooks";
+import { UserWrapper } from "@/components/user-wrapper";
 
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");

@@ -3,13 +3,12 @@
 import React, { useState } from "react";
 import ProdukForm from "../_components/input-form";
 import { useTitle } from "@/lib/hooks";
-import { IProduk } from "@/lib/interfaces";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 
 export default function page({ params }: { params: { id: number } }) {
   useTitle("AtmaKitchen | Produk");
-
+  console.log(params.id);
   const [isLoading, setIsLoading] = useState(false);
 
   // const onUpdateHandler = async (values: IProduk) => {

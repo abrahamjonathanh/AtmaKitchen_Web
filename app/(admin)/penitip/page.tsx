@@ -2,13 +2,10 @@
 import React from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { Metadata } from "next";
-import { IPenitip } from "@/lib/interfaces";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 import { getAllPenitip } from "@/lib/api/penitip";
 import Loading from "@/components/ui/loading";
-
 
 // export const metadata: Metadata = {
 //   title: "AtmaKitchen | Penitip",
@@ -50,10 +47,7 @@ import Loading from "@/components/ui/loading";
 //   ];
 // }
 
-
-
 export default function page() {
-  
   const { data, isLoading } = getAllPenitip();
 
   return (

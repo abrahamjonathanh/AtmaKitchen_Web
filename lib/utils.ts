@@ -1,6 +1,7 @@
 import axios from "axios";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { BadgeProps } from "@/components/ui/badge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -38,4 +39,22 @@ export const toIndonesiaDate = (
   } = { day: "numeric", month: "short", year: "numeric" }
 ) => {
   return new Date(ISODate).toLocaleDateString("id-ID", options);
+};
+
+export const categoryBadge = (value: number | string): BadgeProps => {
+  const roleBadges: {
+    code: number;
+    variant: "violet" | "sky" | "lime";
+    label: "Kue" | "Minuman" | "Roti" | string;
+  }[] = [
+    { code: 1, variant: "violet", label: "Kue" },
+    { code: 2, variant: "sky", label: "Roti" },
+    { code: 3, variant: "lime", label: "Minuman" },
+  ];
+
+  const roleBadge = roleBadges.find((badge) => badge.code == value);
+
+  return roleBadge
+    ? { variant: roleBadge.variant, children: roleBadge.label }
+    : { variant: "violet", children: "Unknown Category" };
 };

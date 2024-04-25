@@ -2,7 +2,7 @@
 import axios from "axios";
 import { toast } from "sonner";
 import { IRiwayatPesanan } from "../interfaces";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { fetcher } from "../utils";
 
 export const getAllRiwayatPesananByPelangganId = async (
