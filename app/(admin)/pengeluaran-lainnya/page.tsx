@@ -6,7 +6,6 @@ import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 import { getAllPengeluaranLainnya } from "@/lib/api/pengeluaranlainnya";
 
-
 async function getData(): Promise<IPengeluaranLainnya[]> {
   // Dummy data for pengeluaran lainnya
   return [

@@ -65,8 +65,6 @@ export const columns: ColumnDef<IPenitip>[] = [
     accessorKey: "created_at",
     header: () => <div>Tanggal Bergabung</div>,
     cell: ({ row }) => {
-      // ↳ kode di bawah ini boleh dihapus. bisa langsung di convert pakai utils yg ada
-      // const isoDate = new Date(row.getValue("created_at")).toISOString().split("T")[0];
       return <div>{toIndonesiaDate(row.getValue("created_at"))}</div>;
     },
   },

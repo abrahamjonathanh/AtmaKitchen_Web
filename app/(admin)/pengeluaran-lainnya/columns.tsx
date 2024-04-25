@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toRupiah } from "@/lib/utils";
+import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 import { useState } from "react";
@@ -44,7 +44,13 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
       <div className="px-4 font-medium w-full">{row.getValue("nama")}</div>
     ),
   },
- //tanggal
+  {
+    accessorKey: "tanggal",
+    header: () => <div>Tanggal Bergabung</div>,
+    cell: ({ row }) => {
+      return <div>{toIndonesiaDate(row.getValue("tanggal"))}</div>;
+    },
+  },
   {
     accessorKey: "biaya",
     header: () => <div>Jumlah</div>,
@@ -75,7 +81,6 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
       }[] = [
         { code: "1", variant: "lime", label: "Pemasukan" },
         { code: "2", variant: "sky", label: "Pengeluaran" },
-      
       ];
 
       const kategoriBadge = kategoriBadges.find(
@@ -98,7 +103,9 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          await deletePengeluaranLainnyaById(row.getValue("id_pengeluaran_lainnya"));
+          await deletePengeluaranLainnyaById(
+            row.getValue("id_pengeluaran_lainnya")
+          );
         } catch (error: any) {
           console.error("Error deleting pengeluaran lainnya: " + error);
         } finally {
@@ -118,14 +125,17 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`${pathname}/${row.getValue("id_pengeluaran_lainnya")}`}>
+              <Link
+                href={`${pathname}/${row.getValue("id_pengeluaran_lainnya")}`}
+              >
                 <DropdownMenuItem>
                   <Pencil size={"16"} /> Ubah
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Trash2 size={"16"} /> Hapus {row.getValue("id_pengeluaran_lainnya")}
+                <Trash2 size={"16"} /> Hapus{" "}
+                {row.getValue("id_pengeluaran_lainnya")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -120,7 +120,7 @@ export type IPengeluaranLainnya = {
   kategori: string;
 };
 
-export interface IPelanggan {
+export interface IPelanggan{
   id_pelanggan: number;
   akun: {
     id_akun?: string;
@@ -129,6 +129,7 @@ export interface IPelanggan {
   nama: string;
   tgl_lahir: string;
   status: string;
+  deleted_at?: string;
 }
 
 export interface IPesanan {
