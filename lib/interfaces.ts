@@ -24,16 +24,6 @@ export type IKaryawan = {
   };
 };
 
-// {
-//     "email": "budi3@gmail.com",
-//     "password": "r12345",
-//     "nama": "Boedi",
-//     "telepon": "0812581725",
-//     "gaji_harian": 150000,
-//     "alamat": "Jln. Kaliurang",
-//     "id_role": 3
-// }
-
 export type IResep = {
   id: string;
   nama?: string;
@@ -90,13 +80,34 @@ export type IPengiriman = {
 export type IProduk = {
   id_produk: string | number;
   nama: string;
-  id_kategori: string;
-  id_penitip: string | number | null;
+  id_kategori?: string;
+  id_penitip?: string | number | null;
   kapasitas: string;
   ukuran: string;
   harga_jual: string;
-  image: HTMLImageElement[] | StaticImageData[];
+  image:
+    | {
+        image: string;
+      }[]
+    | StaticImageData[];
   link?: string;
+  terjual?: string;
+  detail_stok?: {
+    tanggal: string;
+    stok: string;
+  }[];
+};
+
+export type IHampers = {
+  id_produk_hampers: string | number;
+  nama: string;
+  harga_jual: string;
+  image?: HTMLImageElement | StaticImageData;
+  detail_produk?: {
+    id_produk: string;
+    nama?: string;
+    ukuran?: string;
+  }[];
 };
 
 export type IAkun = {
@@ -106,6 +117,17 @@ export type IAkun = {
   nama_alamat: string;
   alamat: string;
   telepon: string;
+};
+
+export type IPemesananBahanBaku = {
+  id_pemesanan_bahan_baku?: string;
+  id_bahan_baku?: string;
+  nama?: string;
+  satuan: "gr" | "ml" | "butir" | "buah";
+  jumlah: string;
+  harga_beli: string;
+  total?: string;
+  created_at?: string;
 };
 
 // @Jeha
@@ -207,10 +229,3 @@ export interface IRiwayatPesanan extends IPesanan {
     jumlah: number;
   }[];
 }
-
-// export interface IProduct {
-//   id: number;
-//   title: string;
-//   price: number;
-//   image: string;
-// }

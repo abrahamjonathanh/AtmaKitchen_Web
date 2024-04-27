@@ -13,7 +13,12 @@ export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
       id_kategori: "1",
       id_penitip: null,
       kapasitas: "20",
-      image: [Brownies],
+      image: [
+        {
+          image:
+            "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
+        },
+      ],
     },
     {
       id_produk: 2,
@@ -23,7 +28,12 @@ export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
       id_kategori: "1",
       id_penitip: null,
       kapasitas: "20",
-      image: [Brownies],
+      image: [
+        {
+          image:
+            "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
+        },
+      ],
     },
     {
       id_produk: 3,
@@ -33,7 +43,12 @@ export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
       id_kategori: "1",
       id_penitip: null,
       kapasitas: "20",
-      image: [Brownies],
+      image: [
+        {
+          image:
+            "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
+        },
+      ],
     },
     {
       id_produk: 1,
@@ -43,7 +58,12 @@ export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
       id_kategori: "1",
       id_penitip: null,
       kapasitas: "20",
-      image: [Brownies],
+      image: [
+        {
+          image:
+            "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
+        },
+      ],
     },
     {
       id_produk: 2,
@@ -53,7 +73,12 @@ export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
       id_kategori: " 1",
       id_penitip: null,
       kapasitas: "20",
-      image: [Brownies],
+      image: [
+        {
+          image:
+            "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
+        },
+      ],
     },
     {
       id_produk: 3,
@@ -63,7 +88,12 @@ export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
       id_kategori: "1",
       id_penitip: null,
       kapasitas: "20",
-      image: [Brownies],
+      image: [
+        {
+          image:
+            "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
+        },
+      ],
     },
   ];
 

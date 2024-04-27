@@ -49,7 +49,15 @@ export function Sidebar({ className }: { className?: string }) {
           icon: <Home size={"16"} />,
           link: "",
         },
-        { title: "Produk", icon: <Box size={"16"} />, link: "" },
+        {
+          title: "Produk",
+          icon: <Box size={"16"} />,
+          link: "",
+          more: [
+            { title: "Produk Biasa", link: "/produk" },
+            { title: "Produk Hampers", link: "/hampers" },
+          ],
+        },
         { title: "Promo", icon: <BadgePercent size={"16"} />, link: "/promo" },
         { title: "Jabatan", icon: <UserCog size={"16"} />, link: "/jabatan" },
       ],

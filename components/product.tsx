@@ -13,7 +13,11 @@ const ProductCard = ({
     id_kategori: "1",
     id_penitip: null,
     id_produk: 1,
-    image: [Brownies],
+    image: [
+      {
+        image: "https://atmaimages.blob.core.windows.net/images/Brownies.png",
+      },
+    ],
     kapasitas: "20",
     ukuran: "20x20 cm",
     link: "",
@@ -33,7 +37,7 @@ const ProductCard = ({
       >
         <div className="max-h-max relative">
           <Image
-            src={product.image[0]}
+            src={(product.image[0] as { image: string }).image}
             alt={`Image of ${product.nama}`}
             className="rounded-t-lg max-h-36 object-cover"
             width={"460"}
@@ -45,7 +49,7 @@ const ProductCard = ({
             <p>
               {product.nama} {product.ukuran}
             </p>
-            <Badge {...categoryBadge(product.id_kategori)} />
+            <Badge {...categoryBadge(product.id_kategori!)} />
             <p className="font-semibold text-orange-600">
               {toRupiah(parseInt(product.harga_jual.toString()))}
             </p>

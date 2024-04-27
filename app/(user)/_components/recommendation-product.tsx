@@ -7,7 +7,7 @@ import React from "react";
 
 export default function ProductRecommendation() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <div className="flex justify-between items-center">
         <p className="text-h4">Rekomendasi untukmu</p>
         <Link

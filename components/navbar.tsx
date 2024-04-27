@@ -205,7 +205,7 @@ export function NavbarUser() {
       <div className="flex gap-4 w-full">
         <div className="w-32 lg:w-40 hidden sm:inline-flex items-center">
           {/* Logo */}
-          <Link href={"/"}>
+          <Link href={"/u/produk"}>
             <Image src={LogoOrange} alt="AtmaKitchen Logo" />
           </Link>
         </div>

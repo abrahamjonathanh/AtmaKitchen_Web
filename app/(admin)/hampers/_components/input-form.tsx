@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,54 +22,52 @@ import {
 } from "@/components/ui/select";
 
 import React, { useEffect, useState } from "react";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import Loading from "@/components/ui/loading";
-import { IProduk } from "@/lib/interfaces";
+import { IHampers } from "@/lib/interfaces";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import NotAvailable from "@/public/products/Not Available.png";
-import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
-  id_produk: z.string().optional(),
+  id_produk_hampers: z.string().optional(),
   nama: z.string().min(1, { message: "Nama produk tidak boleh kosong" }),
-  ukuran: z.string().min(1, { message: "Ukuran tidak boleh kosong" }),
   harga_jual: z.string().min(1, { message: "Harga tidak boleh kosong" }),
-  kapasitas: z.string().min(1, {
-    message: "Kapasitas produksi setiap hari tidak boleh kosong",
-  }),
-  id_kategori: z.string().min(1, { message: "Kategori tidak boleh kosong" }),
-  id_penitip: z.string().optional(),
   image: z.array(z.instanceof(File)).max(5, {
     message: "Foto produk maksimal 5",
   }),
+  detail_produk: z.array(
+    z.object({
+      id_produk: z.string().min(1, { message: "Produk harus dipilih" }),
+    })
+  ),
 });
 
-export default function ProdukForm({
+export default function HampersForm({
   isEditable = false,
   data,
   onSubmit = (values) => console.log(values),
   isLoading = false,
 }: {
   isEditable?: boolean;
-  data?: IProduk;
+  data?: IHampers;
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   isLoading?: boolean;
 }) {
-  console.log(`⚠️ Produk editable mode: ${isEditable}`);
-  const [isTitipan, setIsTitipan] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nama: isEditable ? data?.nama ?? "" : "",
-      kapasitas: isEditable ? data?.kapasitas ?? "" : "",
-      ukuran: isEditable ? data?.ukuran ?? "" : "",
       harga_jual: isEditable ? data?.harga_jual ?? "" : "",
-      id_kategori: isEditable ? data?.id_kategori ?? "" : "",
+      detail_produk: isEditable ? data?.detail_produk : [{ id_produk: "" }],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "detail_produk",
   });
 
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -91,7 +89,7 @@ export default function ProdukForm({
             {selectedImages.length === 0 ? (
               <Image
                 src={NotAvailable}
-                alt="Brownies"
+                alt="Image not available"
                 className="w-full h-max rounded-lg aspect-square object-cover"
               />
             ) : (
@@ -167,21 +165,6 @@ export default function ProdukForm({
                 />
                 <FormField
                   control={form.control}
-                  name="ukuran"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Ukuran</FormLabel>
-                      <FormControl>
-                        <Input type="text" placeholder="Ukuran" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="flex flex-col md:flex-row gap-4 items-end">
-                <FormField
-                  control={form.control}
                   name="harga_jual"
                   render={({ field }) => (
                     <FormItem className="w-full">
@@ -197,89 +180,61 @@ export default function ProdukForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="id_kategori"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Kategori</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih kategori Produk" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="1">Kue</SelectItem>
-                          <SelectItem value="2">Minuman</SelectItem>
-                          <SelectItem value="3">Roti</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={isTitipan}
-                  onCheckedChange={() => {
-                    setIsTitipan(!isTitipan);
-                  }}
-                  id="isTitipanMode"
-                />
-                <Label htmlFor="isTitipanMode">Produk Titipan</Label>
-              </div>
-              {isTitipan ? (
-                <FormField
-                  control={form.control}
-                  name="id_penitip"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Penitip</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih penitip" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="1">Penitip 1</SelectItem>
-                          <SelectItem value="2">Penitip 2</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
             </div>
             <div className="space-y-4">
               <Separator />
             </div>
-            <FormField
-              control={form.control}
-              name="kapasitas"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Kapasitas Produksi Setiap Hari</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Kapasitas Produk"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-4">
+              {/* Fields auto add  */}
+              {fields.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="flex flex-row md:flex-row gap-4 items-end"
+                >
+                  <FormField
+                    control={form.control}
+                    name={`detail_produk.${index}.id_produk`}
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Isi Produk ke-{index + 1}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih Produk" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="1">Coklat batang</SelectItem>
+                            <SelectItem value="2">Butter</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    type="button"
+                    onClick={() => remove(index)}
+                    variant="outline"
+                  >
+                    <Trash2 size={"16"} />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant={"outline"}
+                type="button"
+                onClick={() => append({ id_produk: "" })}
+                className="flex gap-2 w-full"
+              >
+                <Plus size={"16"} /> Tambah Bahan Baku
+              </Button>
+            </div>
             <div className="flex gap-4 items-center justify-end">
               <Button variant={"outline"} onClick={() => router.back()}>
                 Batal
