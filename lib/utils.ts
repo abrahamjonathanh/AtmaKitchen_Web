@@ -2,14 +2,21 @@ import axios from "axios";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { BadgeProps } from "@/components/ui/badge";
-
+import Cookies from "js-cookie";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 // Utils for SWR
 export const fetcher = async (url: string) => {
-  const response = await axios.get(url);
+  const token = Cookies.get("token");
+
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+
   return response.data.data;
 };
 
@@ -36,7 +43,7 @@ export const toIndonesiaDate = (
     hour?: "numeric" | "2-digit";
     minute?: "numeric" | "2-digit";
     second?: "numeric" | "2-digit";
-  } = { day: "numeric", month: "short", year: "numeric" }
+  } = { day: "numeric", month: "short", year: "numeric" },
 ) => {
   return new Date(ISODate).toLocaleDateString("id-ID", options);
 };

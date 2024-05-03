@@ -44,6 +44,8 @@ import UserSidebar from "./user-sidebar";
 import { Notifications } from "./notification";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Sidebar } from "./sidebar";
+import { getCurrentUser, logout } from "@/lib/api/auth";
+import Loading from "./ui/loading";
 
 export function Navbar() {
   // let user = null;
@@ -112,33 +114,39 @@ export function Navbar() {
 }
 
 export function NavbarDashboard({ title }: { title: string }) {
-  // let user = null;
-  // try {
-  //   user = JSON.parse(localStorage.getItem("user")!);
-  // } catch (error) {
-  //   console.error("Error parsing user data from localStorage:", error);
-  // }
+  const { data, isLoading } = getCurrentUser();
+  const router = useRouter();
 
-  // const auth = user;
+  const onLogoutHandler = async () => {
+    const response = await logout();
 
-  // console.log(auth);
+    if (response.status === 200) {
+      router.push("/login");
+    }
+    console.log(response);
+  };
+
   return (
     <div className="w-full border-b border-slate-200 p-4 lg:pr-16 flex justify-between items-center max-h-16">
       <p className="text-h3">{title}</p>
       <div className="flex gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={"ghost"} className="space-x-2 p-1">
-              <Avatar>
-                <AvatarImage
-                  src={"https://github.com/shadcn.png"}
-                  className="border rounded-full border-slate-200 w-10"
-                />
-                <AvatarFallback>AK</AvatarFallback>
-              </Avatar>
-              <p className="font-medium hidden sm:block">{"Tester"}</p>
-              <ChevronDown size={"16"} />
-            </Button>
+            {!isLoading ? (
+              <Button variant={"ghost"} className="space-x-2 p-1">
+                <Avatar>
+                  <AvatarImage
+                    src={data.id_akun.profile_image}
+                    className="border rounded-full border-slate-200 w-10"
+                  />
+                  <AvatarFallback>AK</AvatarFallback>
+                </Avatar>
+                <p className="font-medium hidden sm:block">
+                  {data.nama.split(" ")[0]}
+                </p>
+                <ChevronDown size={"16"} />
+              </Button>
+            ) : null}
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
@@ -151,12 +159,13 @@ export function NavbarDashboard({ title }: { title: string }) {
             </Link>
             {/* <DropdownMenuItem>Billing</DropdownMenuItem>
           <DropdownMenuItem>Team</DropdownMenuItem> */}
-            <Link href={""}>
-              <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                <LogOut size={"16"} />
-                Keluar
-              </DropdownMenuItem>
-            </Link>
+            <DropdownMenuItem
+              className="flex gap-2 cursor-pointer"
+              onClick={onLogoutHandler}
+            >
+              <LogOut size={"16"} />
+              Keluar
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <Sheet>

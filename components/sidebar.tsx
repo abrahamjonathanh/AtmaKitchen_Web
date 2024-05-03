@@ -54,12 +54,16 @@ export function Sidebar({ className }: { className?: string }) {
           icon: <Box size={"16"} />,
           link: "",
           more: [
-            { title: "Produk Biasa", link: "/produk" },
-            { title: "Produk Hampers", link: "/hampers" },
+            { title: "Produk Biasa", link: "/a/produk" },
+            { title: "Produk Hampers", link: "/a/hampers" },
           ],
         },
-        { title: "Promo", icon: <BadgePercent size={"16"} />, link: "/promo" },
-        { title: "Jabatan", icon: <UserCog size={"16"} />, link: "/jabatan" },
+        {
+          title: "Promo",
+          icon: <BadgePercent size={"16"} />,
+          link: "/a/promo",
+        },
+        { title: "Jabatan", icon: <UserCog size={"16"} />, link: "/a/jabatan" },
       ],
     },
     {
@@ -68,12 +72,12 @@ export function Sidebar({ className }: { className?: string }) {
         {
           title: "Pesanan",
           icon: <ScrollText size={"16"} />,
-          link: "/pesanan",
+          link: "/a/pesanan",
         },
         {
           title: "Jarak Kirim",
           icon: <Truck size={"16"} />,
-          link: "/jarak-kirim",
+          link: "/a/jarak-kirim",
         },
       ],
     },
@@ -87,23 +91,22 @@ export function Sidebar({ className }: { className?: string }) {
           more: [
             {
               title: "Semua Akun",
-              link: "/akun",
+              link: "/a/akun",
             },
             {
               title: "Karyawan",
-              link: "/karyawan",
+              link: "/a/karyawan",
             },
             {
               title: "Penitip",
-              link: "/penitip",
+              link: "/a/penitip",
             },
             {
               title: "Pelanggan",
-              link: "/pelanggan",
+              link: "/a/pelanggan",
             },
           ],
         },
-        //   TODO: Make dropdown for more sidebar items
       ],
     },
     {
@@ -112,14 +115,14 @@ export function Sidebar({ className }: { className?: string }) {
         {
           title: "Bahan Baku",
           icon: <Warehouse size={"16"} />,
-          link: "/bahan-baku",
+          link: "/a/bahan-baku",
         },
         {
           title: "Pemesanan Bahan Baku",
           icon: <Boxes size={"16"} />,
-          link: "",
+          link: "/a/pemesanan-bahan-baku",
         },
-        { title: "Resep", icon: <BookOpen size={"16"} />, link: "/resep" },
+        { title: "Resep", icon: <BookOpen size={"16"} />, link: "/a/resep" },
       ],
     },
     {
@@ -128,7 +131,7 @@ export function Sidebar({ className }: { className?: string }) {
         {
           title: "Arus Kas",
           icon: <AreaChart size={"16"} />,
-          link: "",
+          link: "/a/pengeluaran-lainnya",
         },
         {
           title: "Pembayaran Gaji",
@@ -146,22 +149,22 @@ export function Sidebar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "lg:border-r lg:max-w-64 p-4 space-y-4 hidden lg:block w-full h-screen lg:h-auto",
-        className
+        "hidden h-screen w-full space-y-4 p-4 lg:block lg:h-auto lg:max-w-64 lg:border-r",
+        className,
       )}
     >
       <ScrollArea className="h-full pb-12 lg:pb-0">
         <div className="space-y-4">
           {/* Brand */}
-          <Link href={"/"} className="space-y-2 flex flex-col items-center">
+          <Link href={"/"} className="flex flex-col items-center space-y-2">
             <Image src={Logo} alt="AtmaKitchen Logo" />
-            <p className="text-orange-600 text-h4">AtmaKitchen</p>
+            <p className="text-h4 text-orange-600">AtmaKitchen</p>
           </Link>
 
           {/* Links */}
           {sidebarData.map((sidebar, index) => (
             <div className="space-y-2" key={index}>
-              <p className="text-slate-500 font-medium">{sidebar.title}</p>
+              <p className="font-medium text-slate-500">{sidebar.title}</p>
               <div className="flex flex-col gap-1">
                 {sidebar.content.map((data, index) => (
                   <div key={index}>
@@ -171,10 +174,10 @@ export function Sidebar({ className }: { className?: string }) {
                           className={buttonVariants({
                             variant: "ghost",
                             className:
-                              "flex justify-between items-center text-black text-sm w-full",
+                              "flex w-full items-center justify-between text-sm text-black",
                           })}
                         >
-                          <span className="flex gap-4 justify-start">
+                          <span className="flex justify-start gap-4">
                             {data.icon}
                             {data.title}
                           </span>
@@ -187,7 +190,7 @@ export function Sidebar({ className }: { className?: string }) {
                               <Button
                                 variant={"ghost"}
                                 size={"default"}
-                                className="flex justify-start text-black text-sm w-full pl-12"
+                                className="flex w-full justify-start pl-12 text-sm text-black"
                               >
                                 {moreData.title}
                               </Button>
@@ -204,7 +207,7 @@ export function Sidebar({ className }: { className?: string }) {
                           className: "w-full",
                         })}
                       >
-                        <span className="flex gap-4 justify-start text-black text-sm w-full">
+                        <span className="flex w-full justify-start gap-4 text-sm text-black">
                           {data.icon}
                           {data.title}
                         </span>
@@ -237,14 +240,14 @@ export function UserSidebar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "lg:border-r lg:max-w-64 p-4 space-y-4 hidden lg:block w-full h-screen lg:h-auto lg:pl-16",
-        className
+        "hidden h-screen w-full space-y-4 p-4 lg:block lg:h-auto lg:max-w-64 lg:border-r lg:pl-16",
+        className,
       )}
     >
       {/* Links */}
       {sidebarData.map((sidebar, index) => (
         <div className="space-y-2" key={index}>
-          <p className="text-black font-medium">{sidebar.title}</p>
+          <p className="font-medium text-black">{sidebar.title}</p>
           <div className="flex flex-col gap-1">
             {sidebar.content.map((data, index) => (
               <div key={index}>
@@ -254,10 +257,10 @@ export function UserSidebar({ className }: { className?: string }) {
                       className={buttonVariants({
                         variant: "ghost",
                         className:
-                          "flex justify-between items-center text-slate-500 text-sm w-full",
+                          "flex w-full items-center justify-between text-sm text-slate-500",
                       })}
                     >
-                      <span className="flex gap-4 justify-start text-slate-500">
+                      <span className="flex justify-start gap-4 text-slate-500">
                         {data.icon}
                         {data.title}
                       </span>
@@ -270,7 +273,7 @@ export function UserSidebar({ className }: { className?: string }) {
                           <Button
                             variant={"ghost"}
                             size={"default"}
-                            className="flex justify-start text-black text-sm w-full pl-12"
+                            className="flex w-full justify-start pl-12 text-sm text-black"
                           >
                             {moreData.title}
                           </Button>
@@ -287,7 +290,7 @@ export function UserSidebar({ className }: { className?: string }) {
                       className: "w-full",
                     })}
                   >
-                    <span className="flex gap-4 justify-start text-slate-500 text-sm w-full">
+                    <span className="flex w-full justify-start gap-4 text-sm text-slate-500">
                       {data.icon}
                       {data.title}
                     </span>

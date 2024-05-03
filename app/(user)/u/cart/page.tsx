@@ -7,6 +7,7 @@ import ProductCart from "./_components/product_cart";
 import ProductRecommendation from "../../_components/recommendation-product";
 import { useTitle } from "@/lib/hooks";
 import { UserWrapper } from "@/components/user-wrapper";
+import ProductSummaryCard from "./_components/product-summary-card";
 
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");
@@ -50,17 +51,7 @@ export default function page() {
             ))}
           </div>
           {/* Pricing */}
-          <div className="border border-slate-200 lg:w-1/3 h-max rounded-lg p-4 pb-6 space-y-2 sticky bg-white">
-            <p className="text-h4">Ringkasan Belanja</p>
-            <div className="flex justify-between items-center">
-              <p className="text-slate-500">Total Belanja</p>
-              <p className="text-h4">{toRupiah(15000000)}</p>
-            </div>
-            <Separator />
-            <Button variant={"default"} className="w-full">
-              Beli
-            </Button>
-          </div>
+          <ProductSummaryCard isEditable />
         </div>
       </div>
       <ProductRecommendation />

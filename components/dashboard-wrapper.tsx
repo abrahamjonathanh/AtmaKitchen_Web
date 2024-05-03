@@ -15,9 +15,9 @@ export default function DashboardWrapper({
       <div className="flex">
         <Sidebar />
 
-        <div className="flex flex-col w-full">
+        <div className="flex w-full flex-col">
           <NavbarDashboard title={navTitle} />
-          <div className="w-full px-4 pl-4 lg:pr-16 py-4 space-y-4">
+          <div className="w-full max-w-screen-2xl space-y-4 px-4 py-4 pl-4 lg:pr-16">
             {children}
           </div>
         </div>

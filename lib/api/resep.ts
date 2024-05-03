@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import useSWR from "swr";
 import { fetcher } from "../utils";
 import Brownies from "@/public/products/Brownies.png";
+import { IResep } from "../interfaces";
 
 // TODO: Make Resep Interface
 export const getAllResep = () => {
@@ -153,5 +154,77 @@ export const deleteResepById = async (id: number) => {
     return response;
   } catch (error: any) {
     toast.error("Oh no! terjadi kesalahan...");
+  }
+};
+
+export const createResep = async (data: IResep) => {
+  try {
+    // Boiler template for fetching api
+    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
+    const response = await axios.post(`${process.env.BASE_API}/resep`, data);
+
+    // Check if the database down
+    if (response.status === 500) {
+      toast.warning("Database is down! Switching to fakeAPI");
+
+      const response = await axios.post(
+        `https://fakestoreapi.com/products/`,
+        data
+      );
+
+      return response;
+    }
+
+    // ✅ Use toast when its done
+    toast.success(response?.data?.message);
+
+    return response;
+  } catch (error: any) {
+    if (error.response.data.message) {
+      const errorFields = Object.keys(error.response.data.message);
+      errorFields.forEach((field) => {
+        toast.error(error.response.data.message[field]);
+      });
+    } else {
+      toast.error("Oh no! terjadi kesalahan...");
+    }
+    console.error(error.response.data.message);
+  }
+};
+export const updateResepById = async (data: IResep, id_produk: number) => {
+  try {
+    // Boiler template for fetching api
+    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
+    const response = await axios.put(
+      `${process.env.BASE_API}/resep/${id_produk}`,
+      data
+    );
+
+    // Check if the database down
+    if (response.status === 500) {
+      toast.warning("Database is down! Switching to fakeAPI");
+
+      const response = await axios.post(
+        `https://fakestoreapi.com/products/`,
+        data
+      );
+
+      return response;
+    }
+
+    // ✅ Use toast when its done
+    toast.success(response?.data?.message);
+
+    return response;
+  } catch (error: any) {
+    if (error.response.data.message) {
+      const errorFields = Object.keys(error.response.data.message);
+      errorFields.forEach((field) => {
+        toast.error(error.response.data.message[field]);
+      });
+    } else {
+      toast.error("Oh no! terjadi kesalahan...");
+    }
+    console.error(error.response.data.message);
   }
 };

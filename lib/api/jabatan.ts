@@ -7,39 +7,35 @@ import useSWR from "swr";
 import { toast } from "sonner";
 
 export const getAllJabatan = () => {
-  let { data, error, isLoading, isValidating } = useSWR(
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
     `${process.env.BASE_API}/role`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    data = [
+    const data: IJabatan[] = [
       {
         id_role: 1,
-        role: "Customer",
+        role: "Role 1",
+        akun_count: 7,
       },
       {
         id_role: 2,
-        role: "Admin",
+        role: "Role 2",
+        akun_count: 0,
       },
-      {
-        id_role: 3,
-        role: "Manager",
-      },
-      {
-        id_role: 4,
-        role: "Owner",
-      },
-      // ...
     ];
+
+    return { data, isLoading, mutate, error };
   }
 
   return {
     data: data,
     isLoading,
-    isError: error,
+    error,
     isValidating,
+    mutate,
   };
 };
 
@@ -47,7 +43,6 @@ export const getJabatanById = (id: number) => {
   let { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/role/${id}`,
     fetcher,
-    { suspense: true }
   );
 
   if (!isLoading && error) {
@@ -68,8 +63,6 @@ export const getJabatanById = (id: number) => {
 
 export const createJabatan = async (data: IJabatan) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
     const response = await axios.post(`${process.env.BASE_API}/role`, data);
 
     // Check if the database down
@@ -78,13 +71,12 @@ export const createJabatan = async (data: IJabatan) => {
 
       const response = await axios.post(
         `https://fakestoreapi.com/products/`,
-        data
+        data,
       );
 
       return response;
     }
 
-    // ✅ Use toast when its done
     toast.success(response?.data?.message);
 
     return response;
@@ -103,11 +95,9 @@ export const createJabatan = async (data: IJabatan) => {
 
 export const updateJabatanById = async (id: number, data: IJabatan) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
     const response = await axios.put(
       `${process.env.BASE_API}/role/${id}`,
-      data
+      data,
     );
 
     // Check if the database down
@@ -116,7 +106,7 @@ export const updateJabatanById = async (id: number, data: IJabatan) => {
 
       const response = await axios.put(
         `https://fakestoreapi.com/products/${id}`,
-        data
+        data,
       );
 
       return response;
@@ -141,14 +131,12 @@ export const updateJabatanById = async (id: number, data: IJabatan) => {
 
 export const deleteJabatanById = async (id: number) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
     const response = await axios.delete(`${process.env.BASE_API}/role/${id}`);
 
     if (response.status === 500) {
       toast.warning("Database shutdown! Switching to fakeAPI");
       const response = await axios.delete(
-        `https://fakestoreapi.com/products/${id}`
+        `https://fakestoreapi.com/products/${id}`,
       );
 
       return response;

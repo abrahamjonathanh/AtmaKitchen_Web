@@ -4,36 +4,17 @@ import { IKaryawan } from "../interfaces";
 import { fetcher } from "../utils";
 import useSWR from "swr";
 import { toast } from "sonner";
-
-// getAllKaryawan pakai yg dibawah ya :)
-// export const getAllKaryawan = async () => {
-//   try {
-//     // Boiler template for fetching api
-//     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-//     // Add BASE_API to your .env file. Example: BASE_API=http://127.0.0.1:8000/api
-//     const response = await axios.get(`${process.env.BASE_API}/karyawan`);
-//     // const response = await axios.get(`https://fakestoreapi.com/products`);
-
-//     console.log(response.data);
-//     // ✅ Use toast when its done
-//     // toast.success("Berhasil mendapatkan data...");
-
-//     return response;
-//   } catch (error) {
-//     // toast.error("Oh no! terjadi kesalahan...");
-//     // throw error;
-//   }
-// };
+import { axiosInstance } from "../axiosInstance";
 
 export const getAllKaryawan = () => {
-  let { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `${process.env.BASE_API}/karyawan`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    data = [
+    const data: IKaryawan[] = [
       {
         id_karyawan: 1,
         nama: "Sample Agus",
@@ -46,6 +27,8 @@ export const getAllKaryawan = () => {
         },
       },
     ];
+
+    return { data, error, isLoading, mutate };
   }
 
   return {
@@ -58,7 +41,7 @@ export const getAllKaryawan = () => {
 export const getKaryawanById = (id: number) => {
   let { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/karyawan/${id}`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
@@ -89,9 +72,7 @@ export const getKaryawanById = (id: number) => {
 
 export const createKaryawan = async (data: IKaryawan) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.post(`${process.env.BASE_API}/karyawan`, data);
+    const response = await axiosInstance().post(`/karyawan`, data);
 
     // Check if the database down
     if (response.status === 500) {
@@ -99,7 +80,7 @@ export const createKaryawan = async (data: IKaryawan) => {
 
       const response = await axios.post(
         `https://fakestoreapi.com/products/`,
-        data
+        data,
       );
 
       return response;
@@ -155,10 +136,7 @@ export const updateKaryawanById = async (id: number, data: IKaryawan) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.put(
-      `${process.env.BASE_API}/karyawan/${id}`,
-      data
-    );
+    const response = await axiosInstance().put(`/karyawan/${id}`, data);
 
     // Check if the database down
     if (response.status === 500) {
@@ -166,7 +144,7 @@ export const updateKaryawanById = async (id: number, data: IKaryawan) => {
 
       const response = await axios.put(
         `https://fakestoreapi.com/products/${id}`,
-        data
+        data,
       );
 
       return response;
@@ -194,13 +172,13 @@ export const deleteKaryawanById = async (id: number) => {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
     const response = await axios.delete(
-      `${process.env.BASE_API}/karyawan/${id}`
+      `${process.env.BASE_API}/karyawan/${id}`,
     );
 
     if (response.status === 500) {
       toast.warning("Database shutdown! Switching to fakeAPI");
       const response = await axios.delete(
-        `https://fakestoreapi.com/products/${id}`
+        `https://fakestoreapi.com/products/${id}`,
       );
 
       return response;

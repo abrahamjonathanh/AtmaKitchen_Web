@@ -1,13 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
-
 import React, { useState } from "react";
 import LoginImage from "../../../public/images/Login.png";
 import Loading from "@/components/ui/loading";
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+
 const formSchema = z
   .object({
     nama: z.string().min(1, { message: "Nama lengkap tidak boleh kosong!" }),
@@ -49,8 +48,10 @@ import Image from "next/image";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
 
 import { register } from "@/lib/api/auth";
+import { useTitle } from "@/lib/hooks";
 
 export default function RegisterPage() {
+  useTitle("AtmaKitchen | Daftar");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,14 +61,13 @@ export default function RegisterPage() {
       const response = await register(values);
 
       if (response?.status === 200 || response?.status === 201) {
-        router.push("/login"); // For redirect route
+        router.push("/login");
       }
     } catch (error: any) {
       console.error("Error creating akun: ", error);
     } finally {
       setIsLoading(false);
     }
-    // console.log(values);
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -84,11 +84,11 @@ export default function RegisterPage() {
   });
 
   return (
-    <MaxWidthWrapper className="my-4">
-      <div className="flex justify-between">
-        <div className="w-5/12">
-          <p className="text-3xl font-semibold">Selamat Datang</p>
-          <p className="text-5xl font-extrabold bg-gradient-to-br from-red-600 to-orange-400 text-transparent bg-clip-text mb-8">
+    <MaxWidthWrapper className="lg:pr-0">
+      <div className="flex h-full items-center justify-between gap-8">
+        <div className="w-full lg:w-1/3">
+          <p className="text-h2 font-semibold">Selamat Datang</p>
+          <p className="text-h1 mb-8 bg-gradient-to-br from-red-600 to-orange-400 bg-clip-text font-extrabold text-transparent">
             Atma Kitchen
           </p>
           <Form {...form}>
@@ -212,11 +212,11 @@ export default function RegisterPage() {
             </form>
           </Form>
         </div>
-        <div className="w-1/2">
+        <div className="hidden h-full lg:block lg:w-2/3">
           <Image
             src={LoginImage}
             alt="Login"
-            className="w-full h-full object-cover rounded-3xl"
+            className="h-full w-full object-cover"
           />
         </div>
       </div>

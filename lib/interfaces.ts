@@ -25,10 +25,14 @@ export type IKaryawan = {
 };
 
 export type IResep = {
-  id: string;
+  id_produk: string;
   nama?: string;
+  ukuran?: string;
+  images?: {
+    image: string;
+  }[];
   bahan_baku: {
-    id: string;
+    id_bahan_baku: string;
     nama?: string;
     satuan?: string;
     jumlah: string;
@@ -46,8 +50,9 @@ export type IProfileAdmin = {
 };
 
 export type IJabatan = {
-  id: string | number;
+  id_role: string | number;
   role: string;
+  akun_count?: number;
 };
 
 export type IJarakKirim = {
@@ -81,11 +86,14 @@ export type IProduk = {
   id_produk: string | number;
   nama: string;
   id_kategori?: string;
-  id_penitip?: string | number | null;
+  id_penitip?: string | null;
   kapasitas: string;
   ukuran: string;
   harga_jual: string;
-  image:
+  thumbnail?: {
+    image: string;
+  };
+  image?:
     | {
         image: string;
       }[]
@@ -146,15 +154,8 @@ export type IPenitip = {
   alamat: string;
   telepon: string;
   created_at: string; //tanggal bergabung
-  produk: {
-    id_produk: number;
-    id_kategori: number;
-    id_penitip: string;
-    nama: string;
-    kapasitas: number;
-    ukuran: string;
-    harga_jual: number;
-  }[];
+  produk?: IProduk[];
+  produk_titipan_count?: number;
 };
 
 export type IPengeluaranLainnya = {
@@ -190,9 +191,10 @@ export interface IPesanan {
   total_diskon_poin: number;
   total_pesanan: number;
   total_setelah_diskon: number;
-  total_dibayarkan: number;
+  total_dibayarkan: string;
   total_tip: number;
   verified_at: string | null;
+  jenis_pengiriman?: string;
   pelanggan?: {
     id_pelanggan: number;
     id_akun?: number;
@@ -215,6 +217,7 @@ export interface IPesanan {
     telepon: string;
     alamat: string;
   };
+  created_at?: string;
 }
 
 export interface IRiwayatPesanan extends IPesanan {

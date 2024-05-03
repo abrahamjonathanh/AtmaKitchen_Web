@@ -18,6 +18,9 @@ const ProductCard = ({
         image: "https://atmaimages.blob.core.windows.net/images/Brownies.png",
       },
     ],
+    thumbnail: {
+      image: "https://atmaimages.blob.core.windows.net/images/Brownies.png",
+    },
     kapasitas: "20",
     ukuran: "20x20 cm",
     link: "",
@@ -31,20 +34,20 @@ const ProductCard = ({
     <Link href={`/u/produk/${product.id_produk}`}>
       <div
         className={cn(
-          "border rounded-lg border-slate-200 flex flex-col bg-white shadow-md hover:shadow-lg transition-shadow max-w-full sm:max-w-56 md:max-w-full",
-          className
+          "flex max-w-full flex-col rounded-lg border border-slate-200 bg-white shadow-md transition-shadow hover:shadow-lg sm:max-w-56 md:max-w-full",
+          className,
         )}
       >
-        <div className="max-h-max relative">
+        <div className="relative max-h-max">
           <Image
-            src={(product.image[0] as { image: string }).image}
+            src={(product.thumbnail as { image: string }).image}
             alt={`Image of ${product.nama}`}
-            className="rounded-t-lg max-h-36 object-cover"
+            className="max-h-36 rounded-t-lg object-cover"
             width={"460"}
             height={"460"}
           />
         </div>
-        <div className="p-3 pb-4 space-y-2">
+        <div className="space-y-2 p-3 pb-4">
           <div className="space-y-2">
             <p>
               {product.nama} {product.ukuran}
