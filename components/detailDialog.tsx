@@ -26,10 +26,11 @@ const DetailDialog: React.FC<DetailDialogProps> = ({
           <p>Tanggal Order: {toIndonesiaDate(pesanan.tgl_order)}</p>
           <div className="mt-4 space-y-2">
             <p className="text-lg font-semibold">Produk:</p>
-            {pesanan.produk.map((item) => (
-              <div key={item.id}>
+            {pesanan.detail_pesanan.map((item, index: number) => (
+              <div key={index}>
                 <p>
-                  {item.nama} - {toRupiah(item.harga)}
+                  {item.produk.nama} -{" "}
+                  {toRupiah(parseInt(item.produk.harga_jual))}
                 </p>
               </div>
             ))}

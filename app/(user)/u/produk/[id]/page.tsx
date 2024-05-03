@@ -33,6 +33,9 @@ export default function page() {
           "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
       },
     ],
+    thumbnail: {
+      image: "https://atmaimages.blob.core.windows.net/images/Brownies.png",
+    },
     harga_jual: "300000",
     kapasitas: "20",
     nama: "Lapis Surabaya",
@@ -51,28 +54,28 @@ export default function page() {
 
   return (
     <UserWrapper className="space-y-8">
-      <div className="flex gap-4 flex-col lg:flex-row">
+      <div className="flex flex-col gap-4 lg:flex-row">
         {/* Image display */}
-        <div className="lg:w-1/4 flex flex-col gap-4 sm:flex-row h-max md:flex-col md:h-max lg:h-max">
+        <div className="flex h-max flex-col gap-4 sm:flex-row md:h-max md:flex-col lg:h-max lg:w-1/4">
           <Image
-            src={(data.image[indexImageSelected] as { image: string }).image}
+            src={(data.thumbnail as { image: string }).image}
             alt={data.nama}
-            className="w-full h-full max-h-96 rounded-lg aspect-square object-cover sm:w-4/5 md:w-full"
+            className="aspect-square h-full max-h-96 w-full rounded-lg object-cover sm:w-4/5 md:w-full"
             width={"500"}
             height={"500"}
           />
-          <ScrollArea className="h-max sm:h-96 md:h-max lg:h-full sm:w-1/5 md:w-full">
+          <ScrollArea className="h-max sm:h-96 sm:w-1/5 md:h-max md:w-full lg:h-full">
             <div className="flex gap-2 sm:flex-col sm:gap-4 md:flex-row lg:h-max ">
-              {data.image.map((image, index) => (
+              {data.image!.map((image, index) => (
                 <Image
                   src={(image as { image: string }).image}
                   alt={`${(image as { image: string }).image}-${index}`}
                   key={index}
-                  className={`w-1/5 md:w-1/5 sm:w-full h-max rounded-lg aspect-square object-cover cursor-pointer ${
+                  className={`aspect-square h-max w-1/5 cursor-pointer rounded-lg object-cover sm:w-full md:w-1/5 ${
                     index == indexImageSelected
                       ? "brightness-100"
                       : "brightness-50"
-                  } hover:brightness-100 transition`}
+                  } transition hover:brightness-100`}
                   width={"250"}
                   height={"250"}
                   onClick={() => {
@@ -85,7 +88,7 @@ export default function page() {
           </ScrollArea>
         </div>
         {/* Content */}
-        <div className="lg:w-5/12 space-y-4">
+        <div className="space-y-4 lg:w-5/12">
           <div className="space-y-2">
             <p className="text-h3">
               {data.nama} {data.ukuran}
@@ -99,7 +102,7 @@ export default function page() {
               {data.detail_stok!.map((stock, index) => (
                 <div
                   key={index}
-                  className="flex justify-between gap-4 text-slate-500 space-y-2"
+                  className="flex justify-between gap-4 space-y-2 text-slate-500"
                 >
                   <p>{toIndonesiaDate(stock.tanggal)}</p>
                   <p>{stock.stok} Stok</p>
@@ -115,7 +118,7 @@ export default function page() {
           onQuantityChange={(value) => {
             const newQuantity = Math.max(
               1,
-              parseInt(quantity) + value
+              parseInt(quantity) + value,
             ).toString();
             setQuantity(newQuantity);
           }}

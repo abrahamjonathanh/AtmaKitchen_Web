@@ -15,7 +15,6 @@ import {
 import Image from "next/image";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { MoveLeft } from "lucide-react";
-import Link from "next/link";
 import {
   InputOTP,
   InputOTPGroup,
@@ -42,14 +41,13 @@ const SentEmail = () => {
 
 export default function page() {
   useTitle("AtmaKitchen | OTP");
-  const sentMail = SentEmail();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: sentMail,
+      email: "",
       otp: "",
     },
   });

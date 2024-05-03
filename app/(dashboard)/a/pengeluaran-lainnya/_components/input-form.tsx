@@ -126,8 +126,8 @@ export default function PengeluaranLainnyaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="1">Pemasukan</SelectItem>
-                    <SelectItem value="2">Pengeluaran</SelectItem>
+                    <SelectItem value="pemasukan">Pemasukan</SelectItem>
+                    <SelectItem value="pengeluaran">Pengeluaran</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

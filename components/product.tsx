@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Brownies from "@/public/products/Brownies.png";
 import { Badge } from "./ui/badge";
 import { categoryBadge, cn, toRupiah } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
@@ -40,7 +39,7 @@ const ProductCard = ({
       >
         <div className="relative max-h-max">
           <Image
-            src={(product.thumbnail as { image: string }).image}
+            src={product.thumbnail?.image!}
             alt={`Image of ${product.nama}`}
             className="max-h-36 rounded-t-lg object-cover"
             width={"460"}

@@ -1,7 +1,13 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Trash2, Clock } from "lucide-react";
+import {
+  ArrowUpDown,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Clock,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,7 +46,7 @@ export const columns: ColumnDef<IPelanggan>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="px-4 font-medium w-full">{row.getValue("nama")}</div>
+      <div className="w-full px-4 font-medium">{row.getValue("nama")}</div>
     ),
   },
   {
@@ -49,7 +55,7 @@ export const columns: ColumnDef<IPelanggan>[] = [
     cell: ({ row }) => <div className="px-4">{row.getValue("tgl_lahir")}</div>,
   },
   {
-    accessorKey: "status",
+    accessorKey: "deleted_at",
     header: ({ column }) => {
       return (
         <Button
@@ -71,16 +77,21 @@ export const columns: ColumnDef<IPelanggan>[] = [
         { code: "2", variant: "sky", label: "Tidak Aktif" },
       ];
 
-      const statusBadge = statusBadges.find(
-        (badge) => badge.code == row.getValue("status")
-      );
+      // Check if deleted_at is null
+      const isDeleted = row.original.deleted_at === null;
+
+      // Determine status label and variant
+      const statusLabel = !isDeleted ? "Tidak Aktif" : "Aktif";
+      const statusVariant = isDeleted ? "sky" : "lime";
+
       return (
         <div className="px-4">
-          <Badge variant={statusBadge?.variant}>{statusBadge?.label}</Badge>
+          <Badge variant={statusVariant}>{statusLabel}</Badge>
         </div>
       );
     },
   },
+
   {
     id: "actions",
     cell: ({ row }) => {
