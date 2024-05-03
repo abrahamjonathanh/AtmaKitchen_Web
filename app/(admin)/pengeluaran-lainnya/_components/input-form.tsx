@@ -83,22 +83,18 @@ export default function PengeluaranLainnyaForm({
               )}
             />
             <FormField
-            control={form.control}
-            name="tanggal"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Tanggal</FormLabel>
-                <FormControl>
-                  <Input
-                    type="date"
-                    placeholder="Tanggal..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              control={form.control}
+              name="tanggal"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Tanggal</FormLabel>
+                  <FormControl>
+                    <Input type="date" placeholder="Tanggal..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="flex flex-col md:flex-row gap-4">
             <FormField
@@ -108,11 +104,7 @@ export default function PengeluaranLainnyaForm({
                 <FormItem className="w-full">
                   <FormLabel>Jumlah</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Jumlah..."
-                      {...field}
-                    />
+                    <Input type="number" placeholder="Jumlah..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -135,16 +127,14 @@ export default function PengeluaranLainnyaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="1">Pemasukan</SelectItem>
-                    <SelectItem value="2">Pengeluaran</SelectItem>
+                    <SelectItem value="pemasukan">Pemasukan</SelectItem>
+                    <SelectItem value="pengeluaran">Pengeluaran</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-         
         </div>
         <div className="flex gap-4 items-center justify-end">
           <Button variant={"outline"} onClick={() => router.back()}>

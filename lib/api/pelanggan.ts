@@ -52,7 +52,7 @@ export const getPelangganById = (id: number) => {
         akun:{
           email: "sasa@gmail.com",
         },
-        riwayatPesanan:[],
+        history_pesanan:[],
       },
     ];
   }

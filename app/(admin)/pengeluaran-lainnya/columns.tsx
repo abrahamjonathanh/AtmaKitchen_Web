@@ -21,6 +21,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IPengeluaranLainnya } from "@/lib/interfaces";
 import { deletePengeluaranLainnyaById } from "@/lib/api/pengeluaranlainnya";
+import { useSWRConfig } from "swr";
+import { useRouter } from "next/navigation";
 
 export const columns: ColumnDef<IPengeluaranLainnya>[] = [
   {
@@ -76,16 +78,17 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
     cell: ({ row }) => {
       const kategoriBadges: {
         code: string;
-        variant: "lime" | "sky" | "violet";
+        variant: "lime" | "sky";
         label: "Pemasukan" | "Pengeluaran";
       }[] = [
-        { code: "1", variant: "lime", label: "Pemasukan" },
-        { code: "2", variant: "sky", label: "Pengeluaran" },
+        { code: "pemasukan", variant: "lime", label: "Pemasukan" },
+        { code: "pengeluaran", variant: "sky", label: "Pengeluaran" },
       ];
 
       const kategoriBadge = kategoriBadges.find(
         (badge) => badge.code == row.getValue("kategori")
       );
+
       return (
         <div className="px-4">
           <Badge variant={kategoriBadge?.variant}>{kategoriBadge?.label}</Badge>
@@ -98,12 +101,14 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
     cell: ({ row }) => {
       const pathname = usePathname();
       const [isOpen, setIsOpen] = useState(false);
+      const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
+      const router = useRouter(); // // Copy this for create, update, delete
       const [isLoading, setIsLoading] = useState(false);
 
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          await deletePengeluaranLainnyaById(
+          const response = await deletePengeluaranLainnyaById(
             row.getValue("id_pengeluaran_lainnya")
           );
         } catch (error: any) {
@@ -125,13 +130,15 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link
-                href={`${pathname}/${row.getValue("id_pengeluaran_lainnya")}`}
+              <DropdownMenuItem
+                onClick={() =>
+                  router.push(
+                    `${pathname}/${row.getValue("id_pengeluaran_lainnya")}`
+                  )
+                }
               >
-                <DropdownMenuItem>
-                  <Pencil size={"16"} /> Ubah
-                </DropdownMenuItem>
-              </Link>
+                <Pencil size={"16"} /> Ubah
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <Trash2 size={"16"} /> Hapus{" "}

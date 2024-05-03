@@ -68,6 +68,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+
         <Link
           href={pathname + "/create"}
           className={cn(

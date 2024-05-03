@@ -149,13 +149,23 @@ export interface IRiwayatPesanan extends IPesanan {
   id_status_pesanan: number;
   id_karyawan: number;
   status: string;
-  produk: {
-    id: number;
-    nama: string;
-    harga: number;
-    images: HTMLImageElement | StaticImageData;
-    jumlah: number;
+  detail_pesanan: {
+    id_detail_pesanan: number;
+    id_produk?: number;
+    id_produk_hampers? : number;
+    jumlah?: number;
+      produk: {
+        id_produk: number;
+        nama: string;
+        harga_jual: string;
+        images?: HTMLImageElement | StaticImageData;
+        jumlah: number;
+        thumbnail : {
+          image?:HTMLImageElement | StaticImageData | string;
+        }
+      };
   }[];
+  
 }
 
 export interface IProduct {
