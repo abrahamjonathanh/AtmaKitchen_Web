@@ -5,6 +5,7 @@ import { IProduk } from "../interfaces";
 import { fetcher } from "../utils";
 import useSWR from "swr";
 import { toast } from "sonner";
+import { axiosInstance } from "../axiosInstance";
 
 export const getAllProduk = () => {
   const { data, error, isLoading, mutate } = useSWR(
@@ -100,7 +101,7 @@ export const createProduk = async (data: IProduk) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.post(`${process.env.BASE_API}/produk`, data);
+    const response = await axiosInstance().post(`/produk`, data);
 
     // Check if the database down
     if (response.status === 500) {

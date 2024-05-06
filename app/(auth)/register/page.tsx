@@ -27,6 +27,7 @@ const formSchema = z
       .string()
       .min(1, { message: "Nama alamat tidak boleh kosong!" }),
     alamat: z.string().min(1, { message: "Alamat tidak boleh kosong!" }),
+    tgl_lahir: z.date({ required_error: "Alamat tidak boleh kosong" }),
   })
   .refine((data) => data.password === data.konfirmasiPassword, {
     message: "Passwords tidak sama!",
@@ -49,6 +50,15 @@ import MaxWidthWrapper from "@/components/maxWidthWrapper";
 
 import { register } from "@/lib/api/auth";
 import { useTitle } from "@/lib/hooks";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function RegisterPage() {
   useTitle("AtmaKitchen | Daftar");
@@ -57,8 +67,14 @@ export default function RegisterPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      const date = new Date(values.tgl_lahir);
+
       setIsLoading(true);
-      const response = await register({ ...values, id_role: 1 });
+      const response = await register({
+        ...values,
+        id_role: 1,
+        tgl_lahir: `${date.getUTCFullYear()}/${date.getUTCMonth()}/${date.getUTCDate()}`,
+      });
 
       if (response?.status === 200 || response?.status === 201) {
         router.push("/login");
@@ -170,6 +186,48 @@ export default function RegisterPage() {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tgl_lahir"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Tanggal Lahir</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal ",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pilih tanggal lahir</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

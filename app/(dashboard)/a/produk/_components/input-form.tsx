@@ -84,21 +84,21 @@ export default function ProdukForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 md:flex-row  w-full"
+          className="flex w-full flex-col gap-4  md:flex-row"
           encType="multipart/form-data"
         >
-          <div className="w-full md:w-1/3 h-max space-y-4">
+          <div className="h-max w-full space-y-4 md:w-1/3">
             {selectedImages.length === 0 ? (
               <Image
                 src={NotAvailable}
                 alt="Brownies"
-                className="w-full h-max rounded-lg aspect-square object-cover"
+                className="aspect-square h-max w-full rounded-lg object-cover"
               />
             ) : (
               <Image
                 src={URL.createObjectURL(selectedImages[indexImageSelected])}
                 alt="Selected Image"
-                className="w-full h-max rounded-lg object-cover aspect-square"
+                className="aspect-square h-max w-full rounded-lg object-cover"
                 width={"500"}
                 height={"500"}
               />
@@ -109,7 +109,7 @@ export default function ProdukForm({
                   <Image
                     src={URL.createObjectURL(image)}
                     alt={`Image ${index}`}
-                    className="rounded-lg object-cover aspect-square"
+                    className="aspect-square rounded-lg object-cover"
                     width={"500"}
                     height={"500"}
                     onClick={() => setIndexImageSelected(index)}
@@ -128,7 +128,7 @@ export default function ProdukForm({
                       multiple
                       onChange={(e) => {
                         const files = Array.from(
-                          e.target.files ?? []
+                          e.target.files ?? [],
                         ) as File[];
                         setSelectedImages((prev) => [...prev, ...files]);
                         onChange(selectedImages);
@@ -145,9 +145,9 @@ export default function ProdukForm({
               per produk.
             </p>
           </div>
-          <div className="space-y-6 w-full p-4 rounded-lg border border-slate-200 h-max ">
+          <div className="h-max w-full space-y-6 rounded-lg border border-slate-200 p-4 ">
             <div className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
                   name="nama"
@@ -179,7 +179,7 @@ export default function ProdukForm({
                   )}
                 />
               </div>
-              <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
                   name="harga_jual"
@@ -280,7 +280,7 @@ export default function ProdukForm({
                 </FormItem>
               )}
             />
-            <div className="flex gap-4 items-center justify-end">
+            <div className="flex items-center justify-end gap-4">
               <Button variant={"outline"} onClick={() => router.back()}>
                 Batal
               </Button>

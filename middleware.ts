@@ -66,7 +66,7 @@ export async function middleware(request: NextRequest) {
   const PROTECTED = PROTECTED_ROUTES.find(
     (route) => route.role === user?.data?.akun?.role?.role,
   );
-
+  console.log(PROTECTED);
   const UNPROTECTED = UNPROTECTED_ROUTES.some((route) =>
     requestedPath.startsWith(route),
   );

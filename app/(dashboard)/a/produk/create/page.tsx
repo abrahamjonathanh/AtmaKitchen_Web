@@ -19,8 +19,8 @@ export default function page() {
     try {
       setIsLoading(true);
       console.log(values);
-      // const response = await createProduk(values);
-
+      const response = await createProduk(values);
+      console.log(response);
       // if (response?.status === 200 || response?.status === 201) {
       //   mutate("/a/produk"); // For auto refresh
       //   router.push("/a/produk"); // For redirect route

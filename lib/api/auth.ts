@@ -11,7 +11,10 @@ import { fetcher } from "../utils";
 import { useRouter } from "next/navigation";
 export const register = async (data: any) => {
   try {
-    const response = await axios.post(`${process.env.BASE_API}/register`, data);
+    const response = await axios.post(
+      `${process.env.BASE_API}/auth/register`,
+      data,
+    );
 
     // Check if the database down
     if (response.status === 500) {
