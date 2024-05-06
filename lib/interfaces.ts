@@ -74,7 +74,7 @@ export type IPengiriman = {
 
 // @yori
 export type IProduk = {
-  id_produk: string | number;
+  id_produk: string;
   nama: string;
   id_kategori?: string;
   id_penitip?: string | null;

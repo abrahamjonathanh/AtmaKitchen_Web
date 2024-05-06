@@ -17,7 +17,7 @@ export const getAllProduk = () => {
     toast.warning("Database is down! Switching to fakeAPI");
     const data: IProduk[] = [
       {
-        id_produk: 1,
+        id_produk: "1",
         nama: "Lapis Legit",
         id_kategori: "1",
         id_penitip: null,
@@ -27,7 +27,7 @@ export const getAllProduk = () => {
         image: [],
       },
       {
-        id_produk: 2,
+        id_produk: "2",
         nama: "Lapis Surabaya",
         id_kategori: "1",
         id_penitip: null,
@@ -37,7 +37,7 @@ export const getAllProduk = () => {
         image: [],
       },
       {
-        id_produk: 3,
+        id_produk: "3",
         nama: "Roti Sobek",
         id_kategori: "3",
         id_penitip: null,
@@ -47,7 +47,7 @@ export const getAllProduk = () => {
         image: [],
       },
       {
-        id_produk: 4,
+        id_produk: "4",
         nama: "Boba Milk Tea",
         id_kategori: "2",
         id_penitip: "1",
@@ -101,7 +101,7 @@ export const createProduk = async (data: IProduk) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-<<<<<<< HEAD
+
     console.log(data);
     const response = await axiosInstance().post(`/produk`, data, {
       headers: {
@@ -109,10 +109,6 @@ export const createProduk = async (data: IProduk) => {
         Accept: "application/json",
       },
     });
-=======
-    const response = await axiosInstance().post(`/produk`, data);
->>>>>>> 1a7d7d46d313b4ecaf94d41cfd713c1874d0b0c1
-
     // Check if the database down
     if (response.status === 500) {
       toast.warning("Database is down! Switching to fakeAPI");
