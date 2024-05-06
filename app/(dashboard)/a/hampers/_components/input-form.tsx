@@ -33,9 +33,7 @@ const formSchema = z.object({
   id_produk_hampers: z.string().optional(),
   nama: z.string().min(1, { message: "Nama produk tidak boleh kosong" }),
   harga_jual: z.string().min(1, { message: "Harga tidak boleh kosong" }),
-  image: z.array(z.instanceof(File)).max(5, {
-    message: "Foto produk maksimal 5",
-  }),
+  image: z.instanceof(File),
   detail_produk: z.array(
     z.object({
       id_produk: z.string().min(1, { message: "Produk harus dipilih" }),
@@ -70,11 +68,11 @@ export default function HampersForm({
     name: "detail_produk",
   });
 
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [selectedImages, setSelectedImages] = useState<File>();
   const [indexImageSelected, setIndexImageSelected] = useState(0);
 
   useEffect(() => {
-    form.setValue("image", selectedImages);
+    form.setValue("image", selectedImages!);
   }, [selectedImages, form]);
 
   return (
@@ -86,35 +84,22 @@ export default function HampersForm({
           encType="multipart/form-data"
         >
           <div className="h-max w-full space-y-4 md:w-1/3">
-            {selectedImages.length === 0 ? (
+            {selectedImages ? (
               <Image
-                src={NotAvailable}
-                alt="Image not available"
-                className="aspect-square h-max w-full rounded-lg object-cover"
-              />
-            ) : (
-              <Image
-                src={URL.createObjectURL(selectedImages[indexImageSelected])}
+                src={URL.createObjectURL(selectedImages)}
                 alt="Selected Image"
                 className="aspect-square h-max w-full rounded-lg object-cover"
                 width={"500"}
                 height={"500"}
               />
+            ) : (
+              <Image
+                src={NotAvailable}
+                alt="Image not available"
+                className="aspect-square h-max w-full rounded-lg object-cover"
+              />
             )}
-            <div className="grid grid-cols-5 gap-2">
-              {selectedImages.slice(0, 5).map((image, index) => (
-                <div key={index}>
-                  <Image
-                    src={URL.createObjectURL(image)}
-                    alt={`Image ${index}`}
-                    className="aspect-square rounded-lg object-cover"
-                    width={"500"}
-                    height={"500"}
-                    onClick={() => setIndexImageSelected(index)}
-                  />
-                </div>
-              ))}
-            </div>
+
             <FormField
               control={form.control}
               name="image"
@@ -123,12 +108,9 @@ export default function HampersForm({
                   <FormControl>
                     <Input
                       type="file"
-                      multiple
                       onChange={(e) => {
-                        const files = Array.from(
-                          e.target.files ?? [],
-                        ) as File[];
-                        setSelectedImages((prev) => [...prev, ...files]);
+                        const file = e.target.files![0] as File;
+                        setSelectedImages(file);
                         onChange(selectedImages);
                       }}
                     />

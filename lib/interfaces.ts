@@ -89,6 +89,7 @@ export type IProduk = {
         image: string;
       }[]
     | StaticImageData[];
+  images?: { image: string }[];
   link?: string;
   terjual?: string;
   detail_stok?: {
@@ -172,6 +173,16 @@ export interface IPelanggan {
   tgl_lahir: string;
   status: string;
   deleted_at?: string;
+  alamat?: IAlamat[];
+}
+
+export interface IAlamat {
+  id_alamat: string;
+  id_pelanggan: string;
+  label: string;
+  nama: string;
+  alamat: string;
+  telepon: string;
 }
 
 export interface IPesanan {

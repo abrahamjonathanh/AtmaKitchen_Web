@@ -75,9 +75,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (token && user?.data?.akun?.role?.role === "Customer") {
-    return NextResponse.redirect(new URL("/u/produk", request.url));
-  }
+  // if (token && user?.data?.akun?.role?.role === "Customer") {
+  //   return NextResponse.redirect(new URL("/u/produk", request.url));
+  // }
 
   if (!token && requestedPath != "/login")
     return NextResponse.redirect(new URL("/login", request.url));

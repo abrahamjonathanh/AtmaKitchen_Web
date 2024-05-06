@@ -5,6 +5,7 @@ import { IProduk } from "../interfaces";
 import { fetcher } from "../utils";
 import useSWR from "swr";
 import { toast } from "sonner";
+import { axiosInstance } from "../axiosInstance";
 
 export const getAllProduk = () => {
   const { data, error, isLoading, mutate } = useSWR(
@@ -100,7 +101,13 @@ export const createProduk = async (data: IProduk) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.post(`${process.env.BASE_API}/produk`, data);
+    console.log(data);
+    const response = await axiosInstance().post(`/produk`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json",
+      },
+    });
 
     // Check if the database down
     if (response.status === 500) {
@@ -135,10 +142,7 @@ export const updateProdukById = async (id: number, data: IProduk) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.post(
-      `${process.env.BASE_API}/produk/${id}`,
-      data,
-    );
+    const response = await axiosInstance().post(`/produk/${id}`, data);
 
     // Check if the database down
     if (response.status === 500) {
@@ -173,7 +177,7 @@ export const deleteProdukById = async (id: number) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.delete(`${process.env.BASE_API}/produk/${id}`);
+    const response = await axiosInstance().delete(`/produk/${id}`);
 
     if (response.status === 500) {
       toast.warning("Database shutdown! Switching to fakeAPI");

@@ -24,12 +24,13 @@ import {
 import React, { useEffect, useState } from "react";
 import { Pencil, Plus } from "lucide-react";
 import Loading from "@/components/ui/loading";
-import { IProduk } from "@/lib/interfaces";
+import { IPenitip, IProduk } from "@/lib/interfaces";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import NotAvailable from "@/public/products/Not Available.png";
 import { Label } from "@/components/ui/label";
+import { getAllPenitip } from "@/lib/api/penitip";
 
 const formSchema = z.object({
   id_produk: z.string().optional(),
@@ -58,23 +59,28 @@ export default function ProdukForm({
   isLoading?: boolean;
 }) {
   console.log(`⚠️ Produk editable mode: ${isEditable}`);
-  const [isTitipan, setIsTitipan] = useState(false);
+
   const router = useRouter();
+
+  const penitip = getAllPenitip();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nama: isEditable ? data?.nama ?? "" : "",
-      kapasitas: isEditable ? data?.kapasitas ?? "" : "",
-      ukuran: isEditable ? data?.ukuran ?? "" : "",
-      harga_jual: isEditable ? data?.harga_jual ?? "" : "",
-      id_kategori: isEditable ? data?.id_kategori ?? "" : "",
+      nama: isEditable ? data?.nama.toString() ?? "" : "",
+      kapasitas: isEditable ? data?.kapasitas.toString() ?? "" : "",
+      ukuran: isEditable ? data?.ukuran.toString() ?? "" : "",
+      harga_jual: isEditable ? data?.harga_jual.toString() ?? "" : "",
+      id_kategori: isEditable ? data?.id_kategori?.toString() ?? "" : "",
+      id_penitip: isEditable ? data?.id_penitip?.toString() ?? "" : "",
     },
   });
 
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [indexImageSelected, setIndexImageSelected] = useState(0);
+  const [isTitipan, setIsTitipan] = useState(penitip ? true : false);
 
+  // TODO: fix update penitip
   useEffect(() => {
     form.setValue("image", selectedImages);
   }, [selectedImages, form]);
@@ -84,23 +90,31 @@ export default function ProdukForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 md:flex-row  w-full"
+          className="flex w-full flex-col gap-4  md:flex-row"
           encType="multipart/form-data"
         >
-          <div className="w-full md:w-1/3 h-max space-y-4">
-            {selectedImages.length === 0 ? (
+          <div className="h-max w-full space-y-4 md:w-1/3">
+            {isEditable && data?.thumbnail?.image ? (
+              <Image
+                src={data?.thumbnail?.image!}
+                alt="Product Image"
+                className="aspect-square h-max w-full rounded-lg object-cover"
+                width={500}
+                height={500}
+              />
+            ) : selectedImages.length === 0 ? (
               <Image
                 src={NotAvailable}
                 alt="Brownies"
-                className="w-full h-max rounded-lg aspect-square object-cover"
+                className="aspect-square h-max w-full rounded-lg object-cover"
               />
             ) : (
               <Image
                 src={URL.createObjectURL(selectedImages[indexImageSelected])}
                 alt="Selected Image"
-                className="w-full h-max rounded-lg object-cover aspect-square"
-                width={"500"}
-                height={"500"}
+                className="aspect-square h-max w-full rounded-lg object-cover"
+                width={500}
+                height={500}
               />
             )}
             <div className="grid grid-cols-5 gap-2">
@@ -109,7 +123,7 @@ export default function ProdukForm({
                   <Image
                     src={URL.createObjectURL(image)}
                     alt={`Image ${index}`}
-                    className="rounded-lg object-cover aspect-square"
+                    className="aspect-square rounded-lg object-cover"
                     width={"500"}
                     height={"500"}
                     onClick={() => setIndexImageSelected(index)}
@@ -117,37 +131,42 @@ export default function ProdukForm({
                 </div>
               ))}
             </div>
-            <FormField
-              control={form.control}
-              name="image"
-              render={({ field: { onChange } }) => (
-                <FormItem className="w-max">
-                  <FormControl>
-                    <Input
-                      type="file"
-                      multiple
-                      onChange={(e) => {
-                        const files = Array.from(
-                          e.target.files ?? []
-                        ) as File[];
-                        setSelectedImages((prev) => [...prev, ...files]);
-                        onChange(selectedImages);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <p className="text-body text-slate-500">
-              Besar file: maksimum 10.000.000 bytes (10 Megabytes). Ekstensi
-              file yang diperbolehkan: .JPG .JPEG .PNG. Maksimal unggah 5 foto
-              per produk.
-            </p>
+            {!isEditable && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field: { onChange } }) => (
+                    <FormItem className="w-max">
+                      <FormControl>
+                        <Input
+                          type="file"
+                          multiple
+                          onChange={(e) => {
+                            const files = Array.from(
+                              e.target.files ?? [],
+                            ) as File[];
+                            setSelectedImages((prev) => [...prev, ...files]);
+                            onChange(selectedImages);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <p className="text-body text-slate-500">
+                  Besar file: maksimum 10.000.000 bytes (10 Megabytes). Ekstensi
+                  file yang diperbolehkan: .JPG .JPEG .PNG. Maksimal unggah 5
+                  foto per produk.
+                </p>
+              </>
+            )}
           </div>
-          <div className="space-y-6 w-full p-4 rounded-lg border border-slate-200 h-max ">
+          <div className="h-max w-full space-y-6 rounded-lg border border-slate-200 p-4 ">
             <div className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
                   name="nama"
@@ -179,7 +198,7 @@ export default function ProdukForm({
                   )}
                 />
               </div>
-              <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
                   name="harga_jual"
@@ -233,32 +252,43 @@ export default function ProdukForm({
                 />
                 <Label htmlFor="isTitipanMode">Produk Titipan</Label>
               </div>
-              {isTitipan ? (
-                <FormField
-                  control={form.control}
-                  name="id_penitip"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Penitip</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih penitip" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="1">Penitip 1</SelectItem>
-                          <SelectItem value="2">Penitip 2</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ) : null}
+              {isTitipan
+                ? !penitip.isLoading &&
+                  penitip.data && (
+                    <FormField
+                      control={form.control}
+                      name="id_penitip"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Penitip</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih penitip" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {penitip.data.map(
+                                (data: IPenitip, index: number) => (
+                                  <SelectItem
+                                    value={data.id_penitip!}
+                                    key={index}
+                                  >
+                                    {data.nama}
+                                  </SelectItem>
+                                ),
+                              )}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )
+                : null}
             </div>
             <div className="space-y-4">
               <Separator />
@@ -280,7 +310,7 @@ export default function ProdukForm({
                 </FormItem>
               )}
             />
-            <div className="flex gap-4 items-center justify-end">
+            <div className="flex items-center justify-end gap-4">
               <Button variant={"outline"} onClick={() => router.back()}>
                 Batal
               </Button>

@@ -36,7 +36,7 @@ const ProfileTabs = () => {
         {!isLoading ? <BiodataCard data={data} /> : <Loading />}
       </TabsContent>
       <TabsContent value="alamat">
-        <Alamat />
+        {!isLoading ? <Alamat id_user={data.id_pelanggan} /> : <Loading />}
       </TabsContent>
       <TabsContent value="pesanan">
         {!isLoading ? <UserHistory id_user={data.id_pelanggan} /> : <Loading />}

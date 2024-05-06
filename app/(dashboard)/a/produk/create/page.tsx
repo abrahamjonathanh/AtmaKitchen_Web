@@ -19,12 +19,13 @@ export default function page() {
     try {
       setIsLoading(true);
       console.log(values);
-      // const response = await createProduk(values);
+      const response = await createProduk(values);
 
-      // if (response?.status === 200 || response?.status === 201) {
-      //   mutate("/a/produk"); // For auto refresh
-      //   router.push("/a/produk"); // For redirect route
-      // }
+      if (response?.status === 200 || response?.status === 201) {
+        console.log(response.data);
+        mutate("/a/produk"); // For auto refresh
+        router.push("/a/produk"); // For redirect route
+      }
     } catch (error: any) {
       console.error("Error creating karyawan: ", error);
     } finally {

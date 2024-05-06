@@ -21,6 +21,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IProduk } from "@/lib/interfaces";
 import { deleteProdukById } from "@/lib/api/produk";
+import { useRouter } from "next/navigation";
 
 export const columns = (onRefresh?: () => void): ColumnDef<IProduk>[] => [
   {
@@ -107,6 +108,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IProduk>[] => [
     cell: ({ row }) => {
       const pathname = usePathname();
       const [isOpen, setIsOpen] = useState(false);
+      const router = useRouter();
       const [isLoading, setIsLoading] = useState(false);
 
       const onDeleteHandler = async () => {
@@ -138,11 +140,13 @@ export const columns = (onRefresh?: () => void): ColumnDef<IProduk>[] => [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`${pathname}/${row.getValue("id_produk")}`}>
-                <DropdownMenuItem>
-                  <Pencil size={"16"} /> Ubah
-                </DropdownMenuItem>
-              </Link>
+              <DropdownMenuItem
+                onClick={() =>
+                  router.push(`${pathname}/edit/${row.getValue("id_produk")}`)
+                }
+              >
+                <Pencil size={"16"} /> Ubah
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <Trash2 size={"16"} /> Hapus {row.getValue("id_produk")}

@@ -367,7 +367,7 @@ export function NavbarUser() {
               <Menu />
             </SheetTrigger>
             <SheetContent className="w-full sm:w-3/4 ">
-              <UserSidebar />
+              {data && !isLoading && <UserSidebar data={data}/>}
             </SheetContent>
           </Sheet>
         </div>
