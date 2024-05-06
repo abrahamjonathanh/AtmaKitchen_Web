@@ -141,7 +141,7 @@ export type IBahanBaku = {
   id_bahan_baku?: number;
   nama: string;
   stok: string;
-  stok_minimum?: string;
+  stok_minumum?: string;
   satuan: string;
   updated_at: string; //terkahir diperbaharui
 };

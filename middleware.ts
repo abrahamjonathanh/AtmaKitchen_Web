@@ -51,6 +51,7 @@ const PROTECTED_ROUTES = [
       "/a/hampers",
       "/a/produk",
       "/a/pelanggan",
+      "/a/bahan-baku",
       "/a/pemesanan-bahan-baku",
     ],
   },

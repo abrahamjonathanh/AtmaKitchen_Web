@@ -29,7 +29,7 @@ import { IBahanBaku } from "@/lib/interfaces";
 const formSchema = z.object({
   nama: z.string().min(1, { message: "Nama tidak boleh kosong" }),
   stok: z.string().min(1, { message: "Stok tidak boleh kosong" }),
-  stok_minimum: z
+  stok_minumum: z
     .string()
     .min(1, { message: "Stok minimum tidak boleh kosong" }),
   satuan: z.string().min(1, { message: "Satuan tidak boleh kosong" }),
@@ -56,7 +56,7 @@ export default function BahanBakuForm({
     defaultValues: {
       nama: isEditable ? data?.nama ?? "" : "",
       stok: isEditable ? data?.stok.toString() ?? "" : "",
-      stok_minimum: isEditable ? data?.stok_minimum?.toString() ?? "" : "",
+      stok_minumum: isEditable ? data?.stok_minumum?.toString() ?? "" : "",
       satuan: isEditable ? data?.satuan ?? "" : "",
     },
   });
@@ -97,7 +97,7 @@ export default function BahanBakuForm({
             />
             <FormField
               control={form.control}
-              name="stok_minimum"
+              name="stok_minumum"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Stok Minimum</FormLabel>

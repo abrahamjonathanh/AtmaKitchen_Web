@@ -29,7 +29,6 @@ import { Label } from "@/components/ui/label";
 import { getAllBahanBaku } from "@/lib/api/bahan-baku";
 
 const formSchema = z.object({
-  id_pemesanan_bahan_baku: z.string().optional(),
   id_bahan_baku: z.string().optional(),
   nama: z
     .string()
@@ -62,9 +61,6 @@ export default function PemesananBahanBakuForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id_pemesanan_bahan_baku: isEditable
-        ? data?.id_pemesanan_bahan_baku ?? ""
-        : "",
       id_bahan_baku: isEditable ? data?.id_bahan_baku!.toString() ?? "" : "",
       nama: isEditable ? data?.nama ?? "" : "",
       satuan: isEditable ? data?.satuan ?? "" : "",
