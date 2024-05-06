@@ -46,7 +46,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Sidebar } from "./sidebar";
 import { getCurrentUser, logout } from "@/lib/api/auth";
 import Loading from "./ui/loading";
-
+import Cookies from "js-cookie";
 export function Navbar() {
   // let user = null;
   // try {
@@ -67,12 +67,12 @@ export function Navbar() {
     { title: "Produk", href: "" },
   ];
   return (
-    <nav className="fixed inset-x-0 h-14 border-b border-slate-200 bg-white bg-opacity-95 top-0 z-50 flex items-center">
+    <nav className="fixed inset-x-0 top-0 z-50 flex h-14 items-center border-b border-slate-200 bg-white bg-opacity-95">
       <MaxWidthWrapper className="flex justify-between">
         <Link href={"/"}>
           <Image src={LogoOrange} alt="AtmaKitchen Logo" />
         </Link>
-        <div className="hidden lg:flex gap-4">
+        <div className="hidden gap-4 lg:flex">
           {navbar.map((data, index) => (
             <Button variant={"link"} className="text-black" key={index}>
               <Link href={data.href}>{data.title}</Link>
@@ -127,7 +127,7 @@ export function NavbarDashboard({ title }: { title: string }) {
   };
 
   return (
-    <div className="w-full border-b border-slate-200 p-4 lg:pr-16 flex justify-between items-center max-h-16">
+    <div className="flex max-h-16 w-full items-center justify-between border-b border-slate-200 p-4 lg:pr-16">
       <p className="text-h3">{title}</p>
       <div className="flex gap-4">
         <DropdownMenu>
@@ -136,12 +136,12 @@ export function NavbarDashboard({ title }: { title: string }) {
               <Button variant={"ghost"} className="space-x-2 p-1">
                 <Avatar>
                   <AvatarImage
-                    src={data.id_akun.profile_image}
-                    className="border rounded-full border-slate-200 w-10"
+                    src={data.akun.profile_image}
+                    className="w-10 rounded-full border border-slate-200"
                   />
                   <AvatarFallback>AK</AvatarFallback>
                 </Avatar>
-                <p className="font-medium hidden sm:block">
+                <p className="hidden font-medium sm:block">
                   {data.nama.split(" ")[0]}
                 </p>
                 <ChevronDown size={"16"} />
@@ -152,7 +152,7 @@ export function NavbarDashboard({ title }: { title: string }) {
             <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <Link href={"/profile"}>
-              <DropdownMenuItem className="flex gap-2 cursor-pointer">
+              <DropdownMenuItem className="flex cursor-pointer gap-2">
                 <User2 size={"16"} />
                 Profile
               </DropdownMenuItem>
@@ -160,7 +160,7 @@ export function NavbarDashboard({ title }: { title: string }) {
             {/* <DropdownMenuItem>Billing</DropdownMenuItem>
           <DropdownMenuItem>Team</DropdownMenuItem> */}
             <DropdownMenuItem
-              className="flex gap-2 cursor-pointer"
+              className="flex cursor-pointer gap-2"
               onClick={onLogoutHandler}
             >
               <LogOut size={"16"} />
@@ -187,32 +187,35 @@ export function NavbarDashboard({ title }: { title: string }) {
 }
 
 export function NavbarUser() {
-  // let user = null;
-  // try {
-  //   user = JSON.parse(localStorage.getItem("user")!);
-  // } catch (error) {
-  //   console.error("Error parsing user data from localStorage:", error);
-  // }
+  const user = Cookies.get("token") ? getCurrentUser() : null;
+  const { data, isLoading } = user || {}; // Destructuring assignment with default value
 
-  // const auth = user;
+  const router = useRouter();
 
-  // console.log(auth);
+  const onLogoutHandler = async () => {
+    const response = await logout();
+
+    if (response.status === 200) {
+      router.push("/login");
+    }
+    console.log(response);
+  };
 
   const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
 
   const onSearchHandler = (e: React.FormEvent) => {
     e.preventDefault();
-
     const encodedQuery = encodeURI(searchQuery);
+    console.log(encodedQuery);
 
     router.push(`/u/produk/search?q=${encodedQuery}`);
   };
+
   return (
-    <MaxWidthWrapper className="flex justify-between items-center border-b border-slate-200 max-h-16 py-4 inset-x-0 sticky top-0 z-50 overflow-y-hidden bg-white bg-opacity-95 gap-4">
+    <MaxWidthWrapper className="sticky inset-x-0 top-0 z-50 flex max-h-16 items-center justify-between gap-4 overflow-y-hidden border-b border-slate-200 bg-white bg-opacity-95 py-4">
       {/* Logo and search */}
-      <div className="flex gap-4 w-full">
-        <div className="w-32 lg:w-40 hidden sm:inline-flex items-center">
+      <div className="flex w-full gap-4">
+        <div className="hidden w-32 items-center sm:inline-flex lg:w-40">
           {/* Logo */}
           <Link href={"/u/produk"}>
             <Image src={LogoOrange} alt="AtmaKitchen Logo" />
@@ -224,7 +227,7 @@ export function NavbarUser() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant={"ghost"}
-                className="space-x-2 hidden lg:inline-flex"
+                className="hidden space-x-2 lg:inline-flex"
               >
                 <p className="font-medium">Kategori</p>
                 <ChevronDown size={"16"} />
@@ -234,20 +237,20 @@ export function NavbarUser() {
               <DropdownMenuLabel>Kategori Produk</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <Link href={"/profile"}>
-                <DropdownMenuItem className="flex gap-2 cursor-pointer">
+                <DropdownMenuItem className="flex cursor-pointer gap-2">
                   Kue
                 </DropdownMenuItem>
               </Link>
               <Link href={""}>
-                <DropdownMenuItem className="flex gap-2 cursor-pointer">
+                <DropdownMenuItem className="flex cursor-pointer gap-2">
                   Roti
                 </DropdownMenuItem>
               </Link>
             </DropdownMenuContent>
           </DropdownMenu>
           {/* Search */}
-          <div className="w-full relative">
-            <Search className="absolute top-0 bottom-0 w-6 h-6 my-auto text-slate-500 left-3" />
+          <div className="relative w-full">
+            <Search className="absolute bottom-0 left-3 top-0 my-auto h-6 w-6 text-slate-500" />
 
             <form onSubmit={onSearchHandler}>
               <Input
@@ -268,16 +271,16 @@ export function NavbarUser() {
             buttonVariants({
               variant: "ghost",
               className: "px-2 text-slate-500",
-            })
+            }),
           )}
         >
           <History size={"24"} />
         </Link>
         <HoverCard>
           <HoverCardTrigger asChild>
-            <Button variant={"ghost"} className="px-2 text-slate-500 relative">
+            <Button variant={"ghost"} className="relative px-2 text-slate-500">
               <Bell size={"24"} />
-              <div className="absolute z-10 inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-orange-600 border-2 border-white rounded-full -top-1 -end-1 dark:border-gray-900">
+              <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
                 1
               </div>
             </Button>
@@ -292,55 +295,73 @@ export function NavbarUser() {
           className={cn(
             buttonVariants({
               variant: "ghost",
-              className: "px-2 text-slate-500 relative",
-            })
+              className: "relative px-2 text-slate-500",
+            }),
           )}
         >
           <ShoppingCart size={"24"} />
-          <div className="absolute z-10 inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-orange-600 border-2 border-white rounded-full -top-1 -end-1 dark:border-gray-900">
+          <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
             10
           </div>
         </Link>
         <div className="flex gap-2 ">
           {/* Profile */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant={"ghost"}
-                className="space-x-2 p-1 px-1 hidden lg:inline-flex"
-              >
-                <Image
-                  src={DefaultAvatar}
-                  alt="Default Avatar"
-                  className="border rounded-full border-slate-200 w-10 max-w-16"
-                />
-                <p className="font-medium hidden sm:block">Jeremy</p>
-                <ChevronDown size={"16"} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <Link href={"/u/profile"}>
-                <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                  <User2 size={"16"} />
-                  Profile
-                </DropdownMenuItem>
-              </Link>
-              <Link href={""}>
-                <DropdownMenuItem className="flex gap-2 cursor-pointer">
+          {!isLoading && data ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant={"ghost"}
+                  className="hidden space-x-2 p-1 px-1 lg:inline-flex"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={data.akun?.profile_image}
+                      className="w-10 rounded-full border border-slate-200"
+                    />
+                    <AvatarFallback>AK</AvatarFallback>
+                  </Avatar>
+                  <p className="hidden font-medium sm:block">
+                    {data.nama.split(" ")[0]}
+                  </p>
+                  <ChevronDown size={"16"} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <Link href={"/u/profile"}>
+                  <DropdownMenuItem className="flex cursor-pointer gap-2">
+                    <User2 size={"16"} />
+                    Profile
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem
+                  className="flex cursor-pointer gap-2"
+                  onClick={onLogoutHandler}
+                >
                   <LogOut size={"16"} />
                   Keluar
                 </DropdownMenuItem>
-              </Link>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              href={"/login"}
+              className={cn(
+                buttonVariants({
+                  variant: "default",
+                }),
+              )}
+            >
+              Masuk
+            </Link>
+          )}
           {/* Menu in mobile */}
           <Sheet>
             <SheetTrigger
               className={buttonVariants({
                 variant: "ghost",
-                className: "block lg:hidden px-0",
+                className: "block px-0 lg:hidden",
               })}
             >
               <Menu />

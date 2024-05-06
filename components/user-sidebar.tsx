@@ -21,6 +21,7 @@ import {
   Wallet2,
 } from "lucide-react";
 import { toRupiah } from "@/lib/utils";
+import { getCurrentUser } from "@/lib/api/auth";
 
 interface SidebarType {
   title: string;

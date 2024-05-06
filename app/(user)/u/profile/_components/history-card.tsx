@@ -9,58 +9,83 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 
 import DetailTransaksiDialog from "./detail-transaksi-dialog";
+import { IDetailPesanan, IPesananv2 } from "@/lib/interfaces";
 
-export default function UserHistoryCard() {
+export default function UserHistoryCard({
+  data,
+  isAdmin,
+}: {
+  data: IPesananv2;
+  isAdmin: boolean;
+}) {
   return (
-    <div className="border border-slate-200 p-4 rounded-lg space-y-4">
-      <div className="flex justify-between items-center">
-        <span className="flex gap-2 items-center">
+    <div className="space-y-4 rounded-lg border border-slate-200 p-4">
+      <div className="flex items-center justify-between">
+        <span className="flex items-center gap-2">
           <ShoppingBag size={"16"} />
-          <p className="font-medium text-body">Belanja</p>
-          <p className="text-slate-500 text-body">
-            {toIndonesiaDate("2024-04-11T10:22:52Z")}
+          <p className="text-body font-medium">Belanja</p>
+          <p className="text-body text-slate-500">
+            {toIndonesiaDate(data.created_at!)}
           </p>
+          <p className="text-body font-medium">#{data.id_pesanan}</p>
         </span>
-        <Badge variant={"alert"} className="flex gap-1 items-center">
+        <Badge variant={"alert"} className="flex items-center gap-1 capitalize">
           <Truck size={"16"} />
-          Menunggu
+          {data.status_pesanan_latest?.status ?? "Unknown"}
         </Badge>
       </div>
       <div className="space-y-4">
-        {[1, 2, 3].map((data, index) => (
-          <div className="flex gap-4 w-full items-start" key={index}>
-            <Image src={Brownies} alt="Brownies" className="w-16 rounded-lg" />
-            <div className="flex justify-between items-start gap-4 w-full">
+        {data.detail_pesanan?.map((data: IDetailPesanan, index: number) => (
+          <div className="flex w-full items-start gap-4" key={index}>
+            <Image
+              src={data.produk?.thumbnail?.image!}
+              alt={data.produk?.nama!}
+              className="h-16 w-16 rounded-lg object-cover"
+              width={"72"}
+              height={"72"}
+              priority
+            />
+            <div className="flex w-full items-start justify-between gap-4">
               <div>
-                <p className="font-medium">Brownies 20x20 cm</p>
-                <p className="text-slate-500 text-body">
-                  1 Barang x {toRupiah(250000)}
+                <p className="font-medium">
+                  {data.nama_produk} {data.produk?.ukuran}
+                </p>
+                <p className="text-body text-slate-500">
+                  {data.jumlah} Barang x {toRupiah(parseInt(data.harga))}
                 </p>
               </div>
-              <p className="font-medium">{toRupiah(250000)}</p>
+              <p className="font-medium">
+                {toRupiah(parseInt(data.jumlah) * parseInt(data.harga))}
+              </p>
             </div>
           </div>
         ))}
       </div>
       <Separator className="bg-slate-200" />
-      <div className="flex justify-end flex-col items-end">
-        <p className="text-slate-500 text-body">Total</p>
-        <p className="font-medium">{toRupiah(750000)}</p>
-      </div>
-      <div className="flex justify-between items-center flex-col-reverse sm:flex-row gap-4">
-        <p className="text-body text-slate-500 w-full">
-          Anda mendapatkan{" "}
-          <span className="font-semibold text-orange-600">112 poin</span> dari
-          transaksi ini.
+      <div className="flex flex-col items-end justify-end">
+        <p className="text-body text-slate-500">Total</p>
+        <p className="font-medium">
+          {toRupiah(parseInt(data.total_setelah_diskon))}
         </p>
-        <div className="space-x-4 w-full flex justify-end">
-          <DetailTransaksiDialog />
-          <Link
-            href={""}
-            className={cn(buttonVariants({ variant: "default" }))}
-          >
-            Bayar
-          </Link>
+      </div>
+      <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
+        <p className="text-body w-full text-slate-500">
+          Anda mendapatkan{" "}
+          <span className="font-semibold text-orange-600">
+            {parseInt(data.total_diskon_poin) / 100} poin
+          </span>{" "}
+          dari transaksi ini.
+        </p>
+        <div className="flex w-full justify-end space-x-4">
+          <DetailTransaksiDialog data={data} />
+          {!isAdmin && (
+            <Link
+              href={""}
+              className={cn(buttonVariants({ variant: "default" }))}
+            >
+              Bayar
+            </Link>
+          )}
         </div>
       </div>
     </div>

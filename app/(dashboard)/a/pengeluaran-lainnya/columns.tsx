@@ -24,7 +24,9 @@ import { deletePengeluaranLainnyaById } from "@/lib/api/pengeluaranlainnya";
 import { useSWRConfig } from "swr";
 import { useRouter } from "next/navigation";
 
-export const columns: ColumnDef<IPengeluaranLainnya>[] = [
+export const columns = (
+  onRefresh?: () => void,
+): ColumnDef<IPengeluaranLainnya>[] => [
   {
     accessorKey: "id_pengeluaran_lainnya",
     header: "# ID",
@@ -43,12 +45,12 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="px-4 font-medium w-full">{row.getValue("nama")}</div>
+      <div className="w-full px-4 font-medium">{row.getValue("nama")}</div>
     ),
   },
   {
     accessorKey: "tanggal",
-    header: () => <div>Tanggal Bergabung</div>,
+    header: () => <div>Tanggal Transaksi</div>,
     cell: ({ row }) => {
       return <div>{toIndonesiaDate(row.getValue("tanggal"))}</div>;
     },
@@ -81,12 +83,12 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
         variant: "lime" | "sky";
         label: "Pemasukan" | "Pengeluaran";
       }[] = [
-        { code: "pemasukan", variant: "lime", label: "Pemasukan" },
-        { code: "pengeluaran", variant: "sky", label: "Pengeluaran" },
+        { code: "Pemasukan", variant: "lime", label: "Pemasukan" },
+        { code: "Pengeluaran", variant: "sky", label: "Pengeluaran" },
       ];
 
       const kategoriBadge = kategoriBadges.find(
-        (badge) => badge.code == row.getValue("kategori")
+        (badge) => badge.code == row.getValue("kategori"),
       );
 
       return (
@@ -101,16 +103,19 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
     cell: ({ row }) => {
       const pathname = usePathname();
       const [isOpen, setIsOpen] = useState(false);
-      const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
-      const router = useRouter(); // // Copy this for create, update, delete
+      const router = useRouter();
       const [isLoading, setIsLoading] = useState(false);
 
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
           const response = await deletePengeluaranLainnyaById(
-            row.getValue("id_pengeluaran_lainnya")
+            row.getValue("id_pengeluaran_lainnya"),
           );
+
+          if (response?.status === 200 || response?.status === 201) {
+            onRefresh!();
+          }
         } catch (error: any) {
           console.error("Error deleting pengeluaran lainnya: " + error);
         } finally {
@@ -133,7 +138,7 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
               <DropdownMenuItem
                 onClick={() =>
                   router.push(
-                    `${pathname}/${row.getValue("id_pengeluaran_lainnya")}`
+                    `${pathname}/${row.getValue("id_pengeluaran_lainnya")}`,
                   )
                 }
               >
@@ -141,8 +146,7 @@ export const columns: ColumnDef<IPengeluaranLainnya>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Trash2 size={"16"} /> Hapus{" "}
-                {row.getValue("id_pengeluaran_lainnya")}
+                <Trash2 size={"16"} /> Hapus
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -25,7 +25,7 @@ export default function page({ params }: { params: { id: number } }) {
   return (
     <DashboardWrapper navTitle="Ubah Produk">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Produk", link: "/produk" }]}
+        previousPage={[{ title: "Produk", link: "/a/produk" }]}
         currentPage="Ubah"
       />
 

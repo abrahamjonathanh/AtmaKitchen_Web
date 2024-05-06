@@ -39,7 +39,7 @@ const formSchema = z.object({
   detail_produk: z.array(
     z.object({
       id_produk: z.string().min(1, { message: "Produk harus dipilih" }),
-    })
+    }),
   ),
 });
 
@@ -61,7 +61,7 @@ export default function HampersForm({
     defaultValues: {
       nama: isEditable ? data?.nama ?? "" : "",
       harga_jual: isEditable ? data?.harga_jual ?? "" : "",
-      detail_produk: isEditable ? data?.detail_produk : [{ id_produk: "" }],
+      detail_produk: isEditable ? data?.detail_hampers : [{ id_produk: "" }],
     },
   });
 
@@ -82,21 +82,21 @@ export default function HampersForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 md:flex-row  w-full"
+          className="flex w-full flex-col gap-4  md:flex-row"
           encType="multipart/form-data"
         >
-          <div className="w-full md:w-1/3 h-max space-y-4">
+          <div className="h-max w-full space-y-4 md:w-1/3">
             {selectedImages.length === 0 ? (
               <Image
                 src={NotAvailable}
                 alt="Image not available"
-                className="w-full h-max rounded-lg aspect-square object-cover"
+                className="aspect-square h-max w-full rounded-lg object-cover"
               />
             ) : (
               <Image
                 src={URL.createObjectURL(selectedImages[indexImageSelected])}
                 alt="Selected Image"
-                className="w-full h-max rounded-lg object-cover aspect-square"
+                className="aspect-square h-max w-full rounded-lg object-cover"
                 width={"500"}
                 height={"500"}
               />
@@ -107,7 +107,7 @@ export default function HampersForm({
                   <Image
                     src={URL.createObjectURL(image)}
                     alt={`Image ${index}`}
-                    className="rounded-lg object-cover aspect-square"
+                    className="aspect-square rounded-lg object-cover"
                     width={"500"}
                     height={"500"}
                     onClick={() => setIndexImageSelected(index)}
@@ -126,7 +126,7 @@ export default function HampersForm({
                       multiple
                       onChange={(e) => {
                         const files = Array.from(
-                          e.target.files ?? []
+                          e.target.files ?? [],
                         ) as File[];
                         setSelectedImages((prev) => [...prev, ...files]);
                         onChange(selectedImages);
@@ -143,9 +143,9 @@ export default function HampersForm({
               per produk.
             </p>
           </div>
-          <div className="space-y-6 w-full p-4 rounded-lg border border-slate-200 h-max ">
+          <div className="h-max w-full space-y-6 rounded-lg border border-slate-200 p-4 ">
             <div className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
                   name="nama"
@@ -190,7 +190,7 @@ export default function HampersForm({
               {fields.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex flex-row md:flex-row gap-4 items-end"
+                  className="flex flex-row items-end gap-4 md:flex-row"
                 >
                   <FormField
                     control={form.control}
@@ -230,12 +230,12 @@ export default function HampersForm({
                 variant={"outline"}
                 type="button"
                 onClick={() => append({ id_produk: "" })}
-                className="flex gap-2 w-full"
+                className="flex w-full gap-2"
               >
                 <Plus size={"16"} /> Tambah Bahan Baku
               </Button>
             </div>
-            <div className="flex gap-4 items-center justify-end">
+            <div className="flex items-center justify-end gap-4">
               <Button variant={"outline"} onClick={() => router.back()}>
                 Batal
               </Button>

@@ -26,8 +26,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IPelanggan } from "@/lib/interfaces";
 import { deletePelangganById } from "@/lib/api/pelanggan";
+import { toIndonesiaDate } from "@/lib/utils";
 
-export const columns: ColumnDef<IPelanggan>[] = [
+export const columns = (onRefresh?: () => void): ColumnDef<IPelanggan>[] => [
   {
     accessorKey: "id_pelanggan",
     header: "# ID",
@@ -52,7 +53,7 @@ export const columns: ColumnDef<IPelanggan>[] = [
   {
     accessorKey: "tgl_lahir",
     header: "Tanggal Lahir",
-    cell: ({ row }) => <div className="px-4">{row.getValue("tgl_lahir")}</div>,
+    cell: ({ row }) => <div>{toIndonesiaDate(row.getValue("tgl_lahir"))}</div>,
   },
   {
     accessorKey: "deleted_at",
@@ -102,7 +103,13 @@ export const columns: ColumnDef<IPelanggan>[] = [
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          await deletePelangganById(row.getValue("id_pelanggan"));
+          const response = await deletePelangganById(
+            row.getValue("id_pelanggan"),
+          );
+
+          if (response?.status === 200 || response?.status === 201) {
+            onRefresh!();
+          }
         } catch (error: any) {
           console.error("Error deleting pelanggan: " + error);
         } finally {
@@ -128,7 +135,7 @@ export const columns: ColumnDef<IPelanggan>[] = [
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
+              <DropdownMenuItem onClick={() => setIsOpen(true)} disabled>
                 <Trash2 size={"16"} /> Hapus {row.getValue("id_pelanggan")}
               </DropdownMenuItem>
             </DropdownMenuContent>

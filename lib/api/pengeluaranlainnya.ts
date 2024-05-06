@@ -1,19 +1,19 @@
 "use client";
-import axios from "axios";
 import { toast } from "sonner";
 import { IPengeluaranLainnya } from "../interfaces";
 import useSWR from "swr";
 import { fetcher } from "../utils";
+import { axiosInstance } from "../axiosInstance";
 
 export const getAllPengeluaranLainnya = () => {
-  let { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `${process.env.BASE_API}/pengeluaran-lainnya`,
-    fetcher
+    fetcher,
   );
-  console.log(data);
+
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    data = [
+    const data: IPengeluaranLainnya[] = [
       {
         id_pengeluaran_lainnya: 1,
         nama: "listrik",
@@ -26,63 +26,70 @@ export const getAllPengeluaranLainnya = () => {
           alamat: "Jl. Anggur",
           gaji_harian: "70000",
           telepon: "0812345678",
-          akun: { role: { id_role: "1", role: "Admin" } },
-       },
+          akun: {
+            role: { id_role: "1", role: "Admin" },
+            email: "email@gmail.com",
+            id_role: "1",
+          },
+        },
       },
     ];
+
+    return { data, isLoading, error, mutate };
   }
 
   return {
-    data: data,
+    data,
     isLoading,
-    isError: error,
+    error,
+    mutate,
   };
 };
 
 export const getPengeluaranLainnyaById = (id: number) => {
-  let { data, error, isLoading, isValidating } = useSWR(
+  const { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/pengeluaran-lainnya/${id}`,
-    fetcher
+    fetcher,
   );
 
-   if (!isLoading && error) {
+  if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    data = [
-      {
-        id_pengeluaran_lainnya: 1,
-        nama: "listrik",
-        tanggal: "2024-04-12",
-        kategori: "1",
-        biaya: "500000",
-        karyawan: {
-          id_karyawan: 1,
-          nama: "Sasa",
-          alamat: "Jl. Anggur",
-          gaji_harian: "70000",
-          telepon: "0812345678",
-          akun: { role: { id_role: "1", role: "Admin" } },
-       },
+    const data: IPengeluaranLainnya = {
+      id_pengeluaran_lainnya: 1,
+      nama: "listrik",
+      tanggal: "2024-04-12",
+      kategori: "1",
+      biaya: "500000",
+      karyawan: {
+        id_karyawan: 1,
+        nama: "Sasa",
+        alamat: "Jl. Anggur",
+        gaji_harian: "70000",
+        telepon: "0812345678",
+        akun: {
+          role: { id_role: "1", role: "Admin" },
+          email: "email@gmail.com",
+          id_role: "1",
+        },
       },
-    ];
+    };
+    return { data, isLoading, error, isValidating };
   }
 
   return {
     data: data,
     isLoading,
-    isError: error,
+    error,
     isValidating,
   };
 };
 
 export const createPengeluaranLainnya = async (data: IPengeluaranLainnya) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    console.log(data);
-    const response = await axios.post(`${process.env.BASE_API}/pengeluaran-lainnya`, data);
+    const response = await axiosInstance().post(`/pengeluaran-lainnya`, data);
 
     // ✅ Use toast when its done
-    toast.success("Berhasil menambah data...");
+    toast.success(response.data.message);
 
     return response;
   } catch (error) {
@@ -90,17 +97,18 @@ export const createPengeluaranLainnya = async (data: IPengeluaranLainnya) => {
   }
 };
 
-export const updatePengeluaranLainnyaById = async (id: number, data: IPengeluaranLainnya) => {
+export const updatePengeluaranLainnyaById = async (
+  id: number,
+  data: IPengeluaranLainnya,
+) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.put(
-      `${process.env.BASE_API}/pengeluaran-lainnya/${id}`,
-      data
+    const response = await axiosInstance().put(
+      `/pengeluaran-lainnya/${id}`,
+      data,
     );
 
     // ✅ Use toast when its done
-    toast.success("Berhasil mengubah data...");
+    toast.success(response.data.message);
 
     return response;
   } catch (error: any) {
@@ -111,14 +119,10 @@ export const updatePengeluaranLainnyaById = async (id: number, data: IPengeluara
 
 export const deletePengeluaranLainnyaById = async (id: number) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.delete(
-      `${process.env.BASE_API}/pengeluaran-lainnya/${id}`
-    );
+    const response = await axiosInstance().delete(`/pengeluaran-lainnya/${id}`);
 
     // ✅ Use toast when its done
-    toast.success("Berhasil menghapus data...");
+    toast.success(response.data.message);
 
     return response;
   } catch (error: any) {

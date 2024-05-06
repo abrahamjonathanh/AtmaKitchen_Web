@@ -3,63 +3,61 @@ import Image from "next/image";
 import { useState } from "react";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
-import { Mail, Calendar, ShoppingBag } from "lucide-react";
-import { toIndonesiaDate, toRupiah } from "@/lib/utils";
+import { Mail, Calendar } from "lucide-react";
+import { toIndonesiaDate } from "@/lib/utils";
 import { getPelangganById } from "@/lib/api/pelanggan";
 import Loading from "@/components/ui/loading";
-import { IRiwayatPesanan } from "@/lib/interfaces";
-import InfoCard from "./_components/info-card";
-import RiwayatList from "./_components/riwayat-list";
+import { UserListHistory } from "@/app/(user)/u/profile/_components/history";
+import { useTitle } from "@/lib/hooks";
 
 export default function PelangganDetailPage({
   params,
 }: {
   params: { id: number };
 }) {
-  const [selectedPesanan, setSelectedPesanan] =
-    useState<IRiwayatPesanan | null>(null);
-
-  // const showDetailPesanan = (pesanan: IRiwayatPesanan) => {
-  //   setSelectedPesanan(pesanan);
-  // };
-
-  const handleCloseDialog = () => {
-    setSelectedPesanan(null);
-  };
-
+  useTitle("AtmaKitchen | Pelanggan");
   const { data, isLoading } = getPelangganById(params.id);
-  console.log(data);
 
   return (
     <DashboardWrapper navTitle={`Detail Pelanggan`}>
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Pelanggan", link: "/pelanggan" }]}
+        previousPage={[{ title: "Pelanggan", link: "/a/pelanggan" }]}
         currentPage={`Riwayat Pesanan`}
       />
 
-      <div className="space-y-8">
+      <div className="space-y-4">
         {data && !isLoading ? (
-          <InfoCard>
+          <div className="space-y-1 rounded-lg border border-slate-200 bg-white p-4">
             <p className="text-large font-semibold">{data.pelanggan.nama}</p>
             <div className="space-y-1">
-              <div className="flex items-start xl:items-center">
-                <Mail size={16} className="mr-2" />
+              <div className="flex items-center gap-2">
+                <Mail size={16} />
                 <p>{data.pelanggan.id_akun.email}</p>
               </div>
-              <div className="flex items-start xl:items-center">
-                <Calendar size={16} className="mr-2" />
+              <div className="flex items-center gap-2">
+                <Calendar size={16} />
                 <p>{toIndonesiaDate(data.pelanggan.tgl_lahir)}</p>
               </div>
               <p className="text-body text-slate-500">
-                Tanggal bergabung: {toIndonesiaDate(data.pelanggan.created_at)}
+                Tanggal bergabung:{" "}
+                {toIndonesiaDate(data.pelanggan.created_at, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  second: "numeric",
+                })}
               </p>
             </div>
-          </InfoCard>
+          </div>
         ) : (
           <Loading />
         )}
 
-        {data && !isLoading && <RiwayatList data={data.histori_pesanan} />}
+        {data && !isLoading && (
+          <UserListHistory data={data.histori_pesanan} isAdmin />
+        )}
       </div>
     </DashboardWrapper>
   );

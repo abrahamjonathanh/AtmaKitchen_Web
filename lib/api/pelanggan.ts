@@ -4,61 +4,65 @@ import { toast } from "sonner";
 import { IPelanggan, IRiwayatPesanan } from "../interfaces";
 import { fetcher } from "../utils";
 import useSWR from "swr";
+import { axiosInstance } from "../axiosInstance";
 
 export const getAllPelanggan = () => {
-  let { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `${process.env.BASE_API}/pelanggan`,
     fetcher,
   );
 
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    data = [
+    const data: IPelanggan[] = [
       {
-        id_pelanggan: 1,
+        id_pelanggan: "1",
         nama: "Sasa",
         tgl_lahir: "1990-01-01",
         status: "1",
         akun: {
           email: "sasa@gmail.com",
+          id_role: "1",
         },
       },
     ];
+
+    return { data, isLoading, error, mutate };
   }
 
   return {
-    data: data,
+    data,
     isLoading,
-    isError: error,
+    error,
+    mutate,
   };
 };
 
 export const getPelangganById = (id: number) => {
-  let { data, error, isLoading, isValidating } = useSWR(
+  const { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/pelanggan/${id}`,
     fetcher,
   );
 
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    data = [
-      {
-        id_pelanggan: 1,
-        nama: "Sasa",
-        tgl_lahir: "1990-01-01",
-        status: "1",
-        akun: {
-          email: "sasa@gmail.com",
-        },
-        history_pesanan: [],
+    const data: IPelanggan = {
+      id_pelanggan: "1",
+      nama: "Sasa",
+      tgl_lahir: "1990-01-01",
+      status: "1",
+      akun: {
+        email: "sasa@gmail.com",
+        id_role: "1",
       },
-    ];
+    };
+    return { data, isLoading, error, isValidating };
   }
 
   return {
-    data: data,
+    data,
     isLoading,
-    isError: error,
+    error,
     isValidating,
   };
 };
@@ -114,15 +118,26 @@ export const getPelangganById = (id: number) => {
 
 export const deletePelangganById = async (id: number) => {
   try {
-    const response = await axios.delete(
-      `${process.env.BASE_API}/pelanggan/${id}`,
-    );
+    const response = await axiosInstance().delete(`/pelanggan/${id}`);
 
     // ✅ Use toast when its done
-    toast.success("Berhasil menghapus data...");
+    toast.success(response.data.message);
 
     return response;
   } catch (error) {
     toast.error("Oh no! Terjadi kesalahan saat menghapus data pelanggan...");
+  }
+};
+
+export const updatePelangganById = async (id: number, data: any) => {
+  try {
+    const response = await axiosInstance().put(`/pelanggan/${id}`, data);
+
+    if (response.status === 200 || response.status === 201) {
+      toast.success(response.data.message);
+    }
+    return response;
+  } catch (error) {
+    toast.error("Oh no! Terjadi kesalahan saat mengupdate data pelanggan...");
   }
 };

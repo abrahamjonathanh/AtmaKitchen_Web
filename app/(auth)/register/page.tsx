@@ -58,7 +58,7 @@ export default function RegisterPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true);
-      const response = await register(values);
+      const response = await register({ ...values, id_role: 1 });
 
       if (response?.status === 200 || response?.status === 201) {
         router.push("/login");

@@ -46,7 +46,20 @@ export default function page() {
           id_produk_hampers: 1,
           harga_jual: "5000000",
           nama: "Paket A Test",
-          detail_produk: [{ id_produk: "1" }],
+          detail_hampers: [
+            {
+              id_produk: "1",
+              id_detail_hampers: "1",
+              id_produk_hampers: "1",
+              produk: {
+                nama: "Lapis Surabaya",
+                harga_jual: "500000",
+                id_produk: "1",
+                kapasitas: "20",
+                ukuran: "20x20 cm",
+              },
+            },
+          ],
         }}
       />
     </DashboardWrapper>

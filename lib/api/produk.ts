@@ -7,28 +7,28 @@ import useSWR from "swr";
 import { toast } from "sonner";
 
 export const getAllProduk = () => {
-  let { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `${process.env.BASE_API}/produk`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    data = [
+    const data: IProduk[] = [
       {
         id_produk: 1,
         nama: "Lapis Legit",
-        id_kategori: 1,
+        id_kategori: "1",
         id_penitip: null,
         kapasitas: "20",
         ukuran: "20x20 cm",
-        harga_jual: 500000,
+        harga_jual: "500000",
         image: [],
       },
       {
         id_produk: 2,
         nama: "Lapis Surabaya",
-        id_kategori: 1,
+        id_kategori: "1",
         id_penitip: null,
         kapasitas: "20",
         ukuran: "20x20 cm",
@@ -38,7 +38,7 @@ export const getAllProduk = () => {
       {
         id_produk: 3,
         nama: "Roti Sobek",
-        id_kategori: 3,
+        id_kategori: "3",
         id_penitip: null,
         kapasitas: "20",
         ukuran: "10x10 cm",
@@ -48,27 +48,30 @@ export const getAllProduk = () => {
       {
         id_produk: 4,
         nama: "Boba Milk Tea",
-        id_kategori: 2,
-        id_penitip: 1,
+        id_kategori: "2",
+        id_penitip: "1",
         kapasitas: "20",
         ukuran: "500ml",
         harga_jual: "20000",
         image: [],
       },
     ];
+
+    return { data, isLoading, error, mutate };
   }
 
   return {
     data: data,
     isLoading,
-    isError: error,
+    error,
+    mutate,
   };
 };
 
 export const getProdukById = (id: number) => {
   let { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/produk/${id}`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
@@ -105,7 +108,7 @@ export const createProduk = async (data: IProduk) => {
 
       const response = await axios.post(
         `https://fakestoreapi.com/products/`,
-        data
+        data,
       );
 
       return response;
@@ -134,7 +137,7 @@ export const updateProdukById = async (id: number, data: IProduk) => {
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
     const response = await axios.post(
       `${process.env.BASE_API}/produk/${id}`,
-      data
+      data,
     );
 
     // Check if the database down
@@ -143,7 +146,7 @@ export const updateProdukById = async (id: number, data: IProduk) => {
 
       const response = await axios.put(
         `https://fakestoreapi.com/products/${id}`,
-        data
+        data,
       );
 
       return response;
@@ -175,7 +178,7 @@ export const deleteProdukById = async (id: number) => {
     if (response.status === 500) {
       toast.warning("Database shutdown! Switching to fakeAPI");
       const response = await axios.delete(
-        `https://fakestoreapi.com/products/${id}`
+        `https://fakestoreapi.com/products/${id}`,
       );
 
       return response;

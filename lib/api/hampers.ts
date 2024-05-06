@@ -7,7 +7,7 @@ import { IHampers } from "../interfaces";
 export const getAllHampers = () => {
   const { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/hampers`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
@@ -17,22 +17,19 @@ export const getAllHampers = () => {
         id_produk_hampers: 1,
         nama: "Paket A",
         harga_jual: "650",
-        detail_produk: [
-          { id_produk: "1", nama: "Lapis Legit", ukuran: "10x20 cm" },
-          { id_produk: "2", nama: "Brownies", ukuran: "10x20 cm" },
-          { id_produk: "3", nama: "Exclusive Box" },
-          { id_produk: "4", nama: "Card" },
-        ],
-      },
-      {
-        id_produk_hampers: 2,
-        nama: "Paket B",
-        harga_jual: "550000",
-        detail_produk: [
-          { id_produk: "1", nama: "Lapis Surabaya", ukuran: "10x20 cm" },
-          { id_produk: "2", nama: "Roti Sosis" },
-          { id_produk: "3", nama: "Exclusive Box" },
-          { id_produk: "4", nama: "Card" },
+        detail_hampers: [
+          {
+            id_produk: "1",
+            id_detail_hampers: "1",
+            id_produk_hampers: "1",
+            produk: {
+              nama: "Lapis Surabaya",
+              harga_jual: "500000",
+              id_produk: "1",
+              kapasitas: "20",
+              ukuran: "20x20 cm",
+            },
+          },
         ],
       },
     ];

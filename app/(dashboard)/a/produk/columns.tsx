@@ -22,7 +22,7 @@ import { usePathname } from "next/navigation";
 import { IProduk } from "@/lib/interfaces";
 import { deleteProdukById } from "@/lib/api/produk";
 
-export const columns: ColumnDef<IProduk>[] = [
+export const columns = (onRefresh?: () => void): ColumnDef<IProduk>[] => [
   {
     accessorKey: "id_produk",
     header: "# ID",
@@ -93,7 +93,7 @@ export const columns: ColumnDef<IProduk>[] = [
       ];
 
       const roleBadge = roleBadges.find(
-        (badge) => badge.code === row.getValue("id_kategori")
+        (badge) => badge.code === row.getValue("id_kategori"),
       );
       return (
         <div className="px-4">
@@ -113,7 +113,12 @@ export const columns: ColumnDef<IProduk>[] = [
         try {
           setIsLoading(true);
           console.log("hit");
-          await deleteProdukById(row.getValue("id"));
+          const response = await deleteProdukById(row.getValue("id_produk"));
+
+          // Auto refresh data when success.
+          if (response?.status == 200 || response?.status == 201) {
+            onRefresh!();
+          }
         } catch (error: any) {
           console.error("Error deleting karyawan: " + error);
         } finally {

@@ -45,18 +45,17 @@ export const columns: ColumnDef<IHampers>[] = [
     ),
   },
   {
-    accessorKey: "detail_produk",
+    accessorKey: "detail_hampers",
     header: () => <div>Isi Hampers</div>,
     cell: ({ row }) => {
-      const detailProduk: IProduk[] = row.getValue(
-        "detail_produk"
-      ) as IProduk[];
-
+      const detailHampers: { id_detail_hampers: string; produk: IProduk }[] =
+        row.getValue("detail_hampers");
+      console.log(detailHampers);
       return (
-        <div className="space-x-1 ">
-          {detailProduk.map((data, index: number) => (
+        <div className="flex flex-wrap gap-1 ">
+          {detailHampers.map((data, index: number) => (
             <Badge variant={"outline"} key={index}>
-              {data.nama} {data!.ukuran}
+              {data.produk.nama} {data!.produk.ukuran}
             </Badge>
           ))}
         </div>

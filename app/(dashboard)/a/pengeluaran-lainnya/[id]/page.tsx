@@ -12,6 +12,7 @@ import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/ui/loading";
+import { getCurrentUser } from "@/lib/api/auth";
 
 export default function page({ params }: { params: { id: number } }) {
   useTitle("AtmaKitchen | Pengeluaran Lainnya");
@@ -21,10 +22,27 @@ export default function page({ params }: { params: { id: number } }) {
 
   const { data, isValidating } = getPengeluaranLainnyaById(params.id); // Copy this only for update or delete screen to get data by id
 
+  const user = getCurrentUser();
+
   const onUpdateHandler = async (values: any) => {
+    // TODO: DATE FORMAT
     try {
       setIsLoading(true);
-      const response = await updatePengeluaranLainnyaById(params.id, values);
+      const date = new Date(values.tanggal);
+
+      console.log(
+        `${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate() + 1}`,
+      );
+      const response = await updatePengeluaranLainnyaById(params.id, {
+        ...values,
+        id_karyawan: user.data.id_karyawan,
+        tanggal: `${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate() + 1}`,
+      });
+
+      if (response?.status === 200 || response?.status === 201) {
+        mutate("/a/pengeluaran-lainnya");
+        router.push("/a/pengeluaran-lainnya");
+      }
     } catch (error: any) {
       console.error("Error updating pengeluaran lainnya: ", error);
     } finally {
@@ -36,7 +54,7 @@ export default function page({ params }: { params: { id: number } }) {
     <DashboardWrapper navTitle="Ubah pengeluaran lainnya">
       <BreadcrumbWithSeparator
         previousPage={[
-          { title: "Pengeluaran Lainnya", link: "/pengeluaran-lainnya" },
+          { title: "Pengeluaran Lainnya", link: "/a/pengeluaran-lainnya" },
         ]}
         currentPage="Ubah"
       />
@@ -54,34 +72,3 @@ export default function page({ params }: { params: { id: number } }) {
     </DashboardWrapper>
   );
 }
-
-//       <PengeluaranLainnyaForm
-//         isEditable
-//         data={{
-//           id_pengeluaran_lainnya: params.id,
-//           nama: "listrik",
-//           biaya: "1000",
-//           tanggal: "2024-04-13",
-//           kategori: "Pengeluaran",
-//           karyawan: {
-//             id_karyawan: 1,
-//             nama: "Linda",
-//             alamat: "Jl. Anggur",
-//             telepon: "0812346788",
-//             gaji_harian: "70000",
-//             id_role: "1",
-//             akun: {
-//               id_akun: "1",
-//               role: {
-//                 id_role: "1",
-//                 role: "Admin",
-//               },
-//             },
-//           },
-//         }}
-//         onSubmit={onUpdateHandler}
-//         isLoading={isLoading}
-//       />
-//     </DashboardWrapper>
-//   );
-// }

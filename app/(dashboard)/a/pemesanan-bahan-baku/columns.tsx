@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,17 +11,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toIndonesiaDate, toRupiah } from "@/lib/utils";
+import { toIndonesiaDate, toRupiah, toThousand } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-
 import { useState } from "react";
 import DeleteDialog from "@/components/deleteDialog";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IPemesananBahanBaku } from "@/lib/interfaces";
 import { deleteProdukById } from "@/lib/api/produk";
+import { deletePemesananBahanBakuById } from "@/lib/api/pemesanan-bahan-baku";
 
-export const columns: ColumnDef<IPemesananBahanBaku>[] = [
+export const columns = (
+  onRefresh?: () => void,
+): ColumnDef<IPemesananBahanBaku>[] => [
   {
     accessorKey: "id_pemesanan_bahan_baku",
     header: "# ID",
@@ -66,6 +67,9 @@ export const columns: ColumnDef<IPemesananBahanBaku>[] = [
   {
     accessorKey: "jumlah",
     header: () => <div>Banyak</div>,
+    cell: ({ row }) => {
+      return <div>{toThousand(row.getValue("jumlah"))}</div>;
+    },
   },
 
   {
@@ -84,18 +88,18 @@ export const columns: ColumnDef<IPemesananBahanBaku>[] = [
     cell: ({ row }) => {
       const satuanBadges: {
         code: string;
-        variant: "violet" | "sky" | "lime";
-        label: "Gram" | "Ml" | "Butir";
+        variant: "violet" | "sky" | "lime" | "emerald";
+        label: "Gram" | "Ml" | "Butir" | "Buah";
       }[] = [
         { code: "gr", variant: "violet", label: "Gram" },
         { code: "ml", variant: "sky", label: "Ml" },
         { code: "butir", variant: "lime", label: "Butir" },
-        // { code: "4", variant: "lime", label: "Titipan" },
+        { code: "buah", variant: "emerald", label: "Buah" },
         // { code: "5", variant: "lime", label: "Hampers" },
       ];
 
       const satuanBadge = satuanBadges.find(
-        (badge) => badge.code === row.getValue("satuan")
+        (badge) => badge.code === row.getValue("satuan"),
       );
       return (
         <div className="px-4">
@@ -131,10 +135,15 @@ export const columns: ColumnDef<IPemesananBahanBaku>[] = [
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
-          console.log("hit");
-          await deleteProdukById(row.getValue("id"));
+          const response = await deletePemesananBahanBakuById(
+            row.getValue("id_pemesanan_bahan_baku"),
+          );
+
+          if (response?.status === 200 || response?.status === 201) {
+            onRefresh!();
+          }
         } catch (error: any) {
-          console.error("Error deleting karyawan: " + error);
+          console.error("Error deleting pemesanan bahan baku: " + error);
         } finally {
           setIsLoading(false);
           setIsOpen(false);
@@ -154,7 +163,7 @@ export const columns: ColumnDef<IPemesananBahanBaku>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <Link
                 href={`${pathname}/edit/${row.getValue(
-                  "id_pemesanan_bahan_baku"
+                  "id_pemesanan_bahan_baku",
                 )}`}
               >
                 <DropdownMenuItem>
@@ -163,8 +172,7 @@ export const columns: ColumnDef<IPemesananBahanBaku>[] = [
               </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Trash2 size={"16"} /> Hapus{" "}
-                {row.getValue("id_pemesanan_bahan_baku")}
+                <Trash2 size={"16"} /> Hapus
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

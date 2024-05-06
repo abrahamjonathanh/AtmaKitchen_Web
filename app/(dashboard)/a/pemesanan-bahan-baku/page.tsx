@@ -10,15 +10,13 @@ import { getAllPemesananBahanBaku } from "@/lib/api/pemesanan-bahan-baku";
 
 export default function page() {
   useTitle("AtmaKitchen | Pemesanan Bahan Baku");
-  const { data, isLoading } = getAllPemesananBahanBaku();
+  const { data, isLoading, mutate } = getAllPemesananBahanBaku();
 
   return (
-    // Boiler template for dashboard
-    // Please do not change nor delete it unless you know what you are doing
     <DashboardWrapper navTitle="Pemesanan Bahan Baku">
       <BreadcrumbWithSeparator currentPage="Pemesanan Bahan Baku" />
       {data && !isLoading ? (
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns(mutate)} data={data} />
       ) : (
         <Loading />
       )}

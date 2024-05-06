@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -22,37 +22,69 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { getCurrentUser } from "@/lib/api/auth";
+import Loading from "@/components/ui/loading";
+import { updatePelangganById } from "@/lib/api/pelanggan";
+import { useSWRConfig } from "swr";
 
 const formSchema = z.object({
   nama: z.string().min(2).max(50),
   tgl_lahir: z.date(),
   email: z.string().email(),
 });
-export default function BiodataCard() {
+export default function BiodataCard({
+  data,
+}: {
+  data: {
+    id_pelanggan: string;
+    nama: string;
+    tgl_lahir: string;
+    akun: { id_akun: string; email: string };
+  };
+}) {
+  const { mutate } = useSWRConfig();
+  const [isLoading, setIsLoading] = useState(false);
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nama: "",
-      //   tgl_lahir: "",
-      email: "",
+      nama: data?.nama ?? "",
+      tgl_lahir: new Date(data?.tgl_lahir) ?? new Date(),
+      email: data?.akun.email ?? "",
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsLoading(true);
+      const date = new Date(values.tgl_lahir);
+
+      // TODO: Update tanggal lahir
+
+      const response = await updatePelangganById(parseInt(data.id_pelanggan), {
+        ...values,
+        tgl_lahir: `${date.getUTCFullYear()}/${date.getUTCMonth()}/${date.getUTCDate()}`,
+        id_pelanggan: data.id_pelanggan,
+        id_akun: data.akun.id_akun,
+      });
+
+      if (response?.status === 200 || response?.status === 201) {
+        mutate("/u/profile");
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   }
-  return (
+  return data ? (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
         <div className="space-y-2">
           <p className="text-h4">Biodata Diri</p>
           <div className="space-y-4 sm:space-y-2">
             <div className="flex items-center gap-4">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block text-slate-500">
+              <FormLabel className="hidden w-full text-slate-500 sm:block sm:w-1/3">
                 Nama
               </FormLabel>
               <FormField
@@ -60,7 +92,7 @@ export default function BiodataCard() {
                 name="nama"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel className="block sm:hidden text-slate-500">
+                    <FormLabel className="block text-slate-500 sm:hidden">
                       Nama
                     </FormLabel>
                     <FormControl>
@@ -72,7 +104,7 @@ export default function BiodataCard() {
               />
             </div>
             <div className="flex items-center gap-4">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block text-slate-500">
+              <FormLabel className="hidden w-full text-slate-500 sm:block sm:w-1/3">
                 Tanggal Lahir
               </FormLabel>
               <FormField
@@ -80,7 +112,7 @@ export default function BiodataCard() {
                 name="tgl_lahir"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel className="block sm:hidden text-slate-500">
+                    <FormLabel className="block text-slate-500 sm:hidden">
                       Tanggal Lahir
                     </FormLabel>
                     <Popover>
@@ -90,7 +122,7 @@ export default function BiodataCard() {
                             variant={"outline"}
                             className={cn(
                               "w-full pl-3 text-left font-normal ",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -124,7 +156,7 @@ export default function BiodataCard() {
         <div className="space-y-2">
           <p className="text-h4">Informasi Kontak</p>
           <div className="flex items-center gap-4">
-            <FormLabel className="w-full sm:w-1/3 hidden sm:block text-slate-500">
+            <FormLabel className="hidden w-full text-slate-500 sm:block sm:w-1/3">
               Email
             </FormLabel>
             <FormField
@@ -132,11 +164,11 @@ export default function BiodataCard() {
               name="email"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel className="block sm:hidden text-slate-500">
+                  <FormLabel className="block text-slate-500 sm:hidden">
                     Email
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Email..." {...field} />
+                    <Input placeholder="Email..." {...field} disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -144,13 +176,17 @@ export default function BiodataCard() {
             />
           </div>
         </div>
-        <div className="flex gap-2 justify-end">
+        <div className="flex justify-end gap-2">
           <Button variant={"outline"} type="submit">
             Batal
           </Button>
-          <Button type="submit">Perbarui data saya</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <Loading /> : "Perbarui data saya"}
+          </Button>
         </div>
       </form>
     </Form>
+  ) : (
+    <Loading />
   );
 }

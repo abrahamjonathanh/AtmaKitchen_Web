@@ -22,6 +22,7 @@ export const getAllKaryawan = () => {
         gaji_harian: "10000",
         telepon: "012912598",
         akun: {
+          id_role: "1",
           email: "emailags@gmail.com",
           role: { id_role: "1", role: "Admin" },
         },

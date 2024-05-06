@@ -18,12 +18,13 @@ export default function page() {
   const onCreateHandler = async (values: any) => {
     try {
       setIsLoading(true);
-      const response = await createProduk(values);
+      console.log(values);
+      // const response = await createProduk(values);
 
-      if (response?.status === 200 || response?.status === 201) {
-        mutate("/produk"); // For auto refresh
-        router.push("/produk"); // For redirect route
-      }
+      // if (response?.status === 200 || response?.status === 201) {
+      //   mutate("/a/produk"); // For auto refresh
+      //   router.push("/a/produk"); // For redirect route
+      // }
     } catch (error: any) {
       console.error("Error creating karyawan: ", error);
     } finally {
@@ -34,7 +35,7 @@ export default function page() {
   return (
     <DashboardWrapper navTitle="Tambah Produk">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Produk", link: "/produk" }]}
+        previousPage={[{ title: "Produk", link: "/a/produk" }]}
         currentPage="Tambah"
       />
 

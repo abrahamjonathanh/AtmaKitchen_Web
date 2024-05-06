@@ -8,7 +8,7 @@ import Loading from "@/components/ui/loading";
 import { getAllProduk } from "@/lib/api/produk";
 
 export default function page() {
-  const { data, isLoading } = getAllProduk();
+  const { data, isLoading, mutate } = getAllProduk();
 
   return (
     // Boiler template for dashboard
@@ -16,7 +16,7 @@ export default function page() {
     <DashboardWrapper navTitle="Produk">
       <BreadcrumbWithSeparator currentPage="Produk" />
       {data && !isLoading ? (
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns(mutate)} data={data} />
       ) : (
         <Loading />
       )}

@@ -12,16 +12,7 @@ export type IKaryawan = {
   bonus?: string;
   id_role?: string;
   id_akun?: string;
-  akun: {
-    email?: string;
-    password?: string;
-    id_akun?: string;
-    id_role?: string;
-    role: {
-      id_role: string;
-      role: string;
-    };
-  };
+  akun?: IAkun;
 };
 
 export type IResep = {
@@ -111,20 +102,26 @@ export type IHampers = {
   nama: string;
   harga_jual: string;
   image?: HTMLImageElement | StaticImageData;
-  detail_produk?: {
-    id_produk: string;
-    nama?: string;
-    ukuran?: string;
+  detail_hampers?: {
+    id_detail_hampers: string;
+    id_produk_hampers?: string;
+    id_produk?: string;
+    produk: IProduk;
   }[];
 };
 
 export type IAkun = {
-  nama: string;
+  id_akun?: string;
   email: string;
-  password: string;
-  nama_alamat: string;
-  alamat: string;
-  telepon: string;
+  password?: string;
+  id_role: string;
+  profile_image?: string;
+  email_verified_at?: string | null;
+  remember_token?: string | null;
+  role?: {
+    id_role: string;
+    role: string;
+  };
 };
 
 export type IPemesananBahanBaku = {
@@ -160,6 +157,7 @@ export type IPenitip = {
 
 export type IPengeluaranLainnya = {
   id_pengeluaran_lainnya: number;
+  id_karyawan?: string;
   karyawan: IKaryawan;
   nama: string;
   biaya: string;
@@ -168,11 +166,8 @@ export type IPengeluaranLainnya = {
 };
 
 export interface IPelanggan {
-  id_pelanggan: number;
-  akun: {
-    id_akun?: string;
-    email: string;
-  };
+  id_pelanggan: string;
+  akun?: IAkun;
   nama: string;
   tgl_lahir: string;
   status: string;
@@ -245,9 +240,37 @@ export interface IRiwayatPesanan extends IPesanan {
 
 export interface IDetailPesanan {
   id_detail_pesanan: string;
-  id_produk: string;
+  id_produk?: string | null;
+  id_produk_hampers?: string | null;
   kategori?: string;
   nama_produk: string;
   harga: string;
   jumlah: string;
+  produk?: IProduk;
+}
+
+export interface IPesananv2 {
+  id_pesanan: string;
+  id_metode_pembayaran: string;
+  id_pelanggan: string;
+  tgl_order: string;
+  total_diskon_poin: string;
+  total_pesanan: string;
+  total_setelah_diskon: string;
+  total_dibayarkan?: string | null;
+  total_tip?: string | null;
+  jenis_pengiriman: string;
+  verified_at?: string;
+  accepted_at?: string | null;
+  created_at?: string;
+  detail_pesanan?: IDetailPesanan[];
+  status_pesanan_latest?: IStatusPesanan;
+}
+
+export interface IStatusPesanan {
+  id_status_pesanan: string;
+  id_pesanan?: string;
+  id_karyawan?: string;
+  status: string;
+  created_at: string;
 }

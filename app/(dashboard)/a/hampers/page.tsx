@@ -9,7 +9,7 @@ import { getAllHampers } from "@/lib/api/hampers";
 
 export default function page() {
   const { data, isLoading } = getAllHampers();
-
+  console.log(data);
   return (
     // Boiler template for dashboard
     // Please do not change nor delete it unless you know what you are doing

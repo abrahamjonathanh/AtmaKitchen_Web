@@ -20,14 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pencil, Plus } from "lucide-react";
 import Loading from "@/components/ui/loading";
-import { IPemesananBahanBaku } from "@/lib/interfaces";
-import { Separator } from "@/components/ui/separator";
+import { IBahanBaku, IPemesananBahanBaku } from "@/lib/interfaces";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { getAllBahanBaku } from "@/lib/api/bahan-baku";
 
 const formSchema = z.object({
   id_pemesanan_bahan_baku: z.string().optional(),
@@ -52,8 +51,12 @@ export default function PemesananBahanBakuForm({
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   isLoading?: boolean;
 }) {
-  console.log(`⚠️ Pemesanan Bahan Baku editable mode: ${isEditable}`);
+  const bahanbaku = getAllBahanBaku();
+
   const [isNew, setIsNew] = useState(false);
+  const [previouslySelectedIdBahanBaku, setPreviouslySelectedIdBahanBaku] =
+    useState("");
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,46 +65,78 @@ export default function PemesananBahanBakuForm({
       id_pemesanan_bahan_baku: isEditable
         ? data?.id_pemesanan_bahan_baku ?? ""
         : "",
-      id_bahan_baku: isEditable ? data?.id_bahan_baku ?? "" : "",
+      id_bahan_baku: isEditable ? data?.id_bahan_baku!.toString() ?? "" : "",
       nama: isEditable ? data?.nama ?? "" : "",
       satuan: isEditable ? data?.satuan ?? "" : "",
-      jumlah: isEditable ? data?.jumlah ?? "" : "",
-      harga_beli: isEditable ? data?.harga_beli ?? "" : "",
+      jumlah: isEditable ? data?.jumlah!.toString() ?? "" : "",
+      harga_beli: isEditable ? data?.harga_beli!.toString() ?? "" : "",
     },
   });
 
+  useEffect(() => {
+    const idBahanBaku = form.watch("id_bahan_baku");
+    if (idBahanBaku && !isNew) {
+      const selectedBahanBaku = bahanbaku.data?.find(
+        (bahan: IBahanBaku) => bahan.id_bahan_baku?.toString() === idBahanBaku,
+      );
+      if (selectedBahanBaku) {
+        form.setValue("nama", selectedBahanBaku.nama);
+      }
+    } else if (!isNew) {
+      // Mengisi ulang id_bahan_baku saat isNew false
+      form.setValue("id_bahan_baku", previouslySelectedIdBahanBaku);
+    } else if (isNew) {
+      form.setValue("id_bahan_baku", "");
+    }
+  }, [form, isNew, bahanbaku.data, previouslySelectedIdBahanBaku]);
+
+  console.log(form.watch("id_bahan_baku"));
   return (
     <div className="flex flex-col gap-4 md:flex-row">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 md:flex-row  w-full"
+          className="flex w-full flex-col gap-4  md:flex-row"
           encType="multipart/form-data"
         >
-          <div className="space-y-6 w-full p-4 rounded-lg border border-slate-200 h-max ">
+          <div className="h-max w-full space-y-6 rounded-lg border border-slate-200 p-4 ">
             <div className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
                   name="id_bahan_baku"
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Bahan Baku</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        disabled={isNew}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih Bahan Baku" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="1">Telur</SelectItem>
-                          <SelectItem value="2">Coklat Bubuk</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      {bahanbaku.data && !bahanbaku.isLoading && (
+                        <Select
+                          // onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            setPreviouslySelectedIdBahanBaku(value);
+                            field.onChange();
+                          }}
+                          defaultValue={field.value}
+                          disabled={isNew}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih Bahan Baku" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {bahanbaku.data.map(
+                              (bahan: IBahanBaku, index: number) => (
+                                <SelectItem
+                                  value={bahan.id_bahan_baku!.toString()}
+                                  key={index}
+                                >
+                                  {bahan.nama}
+                                </SelectItem>
+                              ),
+                            )}
+                          </SelectContent>
+                        </Select>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -134,7 +169,7 @@ export default function PemesananBahanBakuForm({
                   />
                 ) : null}
               </div>
-              <div className="flex flex-col md:flex-row gap-4 items-end">
+              <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
                   name="jumlah"
@@ -193,10 +228,7 @@ export default function PemesananBahanBakuForm({
                 />
               </div>
             </div>
-            <div className="space-y-4">
-              <Separator />
-            </div>
-            <div className="flex gap-4 items-center justify-end">
+            <div className="flex items-center justify-end gap-4">
               <Button variant={"outline"} onClick={() => router.back()}>
                 Batal
               </Button>

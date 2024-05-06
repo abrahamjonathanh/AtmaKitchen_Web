@@ -6,7 +6,7 @@ import Loading from "@/components/ui/loading";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { login } from "@/lib/api/auth";
+import { getCurrentUser, login } from "@/lib/api/auth";
 import { Button } from "@/components/ui/button";
 import {
   Form,
