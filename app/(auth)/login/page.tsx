@@ -47,7 +47,7 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       const response = await login(values);
-
+      console.log(response);
       if (response?.status === 200 || response?.status === 201) {
         router.push("/a/karyawan");
       }

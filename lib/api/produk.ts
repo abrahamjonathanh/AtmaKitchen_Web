@@ -101,6 +101,7 @@ export const createProduk = async (data: IProduk) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
+<<<<<<< HEAD
     console.log(data);
     const response = await axiosInstance().post(`/produk`, data, {
       headers: {
@@ -108,6 +109,9 @@ export const createProduk = async (data: IProduk) => {
         Accept: "application/json",
       },
     });
+=======
+    const response = await axiosInstance().post(`/produk`, data);
+>>>>>>> 1a7d7d46d313b4ecaf94d41cfd713c1874d0b0c1
 
     // Check if the database down
     if (response.status === 500) {
