@@ -13,6 +13,7 @@ export type IKaryawan = {
   id_role?: string;
   id_akun?: string;
   akun?: IAkun;
+  created_at?: string;
 };
 
 export type IResep = {
@@ -34,10 +35,10 @@ export type IProfileAdmin = {
   id: string;
   nama: string;
   alamat: string;
-  email: string;
   telepon: string;
   password?: string;
   confirmPassword?: string;
+  akun?: IAkun;
 };
 
 export type IJabatan = {

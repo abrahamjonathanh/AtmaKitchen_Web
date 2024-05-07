@@ -40,12 +40,11 @@ const SentEmail = () => {
 };
 
 export default function page() {
-  useTitle("AtmaKitchen | OTP");
+  useTitle("AtmaKitchen | Verifikasi Email");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingVerify, setIsLoadingVerify] = useState(false);
-
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // Destructure email from search params
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,12 +56,15 @@ export default function page() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
     try {
       setIsLoadingVerify(true);
       const response = await verifyOTP(values);
 
       if (response?.status === 200 || response?.status === 201) {
-        router.push(`/forgot-password/new?e=${values.email}&otp=${values.otp}`);
+        router.push("/login");
       }
     } catch (error) {
       console.error("Error sending OTP: ", error);
@@ -74,6 +76,7 @@ export default function page() {
   const resendOTP = async () => {
     try {
       setIsLoading(true);
+      console.log(form.watch("email"));
       await sendOTP({ email: form.watch("email") });
     } catch (error) {
       console.error("Error sending OTP: ", error);

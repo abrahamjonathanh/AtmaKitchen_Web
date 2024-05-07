@@ -33,7 +33,7 @@ const formSchema = z.object({
   id_produk_hampers: z.string().optional(),
   nama: z.string().min(1, { message: "Nama produk tidak boleh kosong" }),
   harga_jual: z.string().min(1, { message: "Harga tidak boleh kosong" }),
-  image: z.instanceof(File),
+  image: z.instanceof(File).optional(),
   detail_produk: z.array(
     z.object({
       id_produk: z.string().min(1, { message: "Produk harus dipilih" }),

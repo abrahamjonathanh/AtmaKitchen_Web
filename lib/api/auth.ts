@@ -75,7 +75,7 @@ export const login = async (data: { email: string; password: string }) => {
 };
 
 export const getCurrentUser = () => {
-  const { data, isLoading, error, isValidating } = useSWR(
+  const { data, isLoading, error, isValidating, mutate } = useSWR(
     `${process.env.BASE_API}/auth/me`,
     fetcher,
   );
@@ -103,10 +103,10 @@ export const getCurrentUser = () => {
     //     deleted_at: null,
     //   },
     // };
-    return { data, isLoading, error, isValidating };
+    return { data, isLoading, error, isValidating, mutate };
   }
 
-  return { data, isLoading, error, isValidating };
+  return { data, isLoading, error, isValidating, mutate };
 };
 
 export const logout = async () => {
@@ -128,7 +128,50 @@ export const logout = async () => {
 
 export const sendOTP = async (data: { email: string }) => {
   try {
-    const response = await axios.post(`${process.env.BASE_API}/send-otp`, data);
+    const response = await axios.post(
+      `${process.env.BASE_API}/auth/send-otp`,
+      data,
+    );
+
+    if (response.status === 200) {
+      toast.success(response.data.message);
+    }
+
+    return response;
+  } catch (error: any) {
+    toast.error(error.response.data.message);
+    console.error(error);
+  }
+};
+
+export const verifyOTP = async (data: { email: string; otp: string }) => {
+  try {
+    const response = await axios.post(
+      `${process.env.BASE_API}/auth/verify`,
+      data,
+    );
+
+    if (response.status === 200) {
+      toast.success(response.data.message);
+    }
+
+    return response;
+  } catch (error: any) {
+    toast.error(error.response.data.message);
+    console.error(error);
+  }
+};
+
+export const resetPassword = async (data: {
+  email: string;
+  otp: string;
+  password: string;
+}) => {
+  try {
+    const response = await axios.post(
+      `${process.env.BASE_API}/auth/reset`,
+      data,
+    );
 
     if (response.status === 200) {
       toast.success(response.data.message);

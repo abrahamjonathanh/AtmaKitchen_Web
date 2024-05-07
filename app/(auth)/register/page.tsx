@@ -77,7 +77,7 @@ export default function RegisterPage() {
       });
 
       if (response?.status === 200 || response?.status === 201) {
-        router.push("/login");
+        router.push(`/register/verify-otp?e=${values.email}`);
       }
     } catch (error: any) {
       console.error("Error creating akun: ", error);

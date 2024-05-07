@@ -16,11 +16,11 @@ import { Button } from "@/components/ui/button";
 import Loading from "@/components/ui/loading";
 import { useRouter } from "next/navigation";
 import { Pencil } from "lucide-react";
-import { IProfileAdmin } from "@/lib/interfaces";
+import { IKaryawan } from "@/lib/interfaces";
 
 const formSchema = z
   .object({
-    id: z.string(),
+    id_karyawan: z.string(),
     nama: z.string().min(1, { message: "Nama tidak boleh kosong" }),
     alamat: z.string().min(1, { message: "Alamat tidak boleh kosong" }),
     email: z
@@ -41,7 +41,7 @@ export default function AdminProfileForm({
   onSubmit = (values) => console.log(values),
   isLoading = false,
 }: {
-  data: IProfileAdmin;
+  data: IKaryawan;
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   isLoading?: boolean;
 }) {
@@ -50,10 +50,10 @@ export default function AdminProfileForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id: data.id,
+      id_karyawan: data.id_karyawan?.toString(),
       nama: data.nama,
       alamat: data.alamat,
-      email: data.email,
+      email: data.akun?.email || "",
       telepon: data.telepon,
       password: "",
       confirmPassword: "",
@@ -61,16 +61,16 @@ export default function AdminProfileForm({
   });
 
   return (
-    <div className="py-4 flex flex-col gap-8 w-full md:w-3/4">
+    <div className="flex w-full flex-col gap-8 py-4 md:w-3/4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit!)}
-          className="space-y-6 w-full rounded-lg h-max"
+          className="h-max w-full space-y-6 rounded-lg"
         >
           <div className="space-y-4 sm:space-y-2">
             <p className="text-h4">Biodata Diri</p>
             <div className="flex items-center gap-4">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block">
+              <FormLabel className="hidden w-full sm:block sm:w-1/3">
                 Nama
               </FormLabel>
               <FormField
@@ -88,7 +88,7 @@ export default function AdminProfileForm({
               />
             </div>
             <div className="flex items-start gap-4 ">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block pt-1.5">
+              <FormLabel className="hidden w-full pt-1.5 sm:block sm:w-1/3">
                 Alamat
               </FormLabel>
               <FormField
@@ -109,7 +109,7 @@ export default function AdminProfileForm({
           <div className="space-y-4 sm:space-y-2">
             <p className="text-h4">Informasi Kontak</p>
             <div className="flex items-center gap-4">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block">
+              <FormLabel className="hidden w-full sm:block sm:w-1/3">
                 Email
               </FormLabel>
               <FormField
@@ -119,7 +119,12 @@ export default function AdminProfileForm({
                   <FormItem className="w-full">
                     <FormLabel className="block sm:hidden">Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="Email..." {...field} />
+                      <Input
+                        type="email"
+                        placeholder="Email..."
+                        {...field}
+                        disabled
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -127,7 +132,7 @@ export default function AdminProfileForm({
               />
             </div>
             <div className="flex items-center gap-4">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block">
+              <FormLabel className="hidden w-full sm:block sm:w-1/3">
                 Telepon
               </FormLabel>
               <FormField
@@ -148,7 +153,7 @@ export default function AdminProfileForm({
           <div className="space-y-4 sm:space-y-2">
             <p className="text-h4">Reset Password (Opsional)</p>
             <div className="flex items-center gap-4">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block">
+              <FormLabel className="hidden w-full sm:block sm:w-1/3">
                 Password Baru
               </FormLabel>
               <FormField
@@ -172,7 +177,7 @@ export default function AdminProfileForm({
               />
             </div>
             <div className="flex items-center gap-4">
-              <FormLabel className="w-full sm:w-1/3 hidden sm:block">
+              <FormLabel className="hidden w-full sm:block sm:w-1/3">
                 Konfirmasi Password Baru
               </FormLabel>
               <FormField
@@ -196,7 +201,7 @@ export default function AdminProfileForm({
               />
             </div>
           </div>
-          <div className="flex gap-4 justify-end">
+          <div className="flex justify-end gap-4">
             <Button variant={"outline"} onClick={() => router.back()}>
               Batal
             </Button>
