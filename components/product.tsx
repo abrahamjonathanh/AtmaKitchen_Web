@@ -4,6 +4,7 @@ import { categoryBadge, cn, toRupiah } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
 import { IProduk } from "@/lib/interfaces";
+import NotAvailable from "@/public/products/Not Available.png";
 
 const ProductCard = ({
   product = {
@@ -38,13 +39,23 @@ const ProductCard = ({
         )}
       >
         <div className="relative max-h-max">
-          <Image
-            src={product.thumbnail?.image!}
-            alt={`Image of ${product.nama}`}
-            className="max-h-36 rounded-t-lg object-cover"
-            width={"460"}
-            height={"460"}
-          />
+          {product.thumbnail?.image ? (
+            <Image
+              src={product.thumbnail?.image!}
+              alt={`Image of ${product.nama}`}
+              className="max-h-36 rounded-t-lg object-cover"
+              width={"460"}
+              height={"460"}
+            />
+          ) : (
+            <Image
+              src={NotAvailable}
+              alt={`Image of ${product.nama}`}
+              className="max-h-36 rounded-t-lg object-cover"
+              width={"460"}
+              height={"460"}
+            />
+          )}
         </div>
         <div className="space-y-2 p-3 pb-4">
           <div className="space-y-2">
