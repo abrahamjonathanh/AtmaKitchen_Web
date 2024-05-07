@@ -15,7 +15,7 @@ export default function page({ params }: { params: { id: number } }) {
   return (
     <DashboardWrapper navTitle="Detail Resep">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Resep", link: "/resep" }]}
+        previousPage={[{ title: "Resep", link: "/a/resep" }]}
         currentPage="Detail"
       />
       {data && !isLoading ? <ResepDetail data={data} /> : <Loading />}

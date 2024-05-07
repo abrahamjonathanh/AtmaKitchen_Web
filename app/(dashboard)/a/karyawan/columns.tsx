@@ -135,11 +135,11 @@ export const columns = (onRefresh?: () => void): ColumnDef<IKaryawan>[] => [
           const response = await deleteKaryawanById(
             row.getValue("id_karyawan"),
           );
-
+          console.log(response);
           // Auto refresh data when success.
-          if (response?.status == 200 || response?.status == 201) {
-            onRefresh!();
-          }
+          // if (response?.status == 200 || response?.status == 201) {
+          // }
+          onRefresh!();
         } catch (error: any) {
           console.error("Error deleting karyawan: " + error);
         } finally {

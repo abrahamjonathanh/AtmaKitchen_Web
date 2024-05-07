@@ -20,8 +20,8 @@ export default function page() {
       const response = await createResep(values);
 
       if (response?.status === 200 || response?.status === 201) {
-        mutate("/resep"); // For auto refresh
-        router.push("/resep"); // For redirect route
+        mutate("/a/resep"); // For auto refresh
+        router.push("/a/resep"); // For redirect route
       }
       console.log(values);
     } catch (error: any) {
@@ -34,7 +34,7 @@ export default function page() {
   return (
     <DashboardWrapper navTitle="Tambah Resep">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Resep", link: "/resep" }]}
+        previousPage={[{ title: "Resep", link: "/a/resep" }]}
         currentPage="Tambah"
       />
 

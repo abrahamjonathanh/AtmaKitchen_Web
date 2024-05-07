@@ -40,7 +40,8 @@ export default function ResepDetail({
   const onDeleteHandler = async () => {
     try {
       setIsLoading(true);
-      await deleteResepById(data.id_produk);
+      const response = await deleteResepById(data.id_produk);
+      console.log(response);
     } catch (error: any) {
       console.error("Error deleting karyawan: " + error);
     } finally {
@@ -54,7 +55,7 @@ export default function ResepDetail({
       <Image
         src={data.images.length ? data.images[0].image : Brownies}
         alt={data.nama}
-        className="rounded-lg w-full sm:w-1/2 md:w-1/3"
+        className="w-full rounded-lg sm:w-1/2 md:w-1/3"
         width={"720"}
         height={"720"}
       />
@@ -64,7 +65,7 @@ export default function ResepDetail({
           Untuk membuat {data.nama} 1 loyang ({data.ukuran}), dibutuhkan
           bahan-bahan sebagai berikut.
         </p>
-        <ul className="list-decimal list-inside">
+        <ul className="list-inside list-decimal">
           {data.bahan_baku.map((bahan, index) => (
             <li key={index}>
               {bahan.bahan_baku.nama} {bahan.jumlah} {bahan.bahan_baku.satuan}
@@ -81,7 +82,7 @@ export default function ResepDetail({
             href={`/resep/edit/${data.id_produk}`}
             className={cn(
               "flex items-center gap-1",
-              buttonVariants({ variant: "default" })
+              buttonVariants({ variant: "default" }),
             )}
           >
             Ubah <Pencil className="text-white" size={"16"} />

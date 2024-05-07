@@ -25,8 +25,8 @@ export default function page({ params }: { params: { id: number } }) {
       const response = await updateResepById(values, params.id);
 
       if (response?.status === 200 || response?.status === 201) {
-        mutate("/resep"); // For auto refresh
-        router.push("/resep"); // For redirect route
+        mutate("/a/resep"); // For auto refresh
+        router.push("/a/resep"); // For redirect route
       }
       console.log(values);
     } catch (error: any) {
@@ -39,7 +39,7 @@ export default function page({ params }: { params: { id: number } }) {
   return (
     <DashboardWrapper navTitle="Ubah Resep">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Resep", link: "/resep" }]}
+        previousPage={[{ title: "Resep", link: "/a/resep" }]}
         currentPage="Ubah"
       />
 

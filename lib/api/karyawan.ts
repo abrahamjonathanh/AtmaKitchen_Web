@@ -36,6 +36,7 @@ export const getAllKaryawan = () => {
     data: data,
     isLoading,
     isError: error,
+    mutate,
   };
 };
 
@@ -172,9 +173,7 @@ export const deleteKaryawanById = async (id: number) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.delete(
-      `${process.env.BASE_API}/karyawan/${id}`,
-    );
+    const response = await axiosInstance().delete(`/karyawan/${id}`);
 
     if (response.status === 500) {
       toast.warning("Database shutdown! Switching to fakeAPI");
@@ -187,7 +186,7 @@ export const deleteKaryawanById = async (id: number) => {
 
     // ✅ Use toast when its done
     toast.success(response?.data?.message);
-
+    console.log(response);
     return response;
   } catch (error: any) {
     toast.error("Oh no! terjadi kesalahan...");
