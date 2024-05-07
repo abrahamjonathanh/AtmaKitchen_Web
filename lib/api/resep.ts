@@ -10,7 +10,7 @@ import { IResep } from "../interfaces";
 export const getAllResep = () => {
   let { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/resep`,
-    fetcher
+    fetcher,
   );
 
   // Ini kondisi kalau databasenya error atau mati. Di pastikan dulu sudah tidak loading lagi (!isLoading) dan terjadi error (error). Itu alasan kenapa muncul !isLoading && error.
@@ -58,7 +58,7 @@ export const getAllResep = () => {
 export const getResepById = (id: number) => {
   let { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/resep/${id}`,
-    fetcher
+    fetcher,
   );
 
   // Ini kondisi kalau databasenya error atau mati. Di pastikan dulu sudah tidak loading lagi (!isLoading) dan terjadi error (error). Itu alasan kenapa muncul !isLoading && error.
@@ -144,9 +144,7 @@ export const deleteResepById = async (id: number) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    const response = await axios.delete(
-      `https://fakestoreapi.com/products/${id}`
-    );
+    const response = await axios.delete(`${process.env.BASE_API}/resep/${id}`);
 
     // ✅ Use toast when its done
     toast.success("Berhasil menghapus data...");
@@ -169,7 +167,7 @@ export const createResep = async (data: IResep) => {
 
       const response = await axios.post(
         `https://fakestoreapi.com/products/`,
-        data
+        data,
       );
 
       return response;
@@ -197,7 +195,7 @@ export const updateResepById = async (data: IResep, id_produk: number) => {
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
     const response = await axios.put(
       `${process.env.BASE_API}/resep/${id_produk}`,
-      data
+      data,
     );
 
     // Check if the database down
@@ -206,7 +204,7 @@ export const updateResepById = async (data: IResep, id_produk: number) => {
 
       const response = await axios.post(
         `https://fakestoreapi.com/products/`,
-        data
+        data,
       );
 
       return response;

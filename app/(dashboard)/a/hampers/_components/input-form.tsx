@@ -212,16 +212,14 @@ export default function HampersForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {/* TODO: dropdown jadi putih */}
                             {!produk.isLoading &&
-                              produk.data &&
                               produk.data.map(
-                                (data: IProduk, index: number) => (
+                                (produk: IProduk, index: number) => (
                                   <SelectItem
-                                    value={data.id_produk!}
+                                    value={produk.id_produk.toString()}
                                     key={index}
                                   >
-                                    {data.nama} {data.ukuran}
+                                    {produk.nama} {produk.ukuran}
                                   </SelectItem>
                                 ),
                               )}

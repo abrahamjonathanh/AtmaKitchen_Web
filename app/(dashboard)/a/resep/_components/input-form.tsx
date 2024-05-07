@@ -30,6 +30,7 @@ import Brownies from "@/public/products/Brownies.png";
 import { Separator } from "@/components/ui/separator";
 import { getAllResep } from "@/lib/api/resep";
 import { getAllBahanBaku } from "@/lib/api/bahan-baku";
+import { getAllProduk } from "@/lib/api/produk";
 
 const formSchema = z.object({
   id_produk: z.string().min(1, { message: "Produk tidak boleh kosong" }),
@@ -94,10 +95,11 @@ export default function ResepForm({
     name: "bahan_baku",
   });
 
+  const produk = getAllProduk();
   const resep = getAllResep();
   const bahan_baku = getAllBahanBaku();
 
-  return !resep.isLoading && !bahan_baku.isLoading ? (
+  return !resep.isLoading && !bahan_baku.isLoading && !produk.isLoading ? (
     <div className="flex flex-col gap-4 md:flex-row">
       <Image
         src={data?.images?.length ? data?.images[0].image : Brownies}
@@ -129,13 +131,13 @@ export default function ResepForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {!resep.isLoading &&
-                        resep.data.map((produk: IProduk, index: number) => (
+                      {!produk.isLoading &&
+                        produk.data.map((produk: IProduk, index: number) => (
                           <SelectItem
                             value={produk.id_produk.toString()}
                             key={index}
                           >
-                            {produk.nama}
+                            {produk.nama} {produk.ukuran}
                           </SelectItem>
                         ))}
                     </SelectContent>

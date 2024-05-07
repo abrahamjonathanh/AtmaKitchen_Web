@@ -8,6 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import Brownies from "@/public/products/Brownies.png";
+import { useSWRConfig } from "swr";
+import { useRouter } from "next/navigation";
 
 export default function ResepDetail({
   data,
@@ -36,14 +38,20 @@ export default function ResepDetail({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
+  const router = useRouter();
 
   const onDeleteHandler = async () => {
     try {
       setIsLoading(true);
       const response = await deleteResepById(data.id_produk);
-      console.log(response);
+
+      if (response?.status === 200 || response?.status === 201) {
+        mutate("/a/resep"); // For auto refresh
+        router.push("/a/resep"); // For redirect route
+      }
     } catch (error: any) {
-      console.error("Error deleting karyawan: " + error);
+      console.error("Error deleting resep: " + error);
     } finally {
       setIsLoading(false); //For stop the loading process
       setIsOpen(false); // For close the dialog

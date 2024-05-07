@@ -121,6 +121,7 @@ export default function PengeluaranLainnyaForm({
                         // disabled={(date) =>
                         //   date < new Date(Date.now() - 24 * 60 * 60 * 1000)
                         // }
+                        disabled={(date) => date > new Date()}
                         initialFocus
                       />
                     </PopoverContent>

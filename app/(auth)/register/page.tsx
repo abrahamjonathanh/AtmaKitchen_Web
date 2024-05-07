@@ -19,10 +19,13 @@ const formSchema = z
       .min(6, { message: "Password harus berisi minimal 6!" }),
     konfirmasiPassword: z
       .string()
-      .min(1, { message: "Konfirmasi Password tidak boleh kosong!" }),
+      .min(6, { message: "Konfirmasi Password harus berisi minimal 6!" }),
     telepon: z
       .string()
-      .min(1, { message: "Nomor telepon tidak boleh kosong!" }),
+      .min(6, { message: "Nomor telepon tidak boleh kosong!" })
+      .refine((value) => /^[0-9]+$/.test(value), {
+        message: "Nomor telepon harus terdiri dari angka saja",
+      }),
     nama_alamat: z
       .string()
       .min(1, { message: "Nama alamat tidak boleh kosong!" }),

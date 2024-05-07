@@ -8,10 +8,10 @@ const formSchema = z
   .object({
     passwordBaru: z
       .string()
-      .min(1, { message: "Password baru tidak boleh kosong!" }),
+      .min(6, { message: "Password minimal 6 karakter!" }),
     konfirmasiPasswordBaru: z
       .string()
-      .min(1, { message: "Konfirmasi password baru tidak boleh kosong!" }),
+      .min(6, { message: "Konfirmasi password minimal 6 karakter!" }),
   })
   .refine((data) => data.passwordBaru === data.konfirmasiPasswordBaru, {
     message: "Passwords tidak sama!",

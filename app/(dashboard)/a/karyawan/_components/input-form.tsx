@@ -38,7 +38,10 @@ const formSchema = z.object({
   bonus: z.string().optional(), // Docs: Optional() is used to handle nullable input
   telepon: z
     .string({ required_error: "Telepon tidak boleh kosong" })
-    .min(6, { message: "Nomor telepon harus terdiri dari minimal 6 angka" }),
+    .min(6, { message: "Nomor telepon harus terdiri dari minimal 6 angka" })
+    .refine((value) => /^[0-9]+$/.test(value), {
+      message: "Nomor telepon harus terdiri dari angka saja",
+    }),
   id_role: z
     .string({ required_error: "Jabatan tidak boleh kosong" })
     .min(1, { message: "Jabatan tidak boleh kosong" }),
