@@ -10,7 +10,7 @@ import HampersForm from "../_components/input-form";
 import { createHampers } from "@/lib/api/hampers";
 
 export default function page() {
-  useTitle("AtmaKitchen | Produk");
+  useTitle("AtmaKitchen | Hampers");
   const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
   const router = useRouter(); // // Copy this for create, update, delete
   const [isLoading, setIsLoading] = useState(false); // // Copy this for create, update, delete
@@ -35,7 +35,7 @@ export default function page() {
   return (
     <DashboardWrapper navTitle="Tambah Hampers">
       <BreadcrumbWithSeparator
-        previousPage={[{ title: "Hampers", link: "/hampers" }]}
+        previousPage={[{ title: "Hampers", link: "/a/hampers" }]}
         currentPage="Tambah"
       />
 

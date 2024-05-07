@@ -9,7 +9,7 @@ const formSchema = z.object({
   alamat: z.string().min(2).max(50),
   telepon: z.string().min(2).max(50),
 });
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {
   Dialog,
   DialogContent,
@@ -34,11 +34,15 @@ export default function AlamatDialog({
   data,
   onSubmit = (values) => console.log(values),
   isLoading = false,
+  setIsOpen,
+  isOpen = false,
 }: {
   isEditable?: boolean;
   data?: any;
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   isLoading?: boolean;
+  setIsOpen?: Dispatch<SetStateAction<boolean>>;
+  isOpen?: boolean;
 }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,13 +56,13 @@ export default function AlamatDialog({
   });
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant={isEditable ? "outline" : "default"} size={"sm"}>
           {isEditable ? "Ubah " : "Tambah"} Alamat
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-sm sm:max-w-xl max-h-screen">
+      <DialogContent className="max-h-screen max-w-sm sm:max-w-xl">
         <DialogHeader>
           <DialogTitle> {isEditable ? "Ubah " : "Tambah"} Alamat</DialogTitle>
         </DialogHeader>
@@ -70,10 +74,10 @@ export default function AlamatDialog({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 flex flex-col text-black"
+              className="flex flex-col space-y-4 text-black"
             >
               <div className="flex items-center gap-4">
-                <FormLabel className="w-full sm:w-1/3 hidden sm:block text-black">
+                <FormLabel className="hidden w-full text-black sm:block sm:w-1/3">
                   Label Alamat
                 </FormLabel>
                 <FormField
@@ -81,7 +85,7 @@ export default function AlamatDialog({
                   name="label"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel className="block sm:hidden text-black">
+                      <FormLabel className="block text-black sm:hidden">
                         Label Alamat
                       </FormLabel>
                       <FormControl>
@@ -93,7 +97,7 @@ export default function AlamatDialog({
                 />
               </div>
               <div className="flex items-center gap-4">
-                <FormLabel className="w-full sm:w-1/3 hidden sm:block text-black">
+                <FormLabel className="hidden w-full text-black sm:block sm:w-1/3">
                   Nama Penerima
                 </FormLabel>
                 <FormField
@@ -101,7 +105,7 @@ export default function AlamatDialog({
                   name="nama"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel className="block sm:hidden text-black">
+                      <FormLabel className="block text-black sm:hidden">
                         Nama Penerima
                       </FormLabel>
                       <FormControl>
@@ -113,7 +117,7 @@ export default function AlamatDialog({
                 />
               </div>
               <div className="flex items-center gap-4">
-                <FormLabel className="w-full sm:w-1/3 hidden sm:block text-black">
+                <FormLabel className="hidden w-full text-black sm:block sm:w-1/3">
                   Alamat Penerima
                 </FormLabel>
                 <FormField
@@ -121,7 +125,7 @@ export default function AlamatDialog({
                   name="alamat"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel className="block sm:hidden text-black">
+                      <FormLabel className="block text-black sm:hidden">
                         Alamat Penerima
                       </FormLabel>
                       <FormControl>
@@ -133,7 +137,7 @@ export default function AlamatDialog({
                 />
               </div>
               <div className="flex items-center gap-4">
-                <FormLabel className="w-full sm:w-1/3 hidden sm:block text-black">
+                <FormLabel className="hidden w-full text-black sm:block sm:w-1/3">
                   No Telepon
                 </FormLabel>
                 <FormField
@@ -141,7 +145,7 @@ export default function AlamatDialog({
                   name="telepon"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel className="block sm:hidden text-black">
+                      <FormLabel className="block text-black sm:hidden">
                         No Telepon
                       </FormLabel>
                       <FormControl>
@@ -154,7 +158,7 @@ export default function AlamatDialog({
               </div>
               <Button
                 type="submit"
-                className="self-end flex gap-2"
+                className="flex gap-2 self-end"
                 disabled={isLoading}
               >
                 {isLoading ? <Loading /> : "Simpan"}

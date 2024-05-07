@@ -13,7 +13,7 @@ export default function page() {
   const [quantity, setQuantity] = useState("1");
 
   const data: IProduk = {
-    id_produk: 1,
+    id_produk: "1",
     image: [
       { image: "https://atmaimages.blob.core.windows.net/images/Brownies.png" },
       {

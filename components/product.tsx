@@ -11,7 +11,7 @@ const ProductCard = ({
     harga_jual: "500000",
     id_kategori: "1",
     id_penitip: null,
-    id_produk: 1,
+    id_produk: "1",
     image: [
       {
         image: "https://atmaimages.blob.core.windows.net/images/Brownies.png",

@@ -137,7 +137,7 @@ export function NavbarDashboard({ title }: { title: string }) {
                 <Avatar>
                   <AvatarImage
                     src={data.akun.profile_image}
-                    className="w-10 rounded-full border border-slate-200"
+                    className="w-10 rounded-full border border-slate-200 object-cover"
                   />
                   <AvatarFallback>AK</AvatarFallback>
                 </Avatar>
@@ -151,7 +151,7 @@ export function NavbarDashboard({ title }: { title: string }) {
           <DropdownMenuContent>
             <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link href={"/profile"}>
+            <Link href={"/a/profile"}>
               <DropdownMenuItem className="flex cursor-pointer gap-2">
                 <User2 size={"16"} />
                 Profile
@@ -367,7 +367,7 @@ export function NavbarUser() {
               <Menu />
             </SheetTrigger>
             <SheetContent className="w-full sm:w-3/4 ">
-              {data && !isLoading && <UserSidebar data={data}/>}
+              {data && !isLoading && <UserSidebar data={data} />}
             </SheetContent>
           </Sheet>
         </div>

@@ -101,7 +101,6 @@ export const createProduk = async (data: IProduk) => {
   try {
     // Boiler template for fetching api
     // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-
     console.log(data);
     const response = await axiosInstance().post(`/produk`, data, {
       headers: {

@@ -58,7 +58,7 @@ export default function Page() {
               <Avatar className="h-20 w-20">
                 <AvatarImage
                   src={data.akun?.profile_image}
-                  className="rounded-full border border-slate-200"
+                  className="rounded-full border border-slate-200 object-cover"
                 />
                 <AvatarFallback>AK</AvatarFallback>
               </Avatar>
@@ -92,7 +92,7 @@ export default function Page() {
                   </span>
                 </span>
                 <p className="font-medium">
-                  {toThousand(data.poins.total_poin)} Poin
+                  {toThousand(data.poins?.total_poin || 0)} Poin
                 </p>
               </div>
             </div>

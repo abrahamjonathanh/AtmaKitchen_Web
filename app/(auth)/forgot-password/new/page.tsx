@@ -1,18 +1,22 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import LoginImage from "../../../../public/images/Login.png";
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-const formSchema = z.object({
-  passwordBaru: z
-    .string()
-    .min(1, { message: "Password baru tidak boleh kosong!" }),
-  konfirmasiPasswordBaru: z
-    .string()
-    .min(1, { message: "Konfirmasi password baru tidak boleh kosong!" }),
-});
+const formSchema = z
+  .object({
+    passwordBaru: z
+      .string()
+      .min(1, { message: "Password baru tidak boleh kosong!" }),
+    konfirmasiPasswordBaru: z
+      .string()
+      .min(1, { message: "Konfirmasi password baru tidak boleh kosong!" }),
+  })
+  .refine((data) => data.passwordBaru === data.konfirmasiPasswordBaru, {
+    message: "Passwords tidak sama!",
+    path: ["konfirmasiPasswordBaru"],
+  });
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +31,15 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { MoveLeft } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { resetPassword } from "@/lib/api/auth";
+import Loading from "@/components/ui/loading";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,24 +49,41 @@ export default function LoginPage() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsLoading(true);
+      const response = await resetPassword({
+        email: searchParams.get("e") || "",
+        otp: searchParams.get("otp") || "",
+        password: values.passwordBaru,
+      });
+
+      if (response?.status === 200 || response?.status === 201) {
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
-    <MaxWidthWrapper className="my-4">
-      <div className="flex justify-between items-center">
-        <div className="w-5/12">
-          <Button className="mb-4 flex gap-2.5" variant={"outline"}>
+    <MaxWidthWrapper className="lg:pr-0">
+      <div className="flex items-center justify-between gap-8">
+        <div className="w-full lg:w-1/3">
+          <Button
+            className="mb-4 flex gap-2.5"
+            variant={"outline"}
+            onClick={router.back}
+          >
             <MoveLeft />
             Kembali
           </Button>
-          <p className="text-3xl font-semibold mb-4">Password Baru</p>
+          <p className="mb-4 text-3xl font-semibold">Password Baru</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-1 mb-1">
+              <div className="space-y-2">
                 <FormField
                   control={form.control}
                   name="passwordBaru"
@@ -91,17 +119,18 @@ export default function LoginPage() {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Ubah Password
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? <Loading /> : "Ubah Password"}
               </Button>
             </form>
           </Form>
         </div>
-        <div className="w-1/2">
+        <div className="hidden h-screen lg:block lg:w-2/3">
           <Image
             src={LoginImage}
             alt="Login"
-            className="w-full h-full object-cover rounded-3xl"
+            className="h-full w-full object-cover"
+            priority
           />
         </div>
       </div>

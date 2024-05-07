@@ -4,31 +4,35 @@ import DashboardWrapper from "@/components/dashboard-wrapper";
 
 import AdminProfileForm from "./_components/input-form";
 import { useState } from "react";
-import { deleteKaryawanById } from "@/lib/api/karyawan";
+import { deleteKaryawanById, updateKaryawanProfile } from "@/lib/api/karyawan";
 import { IProfileAdmin } from "@/lib/interfaces";
 import AdminProfileInfo from "./_components/profile-info";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import { useTitle } from "@/lib/hooks";
+import { getCurrentUser } from "@/lib/api/auth";
+import Loading from "@/components/ui/loading";
 
 export default function page() {
   useTitle("AtmaKitchen | Profil");
+  const profile = getCurrentUser();
+
   const [isLoading, setIsLoading] = useState(false);
 
-  const data: IProfileAdmin = {
-    id: "1",
-    nama: "John Petra",
-    alamat: "Jln. Kaliurang 215",
-    email: "john.petra@gmail.com",
-    telepon: "085612852715",
-    password: "",
-    confirmPassword: "",
-  };
-
-  const onUpdateHandler = async (values: IProfileAdmin) => {
+  const onUpdateHandler = async (values: any) => {
     try {
       setIsLoading(true);
+      console.log(profile.data);
       console.log(values);
-      await deleteKaryawanById(1); // Change this to handler
+      const profileData = profile.data;
+
+      const response = await updateKaryawanProfile({
+        ...values,
+        id_akun: profileData.akun?.id_akun,
+      });
+
+      if (response?.status === 200 || response?.status === 201) {
+        profile.mutate();
+      }
     } catch (error: any) {
       console.error("Error updating profil: ", error);
     } finally {
@@ -39,15 +43,18 @@ export default function page() {
   return (
     <DashboardWrapper navTitle="Profil">
       <BreadcrumbWithSeparator currentPage="Profil" />
-      <div className="max-w-[1200px]">
-        <AdminProfileInfo />
-
-        <AdminProfileForm
-          data={data}
-          isLoading={isLoading}
-          onSubmit={onUpdateHandler}
-        />
-      </div>
+      {profile.data && !profile.isLoading && !profile.isValidating ? (
+        <div className="max-w-[1200px]">
+          <AdminProfileInfo data={profile.data} />
+          <AdminProfileForm
+            data={profile.data}
+            isLoading={isLoading}
+            onSubmit={onUpdateHandler}
+          />
+        </div>
+      ) : (
+        <Loading />
+      )}
     </DashboardWrapper>
   );
 }

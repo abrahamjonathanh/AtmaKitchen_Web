@@ -193,3 +193,25 @@ export const deleteKaryawanById = async (id: number) => {
     toast.error("Oh no! terjadi kesalahan...");
   }
 };
+
+export const updateKaryawanProfile = async (data: {
+  id_karyawan: string;
+  nama: string;
+  alamat: string;
+  email: string;
+  telepon: string;
+  id_akun: string;
+  password: string;
+}) => {
+  try {
+    const response = await axiosInstance().put("/karyawan/profile", data);
+    console.log(response);
+    if (response.status === 200 || response.status === 201) {
+      toast.success(response.data.message);
+    }
+
+    return response;
+  } catch (error) {
+    toast.error("Oh no! terjadi kesalahan...");
+  }
+};

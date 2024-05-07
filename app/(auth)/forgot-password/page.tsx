@@ -28,7 +28,7 @@ import { MoveLeft } from "lucide-react";
 import { sendOTP } from "@/lib/api/auth";
 import Loading from "@/components/ui/loading";
 import { useTitle } from "@/lib/hooks";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   useTitle("AtmaKitchen | Lupa Password");

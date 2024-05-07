@@ -4,7 +4,7 @@ import { IAlamat } from "@/lib/interfaces";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import DeleteDialog from "@/components/deleteDialog";
-import { deleteAlamatById } from "@/lib/api/alamat";
+import { deleteAlamatById, updateAlamatById } from "@/lib/api/alamat";
 
 export default function AlamatCard({
   data,
@@ -14,7 +14,9 @@ export default function AlamatCard({
   onRefresh?: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
 
   const onDeleteHandler = async () => {
     try {
@@ -29,6 +31,25 @@ export default function AlamatCard({
     }
   };
 
+  const onEditHandler = async (values: any) => {
+    try {
+      setIsLoadingUpdate(true);
+      const response = await updateAlamatById(parseInt(data.id_alamat), {
+        ...values,
+        id_pelanggan: data.id_pelanggan,
+      });
+
+      if (response?.status === 200 || response?.status === 201) {
+        onRefresh!();
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingUpdate(false);
+      setIsOpenUpdate(false);
+    }
+  };
+
   return (
     <div className="space-y-2 rounded-lg border border-slate-200 p-4 shadow-md">
       <div>
@@ -38,7 +59,14 @@ export default function AlamatCard({
         <p>{data.alamat}</p>
       </div>
       <div className="flex flex-row items-center gap-2">
-        <AlamatDialog isEditable data={data} />
+        <AlamatDialog
+          isEditable
+          data={data}
+          onSubmit={onEditHandler}
+          isOpen={isOpenUpdate}
+          setIsOpen={setIsOpenUpdate}
+          isLoading={isLoadingUpdate}
+        />
         <Button
           size={"sm"}
           variant={"outline"}

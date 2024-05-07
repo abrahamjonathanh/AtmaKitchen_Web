@@ -138,33 +138,35 @@ export default function PemesananBahanBakuForm({
                   )}
                 />
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={isNew}
-                    onCheckedChange={() => {
-                      setIsNew(!isNew);
-                    }}
-                    id="isNewMode"
-                  />
-                  <Label htmlFor="isNewMode">Bahan Baku Baru</Label>
+              {!isEditable && (
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={isNew}
+                      onCheckedChange={() => {
+                        setIsNew(!isNew);
+                      }}
+                      id="isNewMode"
+                    />
+                    <Label htmlFor="isNewMode">Bahan Baku Baru</Label>
+                  </div>
+                  {isNew ? (
+                    <FormField
+                      control={form.control}
+                      name="nama"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Nama Bahan Baku</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nama Bahan Baku" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ) : null}
                 </div>
-                {isNew ? (
-                  <FormField
-                    control={form.control}
-                    name="nama"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Nama Bahan Baku</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Nama Bahan Baku" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : null}
-              </div>
+              )}
               <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}
