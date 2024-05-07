@@ -27,7 +27,7 @@ export default function page() {
         router.push("/a/produk"); // For redirect route
       }
     } catch (error: any) {
-      console.error("Error creating karyawan: ", error);
+      console.error("Error creating produk: ", error);
     } finally {
       setIsLoading(false);
     }

@@ -78,12 +78,21 @@ export default function ProdukForm({
 
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [indexImageSelected, setIndexImageSelected] = useState(0);
-  const [isTitipan, setIsTitipan] = useState(penitip ? true : false);
+  const [isTitipan, setIsTitipan] = useState(
+    isEditable && data?.id_penitip ? true : false,
+  );
 
   // TODO: fix update penitip
   useEffect(() => {
     form.setValue("image", selectedImages);
+    console.log(selectedImages);
   }, [selectedImages, form]);
+
+  useEffect(() => {
+    if (!isTitipan) {
+      form.setValue("id_penitip", "");
+    }
+  }, [isTitipan, form]);
 
   return (
     <div className="flex flex-col gap-4 md:flex-row">
@@ -233,8 +242,8 @@ export default function ProdukForm({
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="1">Kue</SelectItem>
-                          <SelectItem value="2">Minuman</SelectItem>
-                          <SelectItem value="3">Roti</SelectItem>
+                          <SelectItem value="2">Roti</SelectItem>
+                          <SelectItem value="3">Minuman</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
