@@ -18,6 +18,7 @@ export default function page() {
   const onCreateHandler = async (values: any) => {
     try {
       setIsLoading(true);
+      console.log(values);
       const response = await createBahanBaku(values);
 
       if (response?.status === 200 || response?.status === 201) {

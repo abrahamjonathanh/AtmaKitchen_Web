@@ -24,10 +24,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import Loading from "@/components/ui/loading";
-import { IHampers } from "@/lib/interfaces";
+import { IHampers, IProduk } from "@/lib/interfaces";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import NotAvailable from "@/public/products/Not Available.png";
+import { getAllProduk } from "@/lib/api/produk";
 
 const formSchema = z.object({
   id_produk_hampers: z.string().optional(),
@@ -54,12 +55,21 @@ export default function HampersForm({
 }) {
   const router = useRouter();
 
+  const produk = getAllProduk();
+
+  const defaultDetailProduk =
+    isEditable && data?.detail_hampers
+      ? data.detail_hampers.map((item) => ({
+          id_produk: item.id_produk!.toString(),
+        }))
+      : [{ id_produk: "" }];
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nama: isEditable ? data?.nama ?? "" : "",
-      harga_jual: isEditable ? data?.harga_jual ?? "" : "",
-      detail_produk: isEditable ? data?.detail_hampers : [{ id_produk: "" }],
+      nama: isEditable ? data?.nama.toString() ?? "" : "",
+      harga_jual: isEditable ? data?.harga_jual.toString() ?? "" : "",
+      detail_produk: defaultDetailProduk,
     },
   });
 
@@ -92,6 +102,14 @@ export default function HampersForm({
                 width={"500"}
                 height={"500"}
               />
+            ) : isEditable && data && data.image ? (
+              <Image
+                src={data.image}
+                alt="Current Image"
+                className="aspect-square h-max w-full rounded-lg object-cover"
+                width={"500"}
+                height={"500"}
+              />
             ) : (
               <Image
                 src={NotAvailable}
@@ -100,30 +118,34 @@ export default function HampersForm({
               />
             )}
 
-            <FormField
-              control={form.control}
-              name="image"
-              render={({ field: { onChange } }) => (
-                <FormItem className="w-max">
-                  <FormControl>
-                    <Input
-                      type="file"
-                      onChange={(e) => {
-                        const file = e.target.files![0] as File;
-                        setSelectedImages(file);
-                        onChange(selectedImages);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <p className="text-body text-slate-500">
-              Besar file: maksimum 10.000.000 bytes (10 Megabytes). Ekstensi
-              file yang diperbolehkan: .JPG .JPEG .PNG. Maksimal unggah 5 foto
-              per produk.
-            </p>
+            {!isEditable && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field: { onChange } }) => (
+                    <FormItem className="w-max">
+                      <FormControl>
+                        <Input
+                          type="file"
+                          onChange={(e) => {
+                            const file = e.target.files![0] as File;
+                            setSelectedImages(file);
+                            onChange(selectedImages);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <p className="text-body text-slate-500">
+                  Besar file: maksimum 10.000.000 bytes (10 Megabytes). Ekstensi
+                  file yang diperbolehkan: .JPG .JPEG .PNG. Maksimal unggah 5
+                  foto per produk.
+                </p>
+              </>
+            )}
           </div>
           <div className="h-max w-full space-y-6 rounded-lg border border-slate-200 p-4 ">
             <div className="space-y-4">
@@ -190,8 +212,19 @@ export default function HampersForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="1">Coklat batang</SelectItem>
-                            <SelectItem value="2">Butter</SelectItem>
+                            {/* TODO: dropdown jadi putih */}
+                            {!produk.isLoading &&
+                              produk.data &&
+                              produk.data.map(
+                                (data: IProduk, index: number) => (
+                                  <SelectItem
+                                    value={data.id_produk!}
+                                    key={index}
+                                  >
+                                    {data.nama} {data.ukuran}
+                                  </SelectItem>
+                                ),
+                              )}
                           </SelectContent>
                         </Select>
                         <FormMessage />

@@ -21,8 +21,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IHampers, IProduk } from "@/lib/interfaces";
 import { deleteProdukById } from "@/lib/api/produk";
+import { useRouter } from "next/navigation";
+import { deleteHampersById } from "@/lib/api/hampers";
 
-export const columns: ColumnDef<IHampers>[] = [
+export const columns = (onRefresh?: () => void): ColumnDef<IHampers>[] => [
   {
     accessorKey: "id_produk_hampers",
     header: "# ID",
@@ -77,15 +79,22 @@ export const columns: ColumnDef<IHampers>[] = [
     cell: ({ row }) => {
       const pathname = usePathname();
       const [isOpen, setIsOpen] = useState(false);
+      const router = useRouter();
       const [isLoading, setIsLoading] = useState(false);
 
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
           console.log("hit");
-          await deleteProdukById(row.getValue("id"));
+          const response = await deleteHampersById(
+            row.getValue("id_produk_hampers"),
+          );
+
+          if (response?.status == 200 || response?.status == 201) {
+            onRefresh!();
+          }
         } catch (error: any) {
-          console.error("Error deleting karyawan: " + error);
+          console.error("Error deleting hampers: " + error);
         } finally {
           setIsLoading(false);
           setIsOpen(false);
@@ -106,13 +115,19 @@ export const columns: ColumnDef<IHampers>[] = [
               <Link
                 href={`${pathname}/edit/${row.getValue("id_produk_hampers")}`}
               >
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    router.push(
+                      `${pathname}/edit/${row.getValue("id_produk_hampers")}`,
+                    )
+                  }
+                >
                   <Pencil size={"16"} /> Ubah
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Trash2 size={"16"} /> Hapus {row.getValue("id_produk_hampers")}
+                <Trash2 size={"16"} /> Hapus {row.getValue("nama")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

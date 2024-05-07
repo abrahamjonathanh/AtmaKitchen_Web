@@ -75,7 +75,7 @@ export type IPengiriman = {
 
 // @yori
 export type IProduk = {
-  id_produk: string | number;
+  id_produk: string;
   nama: string;
   id_kategori?: string;
   id_penitip?: string | null;
@@ -142,7 +142,7 @@ export type IBahanBaku = {
   id_bahan_baku?: number;
   nama: string;
   stok: string;
-  stok_minimum?: string;
+  stok_minumum?: string;
   satuan: string;
   updated_at: string; //terkahir diperbaharui
 };

@@ -29,7 +29,6 @@ import { Label } from "@/components/ui/label";
 import { getAllBahanBaku } from "@/lib/api/bahan-baku";
 
 const formSchema = z.object({
-  id_pemesanan_bahan_baku: z.string().optional(),
   id_bahan_baku: z.string().optional(),
   nama: z
     .string()
@@ -62,9 +61,6 @@ export default function PemesananBahanBakuForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id_pemesanan_bahan_baku: isEditable
-        ? data?.id_pemesanan_bahan_baku ?? ""
-        : "",
       id_bahan_baku: isEditable ? data?.id_bahan_baku!.toString() ?? "" : "",
       nama: isEditable ? data?.nama ?? "" : "",
       satuan: isEditable ? data?.satuan ?? "" : "",
@@ -142,33 +138,35 @@ export default function PemesananBahanBakuForm({
                   )}
                 />
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    checked={isNew}
-                    onCheckedChange={() => {
-                      setIsNew(!isNew);
-                    }}
-                    id="isNewMode"
-                  />
-                  <Label htmlFor="isNewMode">Bahan Baku Baru</Label>
+              {!isEditable && (
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={isNew}
+                      onCheckedChange={() => {
+                        setIsNew(!isNew);
+                      }}
+                      id="isNewMode"
+                    />
+                    <Label htmlFor="isNewMode">Bahan Baku Baru</Label>
+                  </div>
+                  {isNew ? (
+                    <FormField
+                      control={form.control}
+                      name="nama"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Nama Bahan Baku</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nama Bahan Baku" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ) : null}
                 </div>
-                {isNew ? (
-                  <FormField
-                    control={form.control}
-                    name="nama"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Nama Bahan Baku</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Nama Bahan Baku" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : null}
-              </div>
+              )}
               <div className="flex flex-col items-end gap-4 md:flex-row">
                 <FormField
                   control={form.control}

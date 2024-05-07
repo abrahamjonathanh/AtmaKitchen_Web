@@ -149,7 +149,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IProduk>[] => [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Trash2 size={"16"} /> Hapus {row.getValue("id_produk")}
+                <Trash2 size={"16"} /> Hapus {row.getValue("nama")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
