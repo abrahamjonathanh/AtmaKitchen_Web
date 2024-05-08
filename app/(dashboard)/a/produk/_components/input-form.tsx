@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import NotAvailable from "@/public/products/Not Available.png";
 import { Label } from "@/components/ui/label";
 import { getAllPenitip } from "@/lib/api/penitip";
+import UpdateDialog from "@/components/updateDialog";
 
 const formSchema = z.object({
   id_produk: z.string().optional(),
@@ -76,6 +77,7 @@ export default function ProdukForm({
     },
   });
 
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [indexImageSelected, setIndexImageSelected] = useState(0);
   const [isTitipan, setIsTitipan] = useState(
@@ -323,7 +325,12 @@ export default function ProdukForm({
               <Button variant={"outline"} onClick={() => router.back()}>
                 Batal
               </Button>
-              <Button type="submit" className="flex gap-2" disabled={isLoading}>
+              <Button
+                type="button"
+                className="flex gap-2"
+                disabled={isLoading}
+                onClick={() => setIsOpen(true)}
+              >
                 {isLoading ? (
                   <Loading />
                 ) : isEditable ? (
@@ -336,6 +343,14 @@ export default function ProdukForm({
                   </>
                 )}
               </Button>
+              <UpdateDialog
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                title={isEditable ? "Ubah" : "Tambah"}
+                description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+                onSubmit={() => onSubmit(form.getValues())}
+                isLoading={isLoading}
+              />
             </div>
           </div>
         </form>

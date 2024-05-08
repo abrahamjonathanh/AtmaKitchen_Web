@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import React from "react";
+import React, { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import { IBahanBaku, IProduk, IResep } from "@/lib/interfaces";
@@ -31,6 +31,7 @@ import { Separator } from "@/components/ui/separator";
 import { getAllResep } from "@/lib/api/resep";
 import { getAllBahanBaku } from "@/lib/api/bahan-baku";
 import { getAllProduk } from "@/lib/api/produk";
+import UpdateDialog from "@/components/updateDialog";
 
 const formSchema = z.object({
   id_produk: z.string().min(1, { message: "Produk tidak boleh kosong" }),
@@ -98,6 +99,15 @@ export default function ResepForm({
   const produk = getAllProduk();
   const resep = getAllResep();
   const bahan_baku = getAllBahanBaku();
+  const [isOpen, setIsOpen] = useState(false);
+
+  // const handleSubmit = (values: {
+  //   id_produk: string;
+  //   bahan_baku: { id_bahan_baku: string; jumlah: string }[];
+  // }) => {
+  //   onSubmit(values);
+  //   setIsOpen(false);
+  // };
 
   return !resep.isLoading && !bahan_baku.isLoading && !produk.isLoading ? (
     <div className="flex flex-col gap-4 md:flex-row">
@@ -107,7 +117,7 @@ export default function ResepForm({
         className="h-max w-full rounded-lg md:w-1/3"
         width={"480"}
         height={"480"}
-        placeholder="blur"
+        // placeholder="blur"
       />
       <Form {...form}>
         <form
@@ -225,7 +235,12 @@ export default function ResepForm({
             <Button variant={"outline"} onClick={() => router.back()}>
               Batal
             </Button>
-            <Button type="submit" className="flex gap-2" disabled={isLoading}>
+            <Button
+              type="button"
+              className="flex gap-2"
+              disabled={isLoading}
+              onClick={() => setIsOpen(true)}
+            >
               {isLoading ? (
                 <Loading />
               ) : isEditable ? (
@@ -238,6 +253,14 @@ export default function ResepForm({
                 </>
               )}
             </Button>
+            <UpdateDialog
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              title={isEditable ? "Ubah" : "Tambah"}
+              description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+              onSubmit={() => onSubmit(form.getValues())}
+              isLoading={isLoading}
+            />
           </div>
         </form>
       </Form>

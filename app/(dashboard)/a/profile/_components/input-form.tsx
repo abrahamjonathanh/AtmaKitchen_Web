@@ -17,6 +17,8 @@ import Loading from "@/components/ui/loading";
 import { useRouter } from "next/navigation";
 import { Pencil } from "lucide-react";
 import { IKaryawan } from "@/lib/interfaces";
+import UpdateDialog from "@/components/updateDialog";
+import { useState } from "react";
 
 const formSchema = z
   .object({
@@ -59,6 +61,7 @@ export default function AdminProfileForm({
       confirmPassword: "",
     },
   });
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="flex w-full flex-col gap-8 py-4 md:w-3/4">
@@ -205,7 +208,12 @@ export default function AdminProfileForm({
             <Button variant={"outline"} onClick={() => router.back()}>
               Batal
             </Button>
-            <Button type="submit" className="flex gap-2" disabled={isLoading}>
+            <Button
+              type="button"
+              className="flex gap-2"
+              disabled={isLoading}
+              onClick={() => setIsOpen(true)}
+            >
               {isLoading ? (
                 <Loading />
               ) : (
@@ -214,6 +222,16 @@ export default function AdminProfileForm({
                 </>
               )}
             </Button>
+            <UpdateDialog
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              title={"Ubah"}
+              description={
+                "Tindakkan ini tidak dapat diulang ketika anda menekan Ubah"
+              }
+              onSubmit={() => onSubmit(form.getValues())}
+              isLoading={isLoading}
+            />
           </div>
         </form>
       </Form>

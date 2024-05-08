@@ -11,7 +11,7 @@ import {
 import { Button } from "./ui/button";
 import Loading from "./ui/loading";
 
-export default function DeleteDialog({
+export default function UpdateDialog({
   isOpen = false,
   setIsOpen,
   title = "Title...",
@@ -30,7 +30,7 @@ export default function DeleteDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="flex max-w-sm flex-col gap-8 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Ubah</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="text-slate-500">
             {description}
           </DialogDescription>
@@ -47,7 +47,7 @@ export default function DeleteDialog({
             onClick={onSubmit}
             disabled={isLoading}
           >
-            {isLoading ? <Loading title="Updating..." /> : "Ubah"}
+            {isLoading ? <Loading /> : title}
           </Button>
         </DialogFooter>
       </DialogContent>

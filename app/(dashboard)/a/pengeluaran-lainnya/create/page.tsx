@@ -48,10 +48,12 @@ export default function page() {
         ]}
         currentPage="Tambah"
       />
-      <PengeluaranLainnyaForm
-        onSubmit={onCreateHandler}
-        isLoading={isLoading}
-      />
+      {data && (
+        <PengeluaranLainnyaForm
+          onSubmit={onCreateHandler}
+          isLoading={isLoading}
+        />
+      )}
     </DashboardWrapper>
   );
 }

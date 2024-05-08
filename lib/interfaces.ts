@@ -29,6 +29,7 @@ export type IResep = {
     satuan?: string;
     jumlah: string;
   }[];
+  thumbnail?: { image: string };
 };
 
 export type IProfileAdmin = {

@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React from "react";
+import React, { useState } from "react";
 import { CalendarIcon, Pencil, Plus } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import { IPengeluaranLainnya } from "@/lib/interfaces";
@@ -32,6 +32,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import UpdateDialog from "@/components/updateDialog";
 
 const formSchema = z.object({
   nama: z.string().min(1, { message: "Nama tidak boleh kosong" }),
@@ -55,6 +56,7 @@ export default function PengeluaranLainnyaForm({
 }) {
   console.log(`⚠️ Pengeluaran Lainnya editable mode: ${isEditable}`);
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
 
   //   Define form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -175,7 +177,12 @@ export default function PengeluaranLainnyaForm({
           <Button variant={"outline"} onClick={() => router.back()}>
             Batal
           </Button>
-          <Button type="submit" className="flex gap-2" disabled={isLoading}>
+          <Button
+            type="button"
+            className="flex gap-2"
+            disabled={isLoading}
+            onClick={() => setIsOpen(true)}
+          >
             {isLoading ? (
               <Loading />
             ) : isEditable ? (
@@ -188,6 +195,14 @@ export default function PengeluaranLainnyaForm({
               </>
             )}
           </Button>
+          <UpdateDialog
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            title={isEditable ? "Ubah" : "Tambah"}
+            description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+            onSubmit={() => onSubmit(form.getValues())}
+            isLoading={isLoading}
+          />
         </div>
       </form>
     </Form>

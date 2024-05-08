@@ -21,10 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import React from "react";
+import React, { useState } from "react";
 import { Pencil, Plus } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import { IBahanBaku } from "@/lib/interfaces";
+import UpdateDialog from "@/components/updateDialog";
 
 const formSchema = z.object({
   nama: z.string().min(1, { message: "Nama tidak boleh kosong" }),
@@ -60,6 +61,8 @@ export default function BahanBakuForm({
       satuan: isEditable ? data?.satuan ?? "" : "",
     },
   });
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Form {...form}>
@@ -140,7 +143,12 @@ export default function BahanBakuForm({
           <Button variant={"outline"} onClick={() => router.back()}>
             Batal
           </Button>
-          <Button type="submit" className="flex gap-2" disabled={isLoading}>
+          <Button
+            type="button"
+            className="flex gap-2"
+            disabled={isLoading}
+            onClick={() => setIsOpen(true)}
+          >
             {isLoading ? (
               <Loading />
             ) : isEditable ? (
@@ -153,6 +161,14 @@ export default function BahanBakuForm({
               </>
             )}
           </Button>
+          <UpdateDialog
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            title={isEditable ? "Ubah" : "Tambah"}
+            description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+            onSubmit={() => onSubmit(form.getValues())}
+            isLoading={isLoading}
+          />
         </div>
       </form>
     </Form>

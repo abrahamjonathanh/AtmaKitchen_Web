@@ -27,6 +27,7 @@ import { IBahanBaku, IPemesananBahanBaku } from "@/lib/interfaces";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { getAllBahanBaku } from "@/lib/api/bahan-baku";
+import UpdateDialog from "@/components/updateDialog";
 
 const formSchema = z.object({
   id_bahan_baku: z.string().optional(),
@@ -68,6 +69,8 @@ export default function PemesananBahanBakuForm({
       harga_beli: isEditable ? data?.harga_beli!.toString() ?? "" : "",
     },
   });
+
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const idBahanBaku = form.watch("id_bahan_baku");
@@ -230,7 +233,12 @@ export default function PemesananBahanBakuForm({
               <Button variant={"outline"} onClick={() => router.back()}>
                 Batal
               </Button>
-              <Button type="submit" className="flex gap-2" disabled={isLoading}>
+              <Button
+                type="button"
+                className="flex gap-2"
+                disabled={isLoading}
+                onClick={() => setIsOpen(true)}
+              >
                 {isLoading ? (
                   <Loading />
                 ) : isEditable ? (
@@ -243,6 +251,14 @@ export default function PemesananBahanBakuForm({
                   </>
                 )}
               </Button>
+              <UpdateDialog
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                title={isEditable ? "Ubah" : "Tambah"}
+                description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+                onSubmit={() => onSubmit(form.getValues())}
+                isLoading={isLoading}
+              />
             </div>
           </div>
         </form>

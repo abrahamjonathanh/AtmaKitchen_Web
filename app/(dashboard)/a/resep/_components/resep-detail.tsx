@@ -70,8 +70,8 @@ export default function ResepDetail({
       <div className="space-y-2">
         <p className="text-h3">{data.nama}</p>
         <p>
-          Untuk membuat {data.nama} 1 loyang ({data.ukuran}), dibutuhkan
-          bahan-bahan sebagai berikut.
+          Untuk membuat {data.nama} ({data.ukuran}), dibutuhkan bahan-bahan
+          sebagai berikut.
         </p>
         <ul className="list-inside list-decimal">
           {data.bahan_baku.map((bahan, index) => (
@@ -87,7 +87,7 @@ export default function ResepDetail({
             Hapus
           </Button>
           <Link
-            href={`/resep/edit/${data.id_produk}`}
+            href={`/a/resep/edit/${data.id_produk}`}
             className={cn(
               "flex items-center gap-1",
               buttonVariants({ variant: "default" }),

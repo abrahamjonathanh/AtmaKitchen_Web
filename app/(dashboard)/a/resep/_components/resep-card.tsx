@@ -1,23 +1,14 @@
 import { buttonVariants } from "@/components/ui/button";
+import { IResep } from "@/lib/interfaces";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function ResepCard({
-  data,
-}: {
-  data: {
-    id_produk: number;
-    nama: string;
-    thumbnail: {
-      image: string;
-    };
-  };
-}) {
+export default function ResepCard({ data }: { data: IResep }) {
   // console.log(thumbnail.image);
   console.log(data);
   return (
-    <div className="border rounded-lg border-slate-200 flex flex-col">
+    <div className="flex flex-col rounded-lg border border-slate-200">
       {/* {data.thumbnail?.image && ( */}
       <Image
         src={
@@ -25,14 +16,16 @@ export default function ResepCard({
           "https://via.placeholder.com/640x480.png/eee?text=Not Available"
         }
         alt={`Image of ${data.nama}`}
-        className="rounded-t-lg max-h-36 object-cover"
+        className="max-h-36 rounded-t-lg object-cover"
         width={"480"}
         height={"480"}
         priority
       />
       {/* )} */}
-      <div className="p-3 pb-4 space-y-2">
-        <p className="text-black font-medium cursor-default">{data.nama}</p>
+      <div className="space-y-2 p-3 pb-4">
+        <p className="cursor-default font-medium text-black">
+          {data.nama} {data.ukuran!}
+        </p>
         <Link
           href={`resep/${data.id_produk}`}
           className={cn("w-full", buttonVariants({ variant: "outline" }))}

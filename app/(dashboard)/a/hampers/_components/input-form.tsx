@@ -29,6 +29,7 @@ import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import NotAvailable from "@/public/products/Not Available.png";
 import { getAllProduk } from "@/lib/api/produk";
+import UpdateDialog from "@/components/updateDialog";
 
 const formSchema = z.object({
   id_produk_hampers: z.string().optional(),
@@ -80,6 +81,7 @@ export default function HampersForm({
 
   const [selectedImages, setSelectedImages] = useState<File>();
   const [indexImageSelected, setIndexImageSelected] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     form.setValue("image", selectedImages!);
@@ -249,10 +251,12 @@ export default function HampersForm({
               </Button>
             </div>
             <div className="flex items-center justify-end gap-4">
-              <Button variant={"outline"} onClick={() => router.back()}>
-                Batal
-              </Button>
-              <Button type="submit" className="flex gap-2" disabled={isLoading}>
+              <Button
+                type="button"
+                className="flex gap-2"
+                disabled={isLoading}
+                onClick={() => setIsOpen(true)}
+              >
                 {isLoading ? (
                   <Loading />
                 ) : isEditable ? (
@@ -265,6 +269,14 @@ export default function HampersForm({
                   </>
                 )}
               </Button>
+              <UpdateDialog
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                title={isEditable ? "Ubah" : "Tambah"}
+                description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+                onSubmit={() => onSubmit(form.getValues())}
+                isLoading={isLoading}
+              />
             </div>
           </div>
         </form>
