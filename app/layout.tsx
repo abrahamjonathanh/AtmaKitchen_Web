@@ -18,14 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Suspense>
-      <html lang="en">
-        <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Suspense fallback={<p>Loading...</p>}>
           <Toaster richColors />
           <Indicator />
           {children}
-        </body>
-      </html>
-    </Suspense>
+        </Suspense>
+      </body>
+    </html>
   );
 }

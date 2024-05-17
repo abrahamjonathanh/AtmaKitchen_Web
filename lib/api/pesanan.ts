@@ -1,16 +1,17 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import { IRiwayatPesanan } from "../interfaces";
+import { IKeranjang, IRiwayatPesanan } from "../interfaces";
 import useSWR from "swr";
 import { fetcher } from "../utils";
+import { axiosInstance } from "../axiosInstance";
 
 export const getAllRiwayatPesananByPelangganId = async (
-  idPelanggan: number
+  idPelanggan: number,
 ) => {
   try {
     const response = await axios.get(
-      `/api/pelanggan/${idPelanggan}/riwayat-pesanan`
+      `/api/pelanggan/${idPelanggan}/riwayat-pesanan`,
     );
     toast.success("Berhasil mendapatkan riwayat pesanan");
     return response.data as IRiwayatPesanan[];
@@ -23,7 +24,7 @@ export const getAllRiwayatPesananByPelangganId = async (
 export const getAllPesanan = () => {
   let { data, error, isLoading, isValidating } = useSWR(
     `${process.env.BASE_API}/pesanan`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
@@ -88,7 +89,7 @@ export const getAllPesanan = () => {
 export const getPesananById = (id: string) => {
   const { data, isLoading, error, isValidating } = useSWR(
     `${process.env.BASE_API}/pesanan/${id}`,
-    fetcher
+    fetcher,
   );
 
   if (!isLoading && error) {
@@ -144,4 +145,55 @@ export const getPesananById = (id: string) => {
   }
 
   return { data, isLoading, error, isValidating };
+};
+
+export const getCartsByCustomerId = (customerId: number) => {
+  const { data, isLoading, error, isValidating, mutate } = useSWR<IKeranjang[]>(
+    `${process.env.BASE_API}/keranjang/${customerId}`,
+    fetcher,
+  );
+
+  if (!isLoading && error) {
+    const data: IKeranjang[] = [
+      {
+        id_keranjang: "1",
+        detail_keranjang: [
+          {
+            id_detail_keranjang: "7",
+            id_keranjang: "1",
+            id_produk: "2",
+            jumlah: 1,
+            produk: {
+              id_produk: "1",
+              harga_jual: "250000",
+              kapasitas: "20",
+              nama: "Tester",
+              ukuran: "20x20cm",
+            },
+          },
+        ],
+      },
+    ];
+    return { data, isLoading, error, isValidating, mutate };
+  }
+
+  return { data, isLoading, error, isValidating, mutate };
+};
+
+export const updateQuantityInCustomerCart = async (
+  cartId: number,
+  data: any,
+) => {
+  try {
+    const response = await axiosInstance().put(
+      `/detail-keranjang/${cartId}`,
+      data,
+    );
+
+    toast.success(response.data.message);
+
+    return response;
+  } catch (error) {
+  } finally {
+  }
 };

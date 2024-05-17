@@ -1,23 +1,44 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { toRupiah } from "@/lib/utils";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import ProductCart from "./_components/product_cart";
 import ProductRecommendation from "../../_components/recommendation-product";
 import { useTitle } from "@/lib/hooks";
 import { UserWrapper } from "@/components/user-wrapper";
 import ProductSummaryCard from "./_components/product-summary-card";
+import {
+  getCartsByCustomerId,
+  updateQuantityInCustomerCart,
+} from "@/lib/api/pesanan";
+import Loading from "@/components/ui/loading";
+import { IDetailKeranjang } from "@/lib/interfaces";
+import { getCurrentUser } from "@/lib/api/auth";
 
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");
   const [isLoading, setIsLoading] = useState(false);
-  const getCarts = async () => {
+  const currentUser = getCurrentUser();
+
+  const customerCart = getCartsByCustomerId(1);
+
+  const updateQuantityInCustomerCartHandler = async ({
+    newQuantity,
+    idProduk,
+    idDetailKeranjang,
+  }: {
+    newQuantity: number;
+    idProduk: number;
+    idDetailKeranjang: number;
+  }) => {
     try {
       setIsLoading(true);
-      //   const response = await deleteKaryawanById(1);
-      //   setProducts(response?.data.data.carts || []);
-      //   console.log("Carts:", response?.data.data);
+      console.log(customerCart.data![0].id_keranjang, newQuantity, idProduk);
+      const response = await updateQuantityInCustomerCart(idDetailKeranjang, {
+        id_produk: idProduk,
+        jumlah: newQuantity,
+      });
+      customerCart.mutate();
+      console.log(response);
     } catch (error: any) {
       console.error(error.response?.data?.message);
     } finally {
@@ -25,34 +46,57 @@ export default function page() {
     }
   };
 
-  useEffect(() => {
-    getCarts();
-  }, []);
   return (
-    <UserWrapper className="bg-slate-50 space-y-8">
-      <div className="space-y-4 relative ">
-        <p className="text-h4">Keranjang (4)</p>
-        <div className="flex gap-4 flex-col-reverse lg:flex-row">
-          {/* Cart list */}
-          <div className="space-y-2 lg:w-2/3">
-            {[
-              {
-                id: 1,
-                product: { id: 2, name: "Brownies", price: 150000 },
-                quantity: 1,
-              },
-              {
-                id: 1,
-                product: { id: 2, name: "Brownies", price: 150000 },
-                quantity: 1,
-              },
-            ].map((data, index) => (
-              <ProductCart key={index} {...data} onRefresh={() => getCarts()} />
-            ))}
+    <UserWrapper className="space-y-8 bg-slate-50">
+      <div className="flex flex-col-reverse gap-4 lg:flex-row">
+        <div className="relative space-y-8 lg:w-2/3">
+          <div className="space-y-4">
+            <p className="text-h4">Pengiriman</p>
+            <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
+              <p className=" font-medium text-slate-500">Alamat Pengiriman</p>
+              <div>
+                <p className="text-h4">John Petra</p>
+                <p>
+                  Jln. Babarsari No. 1, Depok, Kab. Slemak, D.I. Yogyakarta,
+                  125712863
+                </p>
+              </div>
+              <Button variant={"outline"}>Ganti Alamat</Button>
+            </div>
           </div>
-          {/* Pricing */}
-          <ProductSummaryCard isEditable />
+          <div className="space-y-4">
+            {/* TODO: Update keranjang API harusnya 1 orang cuman ada 1 keranjang */}
+            {!customerCart.isLoading &&
+            !customerCart.error &&
+            !customerCart.isValidating &&
+            customerCart.data ? (
+              <>
+                <p className="text-h4">
+                  Keranjang ({customerCart.data[0].detail_keranjang.length})
+                </p>
+                <div>
+                  {/* Cart list */}
+                  <div className="space-y-2">
+                    {customerCart.data[0].detail_keranjang.map(
+                      (data: IDetailKeranjang, index: number) => (
+                        <ProductCart
+                          key={index}
+                          data={data}
+                          onRefresh={updateQuantityInCustomerCartHandler}
+                          isLoading={isLoading}
+                        />
+                      ),
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Loading />
+            )}
+          </div>
         </div>
+        {/* Pricing */}
+        <ProductSummaryCard isEditable />
       </div>
       <ProductRecommendation />
     </UserWrapper>

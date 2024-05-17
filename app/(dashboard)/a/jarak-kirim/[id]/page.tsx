@@ -1,22 +1,39 @@
 "use client";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
-import React from "react";
+import React, { useState } from "react";
 import JarakKirimForm from "../_components/input-form";
-import { getJarakKirimById } from "@/lib/api/jarak-kirim";
+import { createJarakKirim, getJarakKirimById } from "@/lib/api/jarak-kirim";
 import Loading from "@/components/ui/loading";
 
 export default function page({ params }: { params: { id: number } }) {
-  const { data, isLoading } = getJarakKirimById(params.id);
+  const ongkir = getJarakKirimById(params.id);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmitHandler = (values: any) => {
+    console.log(values);
+    try {
+      setIsLoading(true);
+      // const response = createJarakKirim(ongkir.data.)
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <DashboardWrapper navTitle="Atur Jarak Kirim">
       <BreadcrumbWithSeparator
         currentPage="Atur"
-        previousPage={[{ title: "Jarak Kirim", link: "/jarak-kirim" }]}
+        previousPage={[{ title: "Jarak Kirim", link: "/a/jarak-kirim" }]}
       />
-      {data && !isLoading ? (
-        <JarakKirimForm isEditable data={data} />
+      {ongkir.data && !ongkir.isLoading && !ongkir.isValidating ? (
+        <JarakKirimForm
+          isEditable
+          data={ongkir.data}
+          onSubmit={onSubmitHandler}
+          isLoading={isLoading}
+        />
       ) : (
         <Loading />
       )}

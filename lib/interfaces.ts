@@ -50,21 +50,14 @@ export type IJabatan = {
 
 export type IJarakKirim = {
   id_pesanan: string;
-  pengiriman: {
-    id_pengiriman: string;
-    nama: string;
-    alamat: string;
-    jarak: number;
-    harga: number;
-    telepon: string;
-    label?: string;
-  };
+  pengiriman: IPengiriman;
   status_pesanan_latest: {
     status: string;
   };
 };
 
 export type IPengiriman = {
+  id_pesanan?: string;
   id_pengiriman: string;
   nama: string;
   alamat: string;
@@ -266,6 +259,7 @@ export interface IPesananv2 {
   id_pesanan: string;
   id_metode_pembayaran: string;
   id_pelanggan: string;
+  pelanggan: IPelanggan;
   tgl_order: string;
   total_diskon_poin: string;
   total_pesanan: string;
@@ -286,4 +280,17 @@ export interface IStatusPesanan {
   id_karyawan?: string;
   status: string;
   created_at: string;
+}
+
+export interface IDetailKeranjang {
+  id_detail_keranjang: string;
+  id_keranjang?: string;
+  id_produk?: string;
+  produk: IProduk;
+  jumlah: number;
+}
+
+export interface IKeranjang {
+  id_keranjang: string;
+  detail_keranjang: IDetailKeranjang[];
 }

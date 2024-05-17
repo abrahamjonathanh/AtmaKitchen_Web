@@ -7,60 +7,61 @@ import Brownies from "@/public/products/Brownies.png";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Loading from "@/components/ui/loading";
+import { IDetailKeranjang } from "@/lib/interfaces";
 
-interface Props {
-  id: number;
-  product: {
-    id: number;
-    name: string;
-    price: number;
-    // id_image: {
-    //   image: string;
-    // };
-  };
-  quantity: number;
-  onRefresh?: () => void;
-}
-
-export default function ProductCart(props: Props) {
-  const [isLoading, setIsLoading] = useState(false);
-
+export default function ProductCart({
+  data,
+  onRefresh,
+  isLoading = false,
+}: {
+  data: IDetailKeranjang;
+  onRefresh?: ({
+    newQuantity,
+    idProduk,
+    idDetailKeranjang,
+  }: {
+    newQuantity: number;
+    idProduk: number;
+    idDetailKeranjang: number;
+  }) => void;
+  isLoading: boolean;
+}) {
   const onQuantityChange = async (value: number) => {
     try {
-      setIsLoading(true);
-      const newQuantity = Math.max(1, props.quantity + value);
-      //   const response = await UpdateCartQuantityById(props.id, {
-      //     quantity: newQuantity,
-      //   });
-      //   props.onRefresh!();
-      console.log(newQuantity);
+      const newQuantity = Math.max(1, data.jumlah + value);
+
+      onRefresh!({
+        newQuantity,
+        idProduk: parseInt(data.produk.id_produk),
+        idDetailKeranjang: parseInt(data.id_detail_keranjang),
+      });
     } catch (error: any) {
       console.error(error.response?.data?.message);
     } finally {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
     }
-    // setData((prev) => ({ ...prev, quantity: newQuantity }));
-    // console.log(data);
   };
+
   return (
-    <div className="p-4 rounded-lg border border-slate-200 w-full flex gap-3.5 bg-white ">
+    <div className="flex w-full gap-3.5 rounded-lg border border-slate-200 bg-white p-4 ">
       <Image
         src={Brownies}
         alt="Brownies"
-        className="aspect-square rounded max-w-20"
+        className="aspect-square max-w-20 rounded"
       />
-      <div className="w-full flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <p className="font-medium overflow line-clamp-1">Lapis Surabaya</p>
-          <p className="text-large">{toRupiah(600000)}</p>
+      <div className="flex w-full flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <p className="overflow line-clamp-1 font-medium">
+            {data.produk.nama} {data.produk.ukuran}
+          </p>
+          <p className="text-large">
+            {toRupiah(parseInt(data.produk.harga_jual.toString()))}
+          </p>
         </div>
-        <div className="w-full flex justify-end items-center gap-4">
+        <div className="flex w-full items-center justify-end gap-4">
           <Button variant={"ghost"} className="text-slate-500">
             <Trash2 size={"16"} />
           </Button>
-          <div className="flex gap-0 items-center">
+          <div className="flex items-center gap-0">
             <Button
               variant={"ghost"}
               size={"sm"}
@@ -72,9 +73,8 @@ export default function ProductCart(props: Props) {
             </Button>
             <Input
               type="number"
-              defaultValue={props.quantity}
-              className="max-w-14 h-8 overflow-x-hidden"
-              disabled={isLoading}
+              defaultValue={data.jumlah}
+              className="h-8 max-w-14 overflow-x-hidden text-black"
             />
             <Button
               variant={"ghost"}

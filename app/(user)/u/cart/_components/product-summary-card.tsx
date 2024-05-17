@@ -65,35 +65,37 @@ export default function ProductSummaryCard({
 
   return (
     <Form {...form}>
-      <div className="border border-slate-200 lg:w-1/3 h-max rounded-lg p-4 pb-6 space-y-2 sticky bg-white">
+      <div className="sticky h-max space-y-2 rounded-lg border border-slate-200 bg-white p-4 pb-6 lg:w-1/3">
         <p className="text-h4">Ringkasan Belanja</p>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <p className="text-slate-500">Total Harga</p>
           <p className="font-medium">{toRupiah(15000000)}</p>
         </div>
-        <div className="flex justify-between items-center">
-          <p className="text-slate-500">Diskon Poin</p>
-          <p className="text-green-600 font-medium">
-            {toRupiah(-form.watch("poin")! * 100)}
-          </p>
-        </div>
+        {form.watch("poin")! && (
+          <div className="flex items-center justify-between">
+            <p className="text-slate-500">Diskon Poin</p>
+            <p className="font-medium text-green-600">
+              {toRupiah(-form.watch("poin")! * 100)}
+            </p>
+          </div>
+        )}
         <Separator />
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <p className="text-slate-500">Total Belanja</p>
           <p className="text-h4">
             {toRupiah(15000000 - parseInt(form.watch("poin")! || "0") * 100)}
           </p>
         </div>
         <Separator />
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <p className="text-slate-500">Poin Kamu</p>
           <p className="font-medium">{toThousand(251)} Poin</p>
         </div>
 
         <form
           onSubmit={form.handleSubmit(onSubmit!)}
-          className="space-y-4 w-full"
+          className="w-full space-y-4"
         >
           <div className="space-y-2">
             <FormField
@@ -123,7 +125,7 @@ export default function ProductSummaryCard({
             </div>
             <FormDescription className="text-slate-500">
               Anda akan mendapatkan{" "}
-              <span className="text-orange-600 font-medium">120 poin</span> dari
+              <span className="font-medium text-orange-600">120 poin</span> dari
               transaksi ini.
             </FormDescription>
           </div>
@@ -142,7 +144,7 @@ export default function ProductSummaryCard({
                         variant={"outline"}
                         className={cn(
                           "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value ? (
@@ -201,26 +203,26 @@ export default function ProductSummaryCard({
           <Separator />
           {form.watch("pengiriman") === "Ambil Sendiri" && (
             <>
-              <FormDescription className="text-slate-500 flex gap-1 items-center">
+              <FormDescription className="flex items-center gap-1 text-slate-500">
                 Virtual Account:
-                <span className="text-black font-medium">
+                <span className="font-medium text-black">
                   6691298182759
                 </span>{" "}
                 <Copy
                   size={"16"}
                   onClick={() => navigator.clipboard.writeText("6691298182759")}
-                  className="hover:cursor-pointer text-slate-500"
+                  className="text-slate-500 hover:cursor-pointer"
                 />
               </FormDescription>
-              <FormDescription className="text-slate-500 flex gap-1 items-center">
+              <FormDescription className="flex items-center gap-1 text-slate-500">
                 Nominal Transfer:
-                <span className="text-black font-medium ">
+                <span className="font-medium text-black ">
                   {toRupiah(15000000)}
                 </span>{" "}
                 <Copy
                   size={"16"}
                   onClick={() => navigator.clipboard.writeText("15000000")}
-                  className="hover:cursor-pointer text-slate-500"
+                  className="text-slate-500 hover:cursor-pointer"
                 />
               </FormDescription>
               <Separator />
@@ -232,7 +234,7 @@ export default function ProductSummaryCard({
           </FormDescription>
           <Button
             variant={"default"}
-            className="w-full flex gap-1 items-center"
+            className="flex w-full items-center gap-1"
           >
             Saya sudah bayar <ShieldCheck size={"16"} />
           </Button>

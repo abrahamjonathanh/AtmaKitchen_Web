@@ -37,7 +37,7 @@ export default function page({ params }: { params: { id: string } }) {
   return (
     <DashboardWrapper navTitle={`Verifikasi Pembayaran `}>
       <BreadcrumbWithSeparator
-        previousPage={[{ link: "/pesanan", title: "Pesanan" }]}
+        previousPage={[{ link: "/a/pesanan", title: "Pesanan" }]}
         currentPage="Verifikasi Pembayaran"
       />
       {data && !isValidating ? (

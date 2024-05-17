@@ -25,7 +25,18 @@ import { Badge } from "@/components/ui/badge";
 export const columns: ColumnDef<IJarakKirim>[] = [
   {
     accessorKey: "id_pesanan",
-    header: "# ID",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="w-full"
+        >
+          # ID
+          <ArrowUpDown className="ml-2" size={"12"} />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "nama",
@@ -123,7 +134,7 @@ export const columns: ColumnDef<IJarakKirim>[] = [
 
       return (
         <div className="px-4">
-          {amount ? (
+          {row.getValue("status") ? (
             <Badge variant={"success"}>{row.getValue("status")}</Badge>
           ) : (
             <Badge variant={"alert"}>Menunggu</Badge>
@@ -171,14 +182,14 @@ export const columns: ColumnDef<IJarakKirim>[] = [
               </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Trash2 size={"16"} /> Hapus {row.getValue("id")}
+                <Trash2 size={"16"} /> Hapus {row.getValue("id_pesanan")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <DeleteDialog
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            title={row.getValue("id")}
+            title={row.getValue("id_pesanan")}
             description="Tindakkan ini tidak dapat diulang ketika anda menekan Hapus."
             onSubmit={onDeleteHandler}
             isLoading={isLoading}
