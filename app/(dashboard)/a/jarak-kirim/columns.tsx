@@ -131,11 +131,15 @@ export const columns: ColumnDef<IJarakKirim>[] = [
     },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("jarak"));
-
+      const status: String = row.getValue("status");
       return (
         <div className="px-4">
           {row.getValue("status") ? (
-            <Badge variant={"success"}>{row.getValue("status")}</Badge>
+            <Badge
+              variant={!status.startsWith("Menunggu") ? "success" : "alert"}
+            >
+              {row.getValue("status")}
+            </Badge>
           ) : (
             <Badge variant={"alert"}>Menunggu</Badge>
           )}

@@ -39,20 +39,20 @@ export default function JarakKirimForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      jarak: isEditable ? data?.jarak.toString() ?? "" : "",
+      jarak: isEditable ? data?.jarak?.toString() ?? "" : "",
     },
   });
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-4 flex-col lg:flex-row">
-        <div className="border border-slate-200 rounded-lg p-4 lg:w-2/3">
+      <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="rounded-lg border border-slate-200 p-4 lg:w-2/3">
           <p className="text-slate-500">{data?.nama}</p>
           <p className="text-large">{data?.nama}</p>
           <p>{data?.telepon}</p>
-          <p className="overflow-ellipsis line-clamp-2">{data?.alamat}</p>
+          <p className="line-clamp-2 overflow-ellipsis">{data?.alamat}</p>
         </div>
-        <div className="lg:w-1/3 border borderslate-200 rounded-lg p-4">
+        <div className="borderslate-200 rounded-lg border p-4 lg:w-1/3">
           <p className="text-slate-500">Ongkos Kirim</p>
           <p className="text-large">{toRupiah(15000)}</p>
           <p>11 km</p>
@@ -62,7 +62,7 @@ export default function JarakKirimForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit!)}
-          className="space-y-6 w-full p-4 border border-slate-200 rounded-lg"
+          className="w-full space-y-6 rounded-lg border border-slate-200 p-4"
         >
           <div className="space-y-4">
             <FormField
@@ -79,7 +79,7 @@ export default function JarakKirimForm({
               )}
             />
           </div>
-          <div className="flex gap-4 items-center justify-end">
+          <div className="flex items-center justify-end gap-4">
             <Button variant={"outline"} onClick={() => router.back()}>
               Batal
             </Button>

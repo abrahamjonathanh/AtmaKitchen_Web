@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { BadgePercent, CreditCard, Truck } from "lucide-react";
 import { IPesananv2 } from "@/lib/interfaces";
+import UserInvoice from "@/app/_components/userInvoice";
 
 export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
   return (
@@ -120,6 +121,7 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                 <span className="font-medium text-orange-600">112 poin</span>{" "}
                 dari transaksi ini.
               </p>
+              <UserInvoice data={data!} />
             </div>
           </DialogDescription>
         </DialogHeader>

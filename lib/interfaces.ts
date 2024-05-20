@@ -169,6 +169,7 @@ export interface IPelanggan {
   status: string;
   deleted_at?: string;
   alamat?: IAlamat[];
+  pesanan?: IPesananv2[];
 }
 
 export interface IAlamat {

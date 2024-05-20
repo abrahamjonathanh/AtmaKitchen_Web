@@ -21,9 +21,11 @@ import {
   Wallet2,
 } from "lucide-react";
 import { toRupiah } from "@/lib/utils";
-import { getCurrentUser } from "@/lib/api/auth";
+import { getCurrentUser, logout } from "@/lib/api/auth";
 import { IPelanggan } from "@/lib/interfaces";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
 interface SidebarType {
   title: string;
@@ -32,6 +34,16 @@ interface SidebarType {
 }
 
 export default function UserSidebar({ data }: { data: IPelanggan }) {
+  const router = useRouter();
+  const onLogoutHandler = async () => {
+    const response = await logout();
+
+    if (response.status === 200) {
+      router.push("/login");
+    }
+    console.log(response);
+  };
+
   const generalLinks: SidebarType[] = [
     {
       title: "Daftar Transaksi",
@@ -121,9 +133,13 @@ export default function UserSidebar({ data }: { data: IPelanggan }) {
                 {data.icon} {data.title}
               </Link>
             ))}
-            <Link href={""} className="flex items-center gap-4 py-4">
+            <Button
+              variant={"ghost"}
+              className="flex w-full items-center justify-start gap-4 px-0 py-0 hover:bg-transparent"
+              onClick={onLogoutHandler}
+            >
               <LogOut size={"20"} /> Keluar
-            </Link>
+            </Button>
           </div>
         </div>
       </ScrollArea>

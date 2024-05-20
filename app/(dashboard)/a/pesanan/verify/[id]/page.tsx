@@ -16,7 +16,7 @@ export default function page({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data, isValidating } = getPesananById(params.id); // Copy this only for update or delete screen to get data by id
-
+  console.log(params.id);
   const onUpdateHandler = async (values: any) => {
     try {
       setIsLoading(true);

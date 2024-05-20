@@ -8,7 +8,7 @@ import axios from "axios";
 
 export const getAllJarakKirim = () => {
   const { data, error, isLoading, mutate } = useSWR(
-    `${process.env.BASE_API}/pesanan/confirmpayments`,
+    `${process.env.BASE_API}/pesanan/delivery`,
     fetcher,
   );
 

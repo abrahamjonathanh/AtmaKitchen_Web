@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({
   const pathname = usePathname();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [pagination, setPagination] = React.useState({
     pageIndex: 0, //initial page index
@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
   console.log(table.getPageOptions());
   return (
     <div className="space-y-4">
-      <div className="flex justify-between gap-4 items-center">
+      <div className="flex items-center justify-between gap-4">
         <Input
           placeholder="Cari berdasarkan nama..."
           value={(table.getColumn("nama")?.getFilterValue() as string) ?? ""}
@@ -78,16 +78,6 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <Link
-          href={pathname + "/create"}
-          className={cn(
-            "flex items-center gap-1",
-            buttonVariants({ variant: "default" })
-          )}
-        >
-          Tambah
-          <Plus className="text-white" size={"16"} />
-        </Link>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -108,7 +98,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -127,7 +117,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -148,7 +138,7 @@ export function DataTable<TData, TValue>({
       </div>
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <p className="text-slate-500 text-body">
+        <p className="text-body text-slate-500">
           Menampilkan {table.getState().pagination.pageSize} dari{" "}
           {table.getFilteredRowModel().rows.length} data.
         </p>
@@ -157,7 +147,7 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            className="flex gap-2 items-center"
+            className="flex items-center gap-2"
             disabled={!table.getCanPreviousPage()}
           >
             <ChevronLeft size={"16"} /> Previous
@@ -166,7 +156,7 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            className="flex gap-2 items-center"
+            className="flex items-center gap-2"
             disabled={!table.getCanNextPage()}
           >
             Next <ChevronRight size={"16"} />
