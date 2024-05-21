@@ -10,7 +10,7 @@ import VerifikasiForm from "../_components/input-form";
 import Loading from "@/components/ui/loading";
 
 export default function page({ params }: { params: { id: string } }) {
-  useTitle("AtmaKitchen | Ubah Penitip");
+  useTitle("AtmaKitchen | Ubah Pesanan");
   const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function page({ params }: { params: { id: string } }) {
       //     router.push("/penitip"); // For redirect route
       //   }
     } catch (error: any) {
-      console.error("Error updating penitip: ", error);
+      console.error("Error updating pesanan: ", error);
     } finally {
       setIsLoading(false);
     }
@@ -37,7 +37,7 @@ export default function page({ params }: { params: { id: string } }) {
   return (
     <DashboardWrapper navTitle={`Verifikasi Pembayaran `}>
       <BreadcrumbWithSeparator
-        previousPage={[{ link: "/pesanan", title: "Pesanan" }]}
+        previousPage={[{ link: "a/pesanan", title: "Pesanan" }]}
         currentPage="Verifikasi Pembayaran"
       />
       {data && !isValidating ? (

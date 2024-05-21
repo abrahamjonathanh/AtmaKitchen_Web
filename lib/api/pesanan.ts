@@ -1,9 +1,26 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import { IRiwayatPesanan } from "../interfaces";
+import { IPesanan, IRiwayatPesanan } from "../interfaces";
 import useSWR from "swr";
 import { fetcher } from "../utils";
+
+export const updateConfirmation = async (id: number, data: IPesanan) => {
+  try {
+    const response = await axios.put(
+      `${process.env.BASE_API}/pesanan/verify/${id}`,
+      data,
+    );
+
+    toast.success("Berhasil konfirmasi!");
+
+    return response;
+  } catch (error: any) {
+    toast.error("Terjadi kesalahan saat konfirmasi...");
+    throw error;
+  }
+};
+
 
 export const getAllRiwayatPesananByPelangganId = async (
   idPelanggan: number

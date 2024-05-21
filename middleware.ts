@@ -50,7 +50,7 @@ const PROTECTED_ROUTES = [
       "/a/hampers",
       "/a/jabatan",
       "/a/promo",
-      // "/a/pesanan",
+      "/a/pesanan",
       // "/a/jarak-kirim",
       "/a/akun",
       "/a/karyawan",

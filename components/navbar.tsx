@@ -60,11 +60,9 @@ export function Navbar() {
   // console.log(auth);
 
   const navbar = [
-    { title: "Produk", href: "" },
-    { title: "Produk", href: "" },
-    { title: "Produk", href: "" },
-    { title: "Produk", href: "" },
-    { title: "Produk", href: "" },
+    { title: "Produk", href: "/u/produk" },
+    { title: "Keranjang", href: "/u/cart" },
+    { title: "Profil", href: "/u/profile" },
   ];
   return (
     <nav className="fixed inset-x-0 top-0 z-50 flex h-14 items-center border-b border-slate-200 bg-white bg-opacity-95">

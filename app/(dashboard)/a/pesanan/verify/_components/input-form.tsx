@@ -53,8 +53,8 @@ export default function VerifikasiForm({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 flex-col md:flex-row">
-        <div className="p-4 border border-slate-200 rounded-lg space-y-1 w-full md:w-3/5">
+      <div className="flex flex-col gap-4 md:flex-row">
+        <div className="w-full space-y-1 rounded-lg border border-slate-200 p-4 md:w-3/5">
           <div className="text-slate-500">
             Informasi Pesanan{" "}
             <span>
@@ -64,7 +64,7 @@ export default function VerifikasiForm({
           <p className="text-large">{data?.pelanggan?.nama}</p>
           <p>{data?.pelanggan?.telepon}</p>
         </div>
-        <div className="p-4 border border-slate-200 rounded-lg space-y-1 w-full md:w-2/5">
+        <div className="w-full space-y-1 rounded-lg border border-slate-200 p-4 md:w-2/5">
           <div className="text-slate-500">
             Total Tagihan{" "}
             <span>
@@ -80,9 +80,9 @@ export default function VerifikasiForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit!)}
-          className="space-y-6 w-full"
+          className="w-full space-y-6"
         >
-          <div className="p-4 border rounded-lg border-slate-200">
+          <div className="rounded-lg border border-slate-200 p-4">
             <FormField
               control={form.control}
               name="total_dibayarkan"
@@ -101,7 +101,7 @@ export default function VerifikasiForm({
               )}
             />
           </div>
-          <div className="flex gap-4 items-center justify-end">
+          <div className="flex items-center justify-end gap-4">
             <Button variant={"outline"} onClick={() => router.back()}>
               Batal
             </Button>

@@ -56,14 +56,14 @@ export const columns: ColumnDef<IPesanan>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="px-4 font-medium w-full line-clamp-2 ">
+      <div className="line-clamp-2 w-full px-4 font-medium ">
         {row.getValue("pelanggan")}
       </div>
     ),
   },
   {
     accessorKey: "jenis_pengiriman",
-    header: () => <div className="max-w-56 w-auto">Jenis Pengiriman</div>,
+    header: () => <div className="w-auto max-w-56">Jenis Pengiriman</div>,
     cell: ({ row }) => {
       return (
         <div className="capitalize">{row.getValue("jenis_pengiriman")}</div>
@@ -85,50 +85,50 @@ export const columns: ColumnDef<IPesanan>[] = [
   },
   {
     accessorKey: "total_dibayarkan",
-    header: () => <div className="max-w-56 w-auto">Diterima</div>,
+    header: () => <div className="w-auto max-w-56">Diterima</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("total_dibayarkan"));
 
       return <div>{toRupiah(amount)}</div>;
     },
   },
-  {
-    accessorKey: "status",
-    accessorFn: (row) => row.status_pesanan![0].status,
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown className="ml-2" size={"12"} />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const statusBadges: {
-        code: string;
-        variant: "lime" | "emerald" | "sky" | "violet" | "fuchsia";
-        label: "Selesai" | "Manager" | "Admin" | "Customer" | "Driver";
-      }[] = [
-        { code: "selesai", variant: "lime", label: "Selesai" },
-        { code: "2", variant: "emerald", label: "Manager" },
-        { code: "3", variant: "sky", label: "Admin" },
-        { code: "4", variant: "violet", label: "Customer" },
-        { code: "5", variant: "fuchsia", label: "Driver" },
-      ];
+  // {
+  //   accessorKey: "status",
+  //   accessorFn: (row) => row.status_pesanan![0].status,
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         Status
+  //         <ArrowUpDown className="ml-2" size={"12"} />
+  //       </Button>
+  //     );
+  //   },
+  //   cell: ({ row }) => {
+  //     const statusBadges: {
+  //       code: string;
+  //       variant: "lime" | "emerald" | "sky" | "violet" | "fuchsia";
+  //       label: "Selesai" | "Manager" | "Admin" | "Customer" | "Driver";
+  //     }[] = [
+  //       { code: "selesai", variant: "lime", label: "Selesai" },
+  //       { code: "2", variant: "emerald", label: "Manager" },
+  //       { code: "3", variant: "sky", label: "Admin" },
+  //       { code: "4", variant: "violet", label: "Customer" },
+  //       { code: "5", variant: "fuchsia", label: "Driver" },
+  //     ];
 
-      const statusBadge = statusBadges.find(
-        (badge) => badge.code == row.getValue("status")
-      );
-      return (
-        <div className="px-4">
-          <Badge variant={statusBadge?.variant}>{statusBadge?.label}</Badge>
-        </div>
-      );
-    },
-  },
+  //     const statusBadge = statusBadges.find(
+  //       (badge) => badge.code == row.getValue("status"),
+  //     );
+  //     return (
+  //       <div className="px-4">
+  //         <Badge variant={statusBadge?.variant}>{statusBadge?.label}</Badge>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     id: "actions",
     cell: ({ row }) => {
@@ -143,7 +143,7 @@ export const columns: ColumnDef<IPesanan>[] = [
           setIsLoading(true);
 
           const response = await deleteKaryawanById(
-            row.getValue("id_karyawan")
+            row.getValue("id_karyawan"),
           );
 
           // Auto refresh data when success.
@@ -173,7 +173,7 @@ export const columns: ColumnDef<IPesanan>[] = [
               <DropdownMenuItem
                 onClick={() =>
                   router.push(
-                    `${pathname}/verify/${row.getValue("id_pesanan")}`
+                    `${pathname}/verify/${row.getValue("id_pesanan")}`,
                   )
                 }
               >

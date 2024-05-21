@@ -220,6 +220,7 @@ export default function HampersForm({
                                   <SelectItem
                                     value={data.id_produk!}
                                     key={index}
+                                    className="text-black"
                                   >
                                     {data.nama} {data.ukuran}
                                   </SelectItem>
