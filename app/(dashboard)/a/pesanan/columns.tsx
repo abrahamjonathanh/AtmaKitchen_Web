@@ -8,8 +8,6 @@ import {
   Check,
   Grab,
   MoreHorizontal,
-  Pencil,
-  Trash2,
   Truck,
   X,
 } from "lucide-react";
@@ -35,8 +33,19 @@ import { deleteKaryawanById } from "@/lib/api/karyawan";
 export const columns: ColumnDef<IPesananv2>[] = [
   {
     accessorKey: "id_pesanan",
-    header: () => {
-      return <div className="w-10 max-w-16"># ID</div>;
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          # ID
+          <ArrowUpDown className="ml-2" size={"12"} />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return <div className="px-4">{row.getValue("id_pesanan")}</div>;
     },
   },
   {
@@ -90,7 +99,16 @@ export const columns: ColumnDef<IPesananv2>[] = [
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("total_dibayarkan"));
 
-      return <div>{toRupiah(amount)}</div>;
+      return <div>{amount ? toRupiah(amount) : "-"}</div>;
+    },
+  },
+  {
+    accessorKey: "total_tip",
+    header: () => <div className="w-auto max-w-56">Tip</div>,
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("total_tip"));
+
+      return <div>{amount ? toRupiah(amount) : "-"}</div>;
     },
   },
   {
@@ -110,14 +128,24 @@ export const columns: ColumnDef<IPesananv2>[] = [
     cell: ({ row }) => {
       const statusBadges: {
         code: string;
-        variant: "lime" | "emerald" | "sky" | "violet" | "fuchsia";
-        label: "Selesai" | "Manager" | "Admin" | "Customer" | "Driver";
+        variant:
+          | "lime"
+          | "emerald"
+          | "sky"
+          | "violet"
+          | "fuchsia"
+          | "rose"
+          | "gray"
+          | "success";
       }[] = [
-        { code: "selesai", variant: "lime", label: "Selesai" },
-        { code: "2", variant: "emerald", label: "Manager" },
-        { code: "3", variant: "sky", label: "Admin" },
-        { code: "4", variant: "violet", label: "Customer" },
-        { code: "5", variant: "fuchsia", label: "Driver" },
+        { code: "Pesanan diterima", variant: "lime" },
+        { code: "Pembayaran diterima", variant: "success" },
+        { code: "Menunggu ongkir", variant: "emerald" },
+        { code: "Menunggu pembayaran", variant: "sky" },
+        { code: "Menunggu konfirmasi pembayaran", variant: "violet" },
+        { code: "Pesanan diproses", variant: "fuchsia" },
+        { code: "Pesanan dikirim", variant: "rose" },
+        { code: "Pesanan ditolak", variant: "gray" },
       ];
 
       const statusBadge = statusBadges.find(
@@ -125,7 +153,7 @@ export const columns: ColumnDef<IPesananv2>[] = [
       );
       return (
         <div className="px-4">
-          <Badge variant={statusBadge?.variant}>{statusBadge?.label}</Badge>
+          <Badge variant={statusBadge?.variant}>{statusBadge?.code}</Badge>
         </div>
       );
     },

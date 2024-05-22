@@ -29,13 +29,14 @@ const badgeVariants = cva(
         fuchsia:
           "border-transparent bg-fuchsia-200 text-fuchsia-600 hover:bg-fuchsia-200/80",
         rose: "border-transparent bg-rose-200 text-rose-600 hover:bg-rose-200/80",
+        gray: "border-transparent bg-gray-200 text-gray-600 hover:bg-gray-200/80",
         outline: "text-foreground",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export interface BadgeProps

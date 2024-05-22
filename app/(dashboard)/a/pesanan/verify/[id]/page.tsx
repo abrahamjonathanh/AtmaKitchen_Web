@@ -1,7 +1,7 @@
 "use client";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
-import { getPesananById } from "@/lib/api/pesanan";
+import { createPembayaranByIdPesanan, getPesananById } from "@/lib/api/pesanan";
 import { useTitle } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -11,22 +11,21 @@ import Loading from "@/components/ui/loading";
 
 export default function page({ params }: { params: { id: string } }) {
   useTitle("AtmaKitchen | Ubah Penitip");
-  const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
+  const { mutate } = useSWRConfig();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { data, isValidating } = getPesananById(params.id); // Copy this only for update or delete screen to get data by id
-  console.log(params.id);
+  const { data, isValidating } = getPesananById(params.id);
   const onUpdateHandler = async (values: any) => {
     try {
       setIsLoading(true);
       console.log(values);
-      //   const response = await updatePenitipById(params.id, values);
+      const response = await createPembayaranByIdPesanan(params.id, values);
 
-      //   if (response?.status == 200 || response?.status == 201) {
-      //     mutate("/penitip"); // For auto refresh
-      //     router.push("/penitip"); // For redirect route
-      //   }
+      if (response?.status == 200 || response?.status == 201) {
+        mutate("/a/pesanan");
+        router.push("/a/pesanan");
+      }
     } catch (error: any) {
       console.error("Error updating penitip: ", error);
     } finally {

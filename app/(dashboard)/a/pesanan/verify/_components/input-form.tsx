@@ -12,19 +12,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-
-import React from "react";
-import { Pencil, Plus, ShieldCheck } from "lucide-react";
+import React, { useState } from "react";
+import { Plus, ShieldCheck } from "lucide-react";
 import Loading from "@/components/ui/loading";
 import { IPesanan } from "@/lib/interfaces";
 import { Badge } from "@/components/ui/badge";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
-
-const formSchema = z.object({
-  id_pesanan: z.string().optional(),
-  total_dibayarkan: z.string().min(1, { message: "Total tidak boleh kosong" }),
-});
+import UpdateDialog from "@/components/updateDialog";
 
 export default function VerifikasiForm({
   isEditable = false,
@@ -34,27 +28,36 @@ export default function VerifikasiForm({
 }: {
   isEditable?: boolean;
   data?: IPesanan;
-  onSubmit?: (values: z.infer<typeof formSchema>) => void;
+  onSubmit?: (values: any) => void;
   isLoading?: boolean;
 }) {
   console.log(`⚠️ Verifikasi Pembayaran editable mode: ${isEditable}`);
   const router = useRouter();
-
+  const formSchema = z.object({
+    id_pesanan: z.string().optional(),
+    total_dibayarkan: z
+      .string()
+      .transform((str) => Number(str)) // Convert to number before validation
+      .refine((num) => num >= (data?.total_setelah_diskon ?? 1), {
+        message: `Total dibayarkan harus lebih besar atau sama dengan tagihan (${toRupiah(data?.total_setelah_diskon! + data?.pengiriman?.harga! ?? 0)})`,
+      }),
+  });
+  const [isOpen, setIsOpen] = useState(false);
   // Define form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id_pesanan: isEditable ? data?.id_pesanan ?? "" : "",
       total_dibayarkan: isEditable
-        ? data?.total_dibayarkan.toString() ?? ""
-        : "",
+        ? parseInt(data?.total_dibayarkan?.toString() ?? "0")
+        : 0,
     },
   });
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 flex-col md:flex-row">
-        <div className="p-4 border border-slate-200 rounded-lg space-y-1 w-full md:w-3/5">
+      <div className="flex flex-col gap-4 md:flex-row">
+        <div className="w-full space-y-1 rounded-lg border border-slate-200 p-4 md:w-3/5">
           <div className="text-slate-500">
             Informasi Pesanan{" "}
             <span>
@@ -64,7 +67,7 @@ export default function VerifikasiForm({
           <p className="text-large">{data?.pelanggan?.nama}</p>
           <p>{data?.pelanggan?.telepon}</p>
         </div>
-        <div className="p-4 border border-slate-200 rounded-lg space-y-1 w-full md:w-2/5">
+        <div className="w-full space-y-1 rounded-lg border border-slate-200 p-4 md:w-2/5">
           <div className="text-slate-500">
             Total Tagihan{" "}
             <span>
@@ -73,16 +76,18 @@ export default function VerifikasiForm({
               </Badge>
             </span>
           </div>
-          <p className="text-large">{toRupiah(data?.total_setelah_diskon!)}</p>
+          <p className="text-large">
+            {toRupiah(data?.total_setelah_diskon! + data?.pengiriman?.harga!)}
+          </p>
           <p>{(data?.id_metode_pembayaran as { nama: string }).nama}</p>
         </div>
       </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit!)}
-          className="space-y-6 w-full"
+          className="w-full space-y-6"
         >
-          <div className="p-4 border rounded-lg border-slate-200">
+          <div className="rounded-lg border border-slate-200 p-4">
             <FormField
               control={form.control}
               name="total_dibayarkan"
@@ -101,11 +106,16 @@ export default function VerifikasiForm({
               )}
             />
           </div>
-          <div className="flex gap-4 items-center justify-end">
+          <div className="flex items-center justify-end gap-4">
             <Button variant={"outline"} onClick={() => router.back()}>
               Batal
             </Button>
-            <Button type="submit" className="flex gap-2" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="flex gap-2"
+              disabled={isLoading}
+              onClick={() => setIsOpen(true)}
+            >
               {isLoading ? (
                 <Loading />
               ) : isEditable ? (
@@ -118,6 +128,14 @@ export default function VerifikasiForm({
                 </>
               )}
             </Button>
+            <UpdateDialog
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              title={isEditable ? "Ubah" : "Tambah"}
+              description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+              onSubmit={() => onSubmit(form.getValues())}
+              isLoading={isLoading}
+            />
           </div>
         </form>
       </Form>

@@ -43,6 +43,32 @@ export default function JarakKirimForm({
     },
   });
 
+  const radiusByDistance = (distance: number): String => {
+    if (distance <= 5) {
+      return "0-5";
+    } else if (distance <= 10) {
+      return "5-10";
+    } else if (distance <= 15) {
+      return "10-15";
+    } else if (distance > 15) {
+      return ">15";
+    }
+    return "0";
+  };
+
+  const radiusToPrice = (distance: number): number => {
+    if (distance <= 5) {
+      return 10000;
+    } else if (distance <= 10) {
+      return 15000;
+    } else if (distance <= 15) {
+      return 20000;
+    } else if (distance > 15) {
+      return 25000;
+    }
+    return 0;
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 lg:flex-row">
@@ -54,9 +80,11 @@ export default function JarakKirimForm({
         </div>
         <div className="borderslate-200 rounded-lg border p-4 lg:w-1/3">
           <p className="text-slate-500">Ongkos Kirim</p>
-          <p className="text-large">{toRupiah(15000)}</p>
-          <p>11 km</p>
-          <p>Radius 10-15 km</p>
+          <p className="text-large">
+            {toRupiah(radiusToPrice(parseInt(form.watch("jarak"))))}
+          </p>
+          <p>{form.watch("jarak") == "" ? "0" : form.watch("jarak")} km</p>
+          <p>Radius {radiusByDistance(parseInt(form.watch("jarak")))} km</p>
         </div>
       </div>
       <Form {...form}>
