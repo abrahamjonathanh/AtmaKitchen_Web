@@ -69,7 +69,7 @@ export default function ProductSummaryCard({
     // if (form.watch("pengiriman") != "Ambil Sendiri") {
     onUpdatePengiriman(form.watch("pengiriman") != "Ambil Sendiri");
     // }
-  }, [form.watch("pengiriman")]);
+  }, [onUpdatePengiriman, form]);
 
   return (
     <Form {...form}>

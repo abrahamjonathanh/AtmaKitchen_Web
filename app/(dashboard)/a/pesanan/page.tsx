@@ -19,7 +19,7 @@ export default function page() {
   const { data, isLoading } = getAllPesanan();
   const process = getAllPesananInProcess();
   const rejected = getAllPesananRejected();
-  const paymentVerified = getAllPesananPaymentVerified();
+  // const paymentVerified = getAllPesananPaymentVerified();
 
   return (
     // Boiler template for dashboard
@@ -45,11 +45,12 @@ export default function page() {
           )}
         </TabsContent>
         <TabsContent value="paymentverified">
-          {paymentVerified.data && !paymentVerified.isLoading ? (
+          {/* {paymentVerified.data && !paymentVerified.isLoading ? (
             <DataTable columns={columns} data={paymentVerified.data} />
           ) : (
             <Loading />
-          )}
+          )} */}
+          <p>Blm ada</p>
         </TabsContent>
         <TabsContent value="rejected">
           {rejected.data && !rejected.isLoading ? (
