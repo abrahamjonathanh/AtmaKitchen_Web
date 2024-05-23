@@ -33,7 +33,7 @@ interface SidebarType {
   link: string;
 }
 
-export default function UserSidebar({ data }: { data: IPelanggan }) {
+export default function UserSidebar({ data }: { data: any }) {
   const router = useRouter();
   const onLogoutHandler = async () => {
     const response = await logout();

@@ -1,6 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
 import ProductCart from "./_components/product_cart";
 import ProductRecommendation from "../../_components/recommendation-product";
 import { useTitle } from "@/lib/hooks";
@@ -11,15 +10,20 @@ import {
   updateQuantityInCustomerCart,
 } from "@/lib/api/pesanan";
 import Loading from "@/components/ui/loading";
-import { IDetailKeranjang } from "@/lib/interfaces";
-import { getCurrentUser } from "@/lib/api/auth";
+import { IAlamat, IDetailKeranjang } from "@/lib/interfaces";
+import UserAlamatCard from "./_components/user-alamat-card";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");
   const [isLoading, setIsLoading] = useState(false);
-  const currentUser = getCurrentUser();
+  const [isAddingAlamat, setIsAddingAlamat] = useState(false);
+  const [alamat, setAlamat] = useState<IAlamat | null>(null);
+  const { currentUser } = useCurrentUserStore();
 
-  const customerCart = getCartsByCustomerId(1);
+  const customerCart = getCartsByCustomerId(
+    parseInt(currentUser?.id_pelanggan ?? "1"),
+  );
 
   const updateQuantityInCustomerCartHandler = async ({
     newQuantity,
@@ -32,7 +36,7 @@ export default function page() {
   }) => {
     try {
       setIsLoading(true);
-      console.log(customerCart.data![0].id_keranjang, newQuantity, idProduk);
+      console.log(customerCart.data.id_keranjang, newQuantity, idProduk);
       const response = await updateQuantityInCustomerCart(idDetailKeranjang, {
         id_produk: idProduk,
         jumlah: newQuantity,
@@ -46,24 +50,27 @@ export default function page() {
     }
   };
 
+  const onPengirimanHandler = (values: boolean) => {
+    setIsAddingAlamat(values);
+  };
+
+  const onAlamatHandler = (values: IAlamat) => {
+    setAlamat(values);
+  };
+
+  useEffect(() => {
+    if (alamat) {
+      console.log(alamat);
+    }
+  }, [alamat]);
+
   return (
     <UserWrapper className="space-y-8 bg-slate-50">
       <div className="flex flex-col-reverse gap-4 lg:flex-row">
         <div className="relative space-y-8 lg:w-2/3">
-          <div className="space-y-4">
-            <p className="text-h4">Pengiriman</p>
-            <div className="space-y-2 rounded-lg border border-slate-200 bg-white p-4">
-              <p className=" font-medium text-slate-500">Alamat Pengiriman</p>
-              <div>
-                <p className="text-h4">John Petra</p>
-                <p>
-                  Jln. Babarsari No. 1, Depok, Kab. Slemak, D.I. Yogyakarta,
-                  125712863
-                </p>
-              </div>
-              <Button variant={"outline"}>Ganti Alamat</Button>
-            </div>
-          </div>
+          {isAddingAlamat && (
+            <UserAlamatCard onAlamatHandler={onAlamatHandler} />
+          )}
           <div className="space-y-4">
             {/* TODO: Update keranjang API harusnya 1 orang cuman ada 1 keranjang */}
             {!customerCart.isLoading &&
@@ -72,12 +79,12 @@ export default function page() {
             customerCart.data ? (
               <>
                 <p className="text-h4">
-                  Keranjang ({customerCart.data[0].detail_keranjang.length})
+                  Keranjang ({customerCart.data.detail_keranjang.length})
                 </p>
                 <div>
                   {/* Cart list */}
                   <div className="space-y-2">
-                    {customerCart.data[0].detail_keranjang.map(
+                    {customerCart.data.detail_keranjang.map(
                       (data: IDetailKeranjang, index: number) => (
                         <ProductCart
                           key={index}
@@ -96,7 +103,10 @@ export default function page() {
           </div>
         </div>
         {/* Pricing */}
-        <ProductSummaryCard isEditable />
+        <ProductSummaryCard
+          isEditable
+          onUpdatePengiriman={onPengirimanHandler}
+        />
       </div>
       <ProductRecommendation />
     </UserWrapper>

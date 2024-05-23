@@ -47,6 +47,7 @@ import { Sidebar } from "./sidebar";
 import { getCurrentUser, logout } from "@/lib/api/auth";
 import Loading from "./ui/loading";
 import Cookies from "js-cookie";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 export function Navbar() {
   // let user = null;
   // try {
@@ -187,9 +188,9 @@ export function NavbarDashboard({ title }: { title: string }) {
 }
 
 export function NavbarUser() {
-  const user = Cookies.get("token") ? getCurrentUser() : null;
-  const { data, isLoading } = user || {}; // Destructuring assignment with default value
-
+  // const user = Cookies.get("token") ? getCurrentUser() : null;
+  // const { data, isLoading } = user || {}; // Destructuring assignment with default value
+  const { currentUser, isLoggedIn } = useCurrentUserStore();
   const router = useRouter();
 
   const onLogoutHandler = async () => {
@@ -265,48 +266,58 @@ export function NavbarUser() {
       </div>
       {/* History, Cart, and Menu */}
       <div className="flex gap-0 lg:gap-2">
-        <Link
-          href={"/u/profile?showing=pesanan"}
-          className={cn(
-            buttonVariants({
-              variant: "ghost",
-              className: "px-2 text-slate-500",
-            }),
-          )}
-        >
-          <History size={"24"} />
-        </Link>
-        <HoverCard>
-          <HoverCardTrigger asChild>
-            <Button variant={"ghost"} className="relative px-2 text-slate-500">
-              <Bell size={"24"} />
+        {isLoggedIn && currentUser && (
+          <>
+            {/* History */}
+            <Link
+              href={"/u/profile?showing=pesanan"}
+              className={cn(
+                buttonVariants({
+                  variant: "ghost",
+                  className: "px-2 text-slate-500",
+                }),
+              )}
+            >
+              <History size={"24"} />
+            </Link>
+            {/* Notification */}
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button
+                  variant={"ghost"}
+                  className="relative px-2 text-slate-500"
+                >
+                  <Bell size={"24"} />
+                  <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
+                    1
+                  </div>
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="px-0 pb-0">
+                <Notifications />
+              </HoverCardContent>
+            </HoverCard>
+            {/* Cart */}
+            <Link
+              href={"/u/cart"}
+              className={cn(
+                buttonVariants({
+                  variant: "ghost",
+                  className: "relative px-2 text-slate-500",
+                }),
+              )}
+            >
+              <ShoppingCart size={"24"} />
               <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
-                1
+                {currentUser.count_keranjang?.detail_keranjang_count}
               </div>
-            </Button>
-          </HoverCardTrigger>
-          <HoverCardContent className="px-0 pb-0">
-            <Notifications />
-          </HoverCardContent>
-        </HoverCard>
+            </Link>
+          </>
+        )}
 
-        <Link
-          href={"/u/cart"}
-          className={cn(
-            buttonVariants({
-              variant: "ghost",
-              className: "relative px-2 text-slate-500",
-            }),
-          )}
-        >
-          <ShoppingCart size={"24"} />
-          <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
-            10
-          </div>
-        </Link>
         <div className="flex gap-2 ">
           {/* Profile */}
-          {!isLoading && data ? (
+          {isLoggedIn && currentUser ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -315,13 +326,13 @@ export function NavbarUser() {
                 >
                   <Avatar>
                     <AvatarImage
-                      src={data.akun?.profile_image}
+                      src={currentUser.akun?.profile_image}
                       className="w-10 rounded-full border border-slate-200"
                     />
                     <AvatarFallback>AK</AvatarFallback>
                   </Avatar>
                   <p className="hidden font-medium sm:block">
-                    {data.nama.split(" ")[0]}
+                    {currentUser.nama.split(" ")[0]}
                   </p>
                   <ChevronDown size={"16"} />
                 </Button>
@@ -367,7 +378,7 @@ export function NavbarUser() {
               <Menu />
             </SheetTrigger>
             <SheetContent className="w-full sm:w-3/4 ">
-              {data && !isLoading && <UserSidebar data={data} />}
+              {currentUser && isLoggedIn && <UserSidebar data={currentUser} />}
             </SheetContent>
           </Sheet>
         </div>

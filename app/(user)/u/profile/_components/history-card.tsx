@@ -65,7 +65,9 @@ export default function UserHistoryCard({
       <div className="flex flex-col items-end justify-end">
         <p className="text-body text-slate-500">Total</p>
         <p className="font-medium">
-          {toRupiah(parseInt(data.total_setelah_diskon))}
+          {toRupiah(
+            parseInt(data.total_setelah_diskon) + data.pengiriman?.harga!,
+          )}
         </p>
       </div>
       <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
@@ -78,7 +80,7 @@ export default function UserHistoryCard({
         </p>
         <div className="flex w-full justify-end space-x-4">
           <DetailTransaksiDialog data={data} />
-          {!isAdmin && (
+          {!isAdmin && data.total_dibayarkan && (
             <Link
               href={""}
               className={cn(buttonVariants({ variant: "default" }))}

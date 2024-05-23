@@ -63,12 +63,13 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                   <p className="text-body text-slate-500">Alamat</p>
                   <div className="flex flex-col items-end">
                     <p className="text-body font-medium text-black">
-                      John Petra
+                      {data?.pengiriman?.nama}
                     </p>
-                    <p className="text-body text-black">628112352142</p>
+                    <p className="text-body text-black">
+                      {data?.pengiriman?.telepon}
+                    </p>
                     <p className="text-body text-right text-black">
-                      Jln. Tambak Bayan 219 , Depok, Kab. Sleman, D.I.
-                      Yogyakarta
+                      {data?.pengiriman?.alamat}
                     </p>
                   </div>
                 </div>
@@ -92,12 +93,16 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                     {toRupiah(parseInt(data?.total_pesanan!))}
                   </p>
                 </div>
-                <div className="flex justify-between">
-                  <p className="text-body flex items-center gap-2 text-slate-500">
-                    <Truck size={"16"} /> Total Ongkos Kirim
-                  </p>
-                  <p className="text-body text-black ">{toRupiah(10000)}</p>
-                </div>
+                {data?.pengiriman?.harga && (
+                  <div className="flex justify-between">
+                    <p className="text-body flex items-center gap-2 text-slate-500">
+                      <Truck size={"16"} /> Total Ongkos Kirim
+                    </p>
+                    <p className="text-body text-black ">
+                      {toRupiah(data?.pengiriman?.harga)}
+                    </p>
+                  </div>
+                )}
                 {parseInt(data?.total_diskon_poin!) ? (
                   <div className="flex justify-between">
                     <p className="text-body flex items-center gap-2 text-slate-500">
@@ -113,7 +118,11 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
               <div className="flex justify-between">
                 <p className="font-medium text-black">Total Belanja</p>
                 <p className="font-medium text-black">
-                  {toRupiah(parseInt(data?.total_setelah_diskon!))}
+                  {toRupiah(
+                    parseInt(
+                      data?.total_setelah_diskon! + data?.pengiriman?.harga,
+                    ),
+                  )}
                 </p>
               </div>
               <p className="text-body text-slate-500">

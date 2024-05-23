@@ -1,14 +1,12 @@
 "use client";
 
 import axios from "axios";
-import { IAkun } from "../interfaces";
-// import { fetcher } from "../utils";
-// import useSWR from "swr";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import useSWR from "swr";
 import { fetcher } from "../utils";
-import { useRouter } from "next/navigation";
+import { useCurrentUserStore } from "../state/user-store";
+
 export const register = async (data: any) => {
   try {
     const response = await axios.post(
@@ -74,6 +72,18 @@ export const login = async (data: { email: string; password: string }) => {
   }
 };
 
+export const getCurrentUserWithToken = async (token: string) => {
+  try {
+    const response = await axios.get(`${process.env.BASE_API}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getCurrentUser = () => {
   const { data, isLoading, error, isValidating, mutate } = useSWR(
     `${process.env.BASE_API}/auth/me`,
@@ -105,13 +115,13 @@ export const getCurrentUser = () => {
     // };
     return { data, isLoading, error, isValidating, mutate };
   }
+  // Cookies.set("uid", data.id_pelanggan, { expires: 1 });
 
   return { data, isLoading, error, isValidating, mutate };
 };
 
 export const logout = async () => {
   const token = Cookies.get("token");
-
   const response = await axios.post(
     `${process.env.BASE_API}/auth/logout`,
     undefined,
@@ -120,6 +130,7 @@ export const logout = async () => {
 
   if (response.status === 200) {
     toast.success(response.data.message);
+    sessionStorage.removeItem("auth-storage");
     Cookies.remove("token");
   }
 

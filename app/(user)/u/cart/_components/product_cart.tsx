@@ -41,12 +41,16 @@ export default function ProductCart({
     }
   };
 
+  console.log(data.produk);
+
   return (
     <div className="flex w-full gap-3.5 rounded-lg border border-slate-200 bg-white p-4 ">
       <Image
-        src={Brownies}
+        src={data.produk.thumbnail?.image!}
         alt="Brownies"
         className="aspect-square max-w-20 rounded"
+        width={"240"}
+        height={"240"}
       />
       <div className="flex w-full flex-col gap-4">
         <div className="flex items-center justify-between">

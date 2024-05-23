@@ -45,10 +45,12 @@ export default function ProductSummaryCard({
   isEditable = false,
   data,
   onSubmit = (values) => console.log(values),
+  onUpdatePengiriman = (values) => console.log(values),
 }: {
   isEditable?: boolean;
   data?: any;
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
+  onUpdatePengiriman?: (values: boolean) => void;
 }) {
   const [isUseAll, setIsUseAll] = useState(false);
 
@@ -62,6 +64,12 @@ export default function ProductSummaryCard({
   useEffect(() => {
     if (isUseAll) form.setValue("poin", "251");
   }, [isUseAll, form]);
+
+  useEffect(() => {
+    // if (form.watch("pengiriman") != "Ambil Sendiri") {
+    onUpdatePengiriman(form.watch("pengiriman") != "Ambil Sendiri");
+    // }
+  }, [form.watch("pengiriman")]);
 
   return (
     <Form {...form}>

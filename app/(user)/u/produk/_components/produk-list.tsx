@@ -1,71 +1,34 @@
 "use client";
 import { ProductCard } from "@/components/product";
 import Loading from "@/components/ui/loading";
+import { getAllHampers } from "@/lib/api/hampers";
 import { getAllProduk } from "@/lib/api/produk";
-import { IProduk } from "@/lib/interfaces";
+import { IHampers, IProduk } from "@/lib/interfaces";
 import React from "react";
 
 export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
-  const { data, isLoading } = getAllProduk();
+  const { data: produkData, isLoading: produkLoading } = getAllProduk();
+  const { data: hampersData, isLoading: hampersLoading } = getAllHampers();
 
-  // const dummys: IProduk[] = [
-  //   {
-  //     id_produk: 1,
-  //     nama: "Lapis Legit",
-  //     ukuran: "20x20 cm",
-  //     harga_jual: "500000",
-  //     id_kategori: "1",
-  //     id_penitip: null,
-  //     kapasitas: "20",
-  //     image: [
-  //       {
-  //         image:
-  //           "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //       },
-  //     ],
-  //     thumbnail: {
-  //       image:
-  //         "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //     },
-  //   },
-  //   {
-  //     id_produk: 2,
-  //     nama: "Lapis Legit",
-  //     ukuran: "10x20 cm",
-  //     harga_jual: "500000",
-  //     id_kategori: "1",
-  //     id_penitip: null,
-  //     kapasitas: "20",
-  //     image: [
-  //       {
-  //         image:
-  //           "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //       },
-  //     ],
-  //     thumbnail: {
-  //       image:
-  //         "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //     },
-  //   },
-  // ];
+  const isLoading = produkLoading || hampersLoading;
+
+  const combinedData = [...(produkData || []), ...(hampersData || [])];
 
   const filteredDummys = searchQuery?.trim()
-    ? data &&
-      !isLoading &&
-      data.filter((data: IProduk) =>
+    ? combinedData.filter((data: IProduk | IHampers) =>
         data.nama
-          .concat(data.ukuran.toLowerCase().toString())
+          .concat((data as IProduk).ukuran?.toLowerCase() ?? "")
           .toLowerCase()
           .includes(searchQuery.toLowerCase()),
       )
-    : !isLoading && data;
+    : combinedData;
 
   return (
     <>
-      {data && !isLoading ? (
+      {!isLoading ? (
         filteredDummys.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {filteredDummys.map((data: IProduk, index: number) => (
+            {filteredDummys.map((data: IProduk | IHampers, index: number) => (
               <ProductCard
                 product={data}
                 key={index}
@@ -83,7 +46,7 @@ export default function ProdukList({ searchQuery }: { searchQuery?: string }) {
               . Menampilkan hasil untuk seluruh produk.
             </p>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {data.map((data: IProduk, index: number) => (
+              {combinedData.map((data: IProduk | IHampers, index: number) => (
                 <ProductCard
                   product={data}
                   key={index}

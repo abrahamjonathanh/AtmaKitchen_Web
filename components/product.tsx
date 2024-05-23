@@ -3,7 +3,7 @@ import { Badge } from "./ui/badge";
 import { categoryBadge, cn, toRupiah } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
-import { IProduk } from "@/lib/interfaces";
+import { IHampers, IProduk } from "@/lib/interfaces";
 import NotAvailable from "@/public/products/Not Available.png";
 
 const ProductCard = ({
@@ -27,7 +27,7 @@ const ProductCard = ({
   },
   className,
 }: {
-  product?: IProduk;
+  product?: any;
   className?: string;
 }) => {
   return (
@@ -46,6 +46,16 @@ const ProductCard = ({
               className="max-h-36 rounded-t-lg object-cover"
               width={"460"}
               height={"460"}
+              priority
+            />
+          ) : product.image ? (
+            <Image
+              src={product.image!}
+              alt={`Image of ${product.nama}`}
+              className="max-h-36 rounded-t-lg object-cover"
+              width={"460"}
+              height={"460"}
+              priority
             />
           ) : (
             <Image
@@ -54,6 +64,7 @@ const ProductCard = ({
               className="max-h-36 rounded-t-lg object-cover"
               width={"460"}
               height={"460"}
+              priority
             />
           )}
         </div>

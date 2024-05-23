@@ -6,7 +6,7 @@ import Loading from "@/components/ui/loading";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { getCurrentUser, login } from "@/lib/api/auth";
+import { getCurrentUser, getCurrentUserWithToken, login } from "@/lib/api/auth";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,6 +21,7 @@ import Link from "next/link";
 import Image from "next/image";
 import MaxWidthWrapper from "@/components/maxWidthWrapper";
 import { useTitle } from "@/lib/hooks";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 const formSchema = z.object({
   email: z
@@ -34,6 +35,7 @@ export default function LoginPage() {
   useTitle("AtmaKitchen | Masuk");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const currentUser = useCurrentUserStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,6 +53,9 @@ export default function LoginPage() {
       if (response?.status === 200 || response?.status === 201) {
         router.push("/a/karyawan");
       }
+      const user = await getCurrentUserWithToken(response?.data.access_token);
+      currentUser.login(user?.data.data);
+      console.log(user);
     } catch (error: any) {
       console.error("Error sign in akun: ", error);
     } finally {

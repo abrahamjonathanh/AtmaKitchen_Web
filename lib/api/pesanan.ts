@@ -148,7 +148,7 @@ export const getPesananById = (id: string) => {
 };
 
 export const getCartsByCustomerId = (customerId: number) => {
-  const { data, isLoading, error, isValidating, mutate } = useSWR<IKeranjang[]>(
+  const { data, isLoading, error, isValidating, mutate } = useSWR(
     `${process.env.BASE_API}/keranjang/${customerId}`,
     fetcher,
   );

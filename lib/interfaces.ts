@@ -166,7 +166,7 @@ export interface IPelanggan {
   akun?: IAkun;
   nama: string;
   tgl_lahir: string;
-  status: string;
+  status?: string;
   deleted_at?: string;
   alamat?: IAlamat[];
   pesanan?: IPesananv2[];
@@ -273,6 +273,7 @@ export interface IPesananv2 {
   created_at?: string;
   detail_pesanan?: IDetailPesanan[];
   status_pesanan_latest?: IStatusPesanan;
+  pengiriman?: IPengiriman;
 }
 
 export interface IStatusPesanan {
