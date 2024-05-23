@@ -27,7 +27,7 @@ export default function page({ params }: { params: { id: string } }) {
         router.push("/a/pesanan");
       }
     } catch (error: any) {
-      console.error("Error updating penitip: ", error);
+      console.error("Error updating pesanan: ", error);
     } finally {
       setIsLoading(false);
     }

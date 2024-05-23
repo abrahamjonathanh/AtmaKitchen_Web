@@ -198,6 +198,7 @@ export interface IPesanan {
   total_tip: number;
   verified_at: string | null;
   jenis_pengiriman?: string;
+  nama?: string;
   pelanggan?: {
     id_pelanggan: number;
     id_akun?: number;
