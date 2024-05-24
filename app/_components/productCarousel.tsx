@@ -21,7 +21,7 @@ import ChocoCreamy from "../../public/products/Choco creamy latte.png";
 import KopiLuwak from "../../public/products/Kopi luwak bubuk.png";
 import MatchaCreamy from "../../public/products/Matcha creamy latte.png";
 import MatchaOrganik from "../../public/products/Matcha organik bubuk.png";
-import MilkBun from "../../public/products/Milk bun.png";
+import MilkBun from "@/public/products/Milk bun.png";
 import RotiKeju from "../../public/products/Roti keju.png";
 import RotiSosis from "../../public/products/Roti sosis.png";
 import Link from "next/link";
