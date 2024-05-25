@@ -139,6 +139,8 @@ export type IBahanBaku = {
   stok_minumum?: string;
   satuan: string;
   updated_at: string; //terkahir diperbaharui
+  nama_bahan_baku?:string;
+  total_kekurangan?: number; 
 };
 
 export type IPenitip = {

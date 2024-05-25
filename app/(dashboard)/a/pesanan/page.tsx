@@ -9,7 +9,7 @@ import {
   getAllPesanan,
   getAllPesananInProcess,
   getAllPesananPaymentVerified,
-  getAllPesananRejected,
+  // getAllPesananRejected,
 } from "@/lib/api/pesanan";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTitle } from "@/lib/hooks";
@@ -18,7 +18,7 @@ export default function page() {
   useTitle("AtmaKitchen | Pesanan");
   const { data, isLoading } = getAllPesanan();
   const process = getAllPesananInProcess();
-  const rejected = getAllPesananRejected();
+  // const rejected = getAllPesananRejected();
   // const paymentVerified = getAllPesananPaymentVerified();
 
   return (
@@ -52,13 +52,13 @@ export default function page() {
           )} */}
           <p>Blm ada</p>
         </TabsContent>
-        <TabsContent value="rejected">
+        {/* <TabsContent value="rejected">
           {rejected.data && !rejected.isLoading ? (
             <DataTable columns={columns} data={rejected.data} />
           ) : (
             <Loading />
           )}
-        </TabsContent>
+        </TabsContent> */}
         <TabsContent value="process">
           {process.data && !process.isLoading ? (
             <DataTable columns={columns} data={process.data} />
