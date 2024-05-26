@@ -6,13 +6,16 @@ import { useTitle } from "@/lib/hooks";
 import { UserWrapper } from "@/components/user-wrapper";
 import ProductSummaryCard from "./_components/product-summary-card";
 import {
+  createPesanan,
   getCartsByCustomerId,
   updateQuantityInCustomerCart,
 } from "@/lib/api/pesanan";
 import Loading from "@/components/ui/loading";
-import { IAlamat, IDetailKeranjang } from "@/lib/interfaces";
+import { IAlamat, IDetailKeranjang, IHampers, IProduk } from "@/lib/interfaces";
 import UserAlamatCard from "./_components/user-alamat-card";
 import { useCurrentUserStore } from "@/lib/state/user-store";
+import { addDays } from "date-fns";
+import { deleteAllDetailKeranjangByIdPelanggan } from "@/lib/api/keranjang";
 
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");
@@ -52,11 +55,60 @@ export default function page() {
 
   const onPengirimanHandler = (values: boolean) => {
     setIsAddingAlamat(values);
+    console.log(isAddingAlamat);
   };
 
   const onAlamatHandler = (values: IAlamat) => {
     setAlamat(values);
   };
+
+  const onSubmitHandler = (values: any) => {
+    isAddingAlamat ? alamat : setAlamat(null);
+    const produk: (IProduk & { jumlah: number })[] = [];
+    const produk_hampers: (IHampers & { jumlah: number })[] = [];
+
+    customerCart.data.detail_keranjang.forEach((item: any) => {
+      if (item.hampers === null) {
+        produk.push({ ...item.produk, jumlah: item.jumlah });
+      } else if (item.produk === null) {
+        produk_hampers.push({ ...item.hampers, jumlah: item.jumlah });
+      }
+    });
+
+    const data = {
+      id_metode_pembayaran: values.id_metode_pembayaran,
+      id_pelanggan: currentUser?.id_pelanggan,
+      tgl_order: addDays(new Date(values.dob), 1).toISOString().split("T")[0],
+      total_diskon_poin: values.poin ? values.poin : 0,
+      jenis_pengiriman: values.pengiriman,
+      nama: alamat?.nama,
+      telepon: alamat?.telepon,
+      alamat: alamat?.alamat,
+      produk: produk.length > 0 ? produk : null,
+      produk_hampers: produk_hampers.length > 0 ? produk_hampers : null,
+    };
+
+    if (produk.length > 0 || produk_hampers.length > 0) {
+      createPesanan(data);
+      deleteAllDetailKeranjangByIdPelanggan(currentUser?.id_pelanggan!);
+    }
+  };
+
+  const calculateTotalHarga = () => {
+    let totalHarga = 0;
+    !customerCart.isLoading &&
+      customerCart.data.detail_keranjang &&
+      customerCart.data.detail_keranjang.forEach((item: any) => {
+        if (item.hampers === null) {
+          totalHarga += item.produk.harga_jual * item.jumlah;
+        } else if (item.produk === null) {
+          totalHarga += item.hampers.harga_jual * item.jumlah;
+        }
+      });
+    return totalHarga;
+  };
+
+  const totalHarga = calculateTotalHarga();
 
   useEffect(() => {
     if (alamat) {
@@ -91,6 +143,7 @@ export default function page() {
                           data={data}
                           onRefresh={updateQuantityInCustomerCartHandler}
                           isLoading={isLoading}
+                          onReload={customerCart.mutate}
                         />
                       ),
                     )}
@@ -104,8 +157,10 @@ export default function page() {
         </div>
         {/* Pricing */}
         <ProductSummaryCard
+          totalHarga={totalHarga}
           isEditable
           onUpdatePengiriman={onPengirimanHandler}
+          onSubmit={onSubmitHandler}
         />
       </div>
       <ProductRecommendation />

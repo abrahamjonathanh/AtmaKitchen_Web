@@ -97,6 +97,48 @@ export const getProdukById = (id: number) => {
   };
 };
 
+export const getStokByIdAndDate = (id: number, date: any) => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/produk/stok/${id}/${date}`,
+    fetcher,
+  );
+
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+    data = {
+      stok: null,
+    };
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};
+
+export const getReadyStockByIdAndDate = (id: number, date: any) => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/produk/tanggal/${date}/${id}`,
+    fetcher,
+  );
+
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+    data = {
+      stok: null,
+    };
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};
+
 export const createProduk = async (data: IProduk) => {
   try {
     // Boiler template for fetching api

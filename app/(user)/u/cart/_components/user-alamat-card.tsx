@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { getAlamatPelangganById } from "@/lib/api/alamat";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCurrentUserStore } from "@/lib/state/user-store";
 import {
   Dialog,
@@ -24,10 +24,16 @@ export default function UserAlamatCard({
     parseInt(currentUser?.id_pelanggan ?? "1"),
   );
 
+  useEffect(() => {
+    if (data) {
+      onAlamatHandler(data.alamat[selectedAlamatIndex]);
+    }
+  }, [selectedAlamatIndex, data, onAlamatHandler]);
+
   const onChangeAlamat = (index: number) => {
     setSelectedAlamatIndex(index);
-    onAlamatHandler(data.alamat[selectedAlamatIndex]);
   };
+
   return (
     !isLoading &&
     data && (

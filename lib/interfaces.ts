@@ -289,11 +289,18 @@ export interface IDetailKeranjang {
   id_detail_keranjang: string;
   id_keranjang?: string;
   id_produk?: string;
-  produk: IProduk;
+  id_produk_hampers?: string;
+  produk?: IProduk;
+  hampers?: IHampers;
   jumlah: number;
 }
 
 export interface IKeranjang {
   id_keranjang: string;
   detail_keranjang: IDetailKeranjang[];
+}
+
+export interface IMetodePembayaran {
+  id_metode_pembayaran: number;
+  nama: string;
 }
