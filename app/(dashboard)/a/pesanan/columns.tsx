@@ -29,6 +29,15 @@ import DeleteDialog from "@/components/deleteDialog";
 import { usePathname, useRouter } from "next/navigation";
 import { IPesanan, IPesananv2 } from "@/lib/interfaces";
 import { deleteKaryawanById } from "@/lib/api/karyawan";
+import {
+  fetchBahanBaku,
+  terimaPesananById,
+  tolakPesananById,
+} from "@/lib/api/pesanan";
+import { useFormStatus } from "react-dom";
+import { axiosInstance } from "@/lib/axiosInstance";
+import BahanBakuDialog from "@/components/bahanBakuDialog";
+import { toast } from "sonner";
 
 export const columns: ColumnDef<IPesananv2>[] = [
   {
@@ -163,9 +172,20 @@ export const columns: ColumnDef<IPesananv2>[] = [
     cell: ({ row }) => {
       const pathname = usePathname();
       const [isOpen, setIsOpen] = useState(false);
+      const [pesananId, setPesananId] = useState<string | null>(null);
       const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
       const router = useRouter(); // // Copy this for create, update, delete
       const [isLoading, setIsLoading] = useState(false); // // Copy this for create, update, delete
+      const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+      const [confirmingAction, setConfirmingAction] = useState<
+        "accepted" | "rejected" | null
+      >(null);
+      const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false); // State untuk menampilkan dialog bahan baku
+
+      const handleConfirmation = (action: "accepted" | "rejected") => {
+        setConfirmingAction(action);
+        setConfirmDialogOpen(true);
+      };
 
       const onDeleteHandler = async () => {
         try {
@@ -184,6 +204,76 @@ export const columns: ColumnDef<IPesananv2>[] = [
         } finally {
           setIsLoading(false); //For stop the loading process
           setIsOpen(false); // For close the dialog
+        }
+      };
+
+      const handleUpdateStatus = async (status: "accepted" | "rejected") => {
+        try {
+          setIsLoading(true);
+          if (status === "accepted") {
+            const pesananId = row.getValue("id_pesanan") as string;
+            if (
+              typeof pesananId === "string" ||
+              typeof pesananId === "number"
+            ) {
+              await terimaPesananById(pesananId.toString());
+              const bahanBakuData = await fetchBahanBaku(pesananId.toString());
+              setPesananId(pesananId);
+              setIsBahanBakuDialogOpen(true);
+
+              if (
+                bahanBakuData &&
+                bahanBakuData.data &&
+                bahanBakuData.data.total_kekurangan_per_bahan_baku
+              ) {
+                const kekuranganBahanBaku =
+                  bahanBakuData.data.total_kekurangan_per_bahan_baku;
+
+                const bahanBakuList = kekuranganBahanBaku.map(
+                  (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
+                    nama: bahan.nama_bahan_baku,
+                    kekurangan: bahan.total_kekurangan,
+                  }),
+                );
+
+                if (bahanBakuList.length > 0) {
+                  // Tampilkan informasi dalam satu toast
+                  const message = `${bahanBakuData.message}:<br />${bahanBakuList
+                    .map(
+                      (bahan: { nama: any; kekurangan: any }) => `
+                      &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
+                      &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
+                    )
+                    .join("<br /><br />")}`;
+                  toast.info(message);
+                } else {
+                  console.error(
+                    "Data bahan baku tidak dalam format yang benar.",
+                  );
+                }
+              } else {
+                console.error("Data bahan baku sudah lengkap.");
+              }
+            } else {
+              console.error("Invalid type for pesananId:", typeof pesananId);
+            }
+          } else {
+            const pesananId = row.getValue("id_pesanan");
+            if (
+              typeof pesananId === "string" ||
+              typeof pesananId === "number"
+            ) {
+              await tolakPesananById(pesananId.toString());
+            } else {
+              console.error("Invalid type for pesananId:", typeof pesananId);
+            }
+          }
+          mutate("/api/pesanan");
+        } catch (error) {
+          console.error(`Failed to mark order as ${status}: `, error);
+        } finally {
+          setIsLoading(false);
+          setIsOpen(false);
         }
       };
 
@@ -231,10 +321,11 @@ export const columns: ColumnDef<IPesananv2>[] = [
               <DropdownMenuLabel>MO ONLY</DropdownMenuLabel>
               <DropdownMenuItem>Lihat Pesanan</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Box size={"16"} /> Diproses
+              <DropdownMenuItem onClick={() => handleUpdateStatus("accepted")}>
+                <Check size={"16"} /> Diproses
               </DropdownMenuItem>
-              <DropdownMenuItem>
+
+              <DropdownMenuItem onClick={() => handleUpdateStatus("rejected")}>
                 <X size={"16"} /> Ditolak
               </DropdownMenuItem>
             </DropdownMenuContent>

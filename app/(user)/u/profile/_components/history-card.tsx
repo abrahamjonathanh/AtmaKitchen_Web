@@ -1,15 +1,16 @@
+// components/UserHistoryCard.tsx
+"use client";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Truck } from "lucide-react";
 import Image from "next/image";
-import React from "react";
-import Brownies from "@/public/products/Brownies.png";
+import React, { useRef } from "react";
 import { cn, toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-
 import DetailTransaksiDialog from "./detail-transaksi-dialog";
 import { IDetailPesanan, IPesananv2 } from "@/lib/interfaces";
+import { uploadPaymentProof } from "@/lib/api/pesanan";
 
 export default function UserHistoryCard({
   data,
@@ -18,6 +19,33 @@ export default function UserHistoryCard({
   data: IPesananv2;
   isAdmin: boolean;
 }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    console.log(file);
+    if (file) {
+      try {
+        const response = await uploadPaymentProof(
+          data.id_pelanggan,
+          data.id_pesanan,
+          file,
+        );
+        console.log(response);
+        // Handle successful upload (e.g., show a success message or update the UI)
+      } catch (error) {
+        console.error("File upload failed", error);
+        // Handle upload failure (e.g., show an error message)
+      }
+    }
+  };
+
+  const handlePayClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="space-y-4 rounded-lg border border-slate-200 p-4">
       <div className="flex items-center justify-between">
@@ -35,11 +63,11 @@ export default function UserHistoryCard({
         </Badge>
       </div>
       <div className="space-y-4">
-        {data.detail_pesanan?.map((data: IDetailPesanan, index: number) => (
+        {data.detail_pesanan?.map((item: IDetailPesanan, index: number) => (
           <div className="flex w-full items-start gap-4" key={index}>
             <Image
-              src={data.produk?.thumbnail?.image!}
-              alt={data.produk?.nama!}
+              src={item.produk?.thumbnail?.image!}
+              alt={item.produk?.nama!}
               className="h-16 w-16 rounded-lg object-cover"
               width={"72"}
               height={"72"}
@@ -48,14 +76,14 @@ export default function UserHistoryCard({
             <div className="flex w-full items-start justify-between gap-4">
               <div>
                 <p className="font-medium">
-                  {data.nama_produk} {data.produk?.ukuran}
+                  {item.nama_produk} {item.produk?.ukuran}
                 </p>
                 <p className="text-body text-slate-500">
-                  {data.jumlah} Barang x {toRupiah(parseInt(data.harga))}
+                  {item.jumlah} Barang x {toRupiah(parseInt(item.harga))}
                 </p>
               </div>
               <p className="font-medium">
-                {toRupiah(parseInt(data.jumlah) * parseInt(data.harga))}
+                {toRupiah(parseInt(item.jumlah) * parseInt(item.harga))}
               </p>
             </div>
           </div>
@@ -80,13 +108,22 @@ export default function UserHistoryCard({
         </p>
         <div className="flex w-full justify-end space-x-4">
           <DetailTransaksiDialog data={data} />
-          {!isAdmin && !data.total_dibayarkan && (
-            <Link
-              href={""}
-              className={cn(buttonVariants({ variant: "default" }))}
-            >
-              Bayar
-            </Link>
+          {!isAdmin && data.total_dibayarkan && (
+            <>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+              <button
+                className={cn(buttonVariants({ variant: "default" }))}
+                onClick={handlePayClick}
+              >
+                Bayar
+              </button>
+            </>
           )}
         </div>
       </div>
