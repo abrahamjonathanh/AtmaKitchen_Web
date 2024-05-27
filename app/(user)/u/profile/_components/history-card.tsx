@@ -80,7 +80,7 @@ export default function UserHistoryCard({
         </p>
         <div className="flex w-full justify-end space-x-4">
           <DetailTransaksiDialog data={data} />
-          {!isAdmin && data.total_dibayarkan && (
+          {!isAdmin && !data.total_dibayarkan && (
             <Link
               href={""}
               className={cn(buttonVariants({ variant: "default" }))}

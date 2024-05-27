@@ -32,13 +32,13 @@ async function fetchUser(
   }
 }
 
-const UNPROTECTED_ROUTES = ["/u/produk", "/u/cart"];
+const UNPROTECTED_ROUTES = ["/u/produk", "/u/hampers"];
 
 const PROTECTED_ROUTES = [
   {
     role: "Customer",
     default: "/u/produk",
-    routes: ["/u/produk", "/u/profile"],
+    routes: ["/u/produk", "/u/profile", "/u/cart"],
   },
   {
     role: "Admin",
@@ -60,6 +60,7 @@ const PROTECTED_ROUTES = [
       "/a/resep",
       "/a/pengeluaran-lainnya",
       "/a/profile",
+      "/a/dashboard",
     ],
   },
 ];

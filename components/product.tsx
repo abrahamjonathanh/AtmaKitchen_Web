@@ -31,7 +31,13 @@ const ProductCard = ({
   className?: string;
 }) => {
   return (
-    <Link href={`/u/produk/${product.id_produk}`}>
+    <Link
+      href={
+        product.id_produk
+          ? `/u/produk/${product.id_produk}`
+          : `/u/hampers/${product.id_produk_hampers}`
+      }
+    >
       <div
         className={cn(
           "flex max-w-full flex-col rounded-lg border border-slate-200 bg-white shadow-md transition-shadow hover:shadow-lg sm:max-w-56 md:max-w-full",

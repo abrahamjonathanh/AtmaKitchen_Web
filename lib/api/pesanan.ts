@@ -427,3 +427,12 @@ export const getAllPesananPaymentVerified = () => {
     isValidating,
   };
 };
+
+export const getAllPendapatanBulananByYear = () => {
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    `${process.env.BASE_API}/pesanan/laporan`,
+    fetcher,
+  );
+
+  return { data, error, isLoading, isValidating, mutate };
+};
