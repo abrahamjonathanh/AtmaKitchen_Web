@@ -7,61 +7,55 @@ import Image from "next/image";
 import React, { useState } from "react";
 import ProductQuantityCard from "../_components/produk-quantity-card";
 import ProductRecommendation from "@/app/(user)/_components/recommendation-product";
-import { getProdukById } from "@/lib/api/produk";
+import {
+  getProdukById,
+  getStokByIdAndDate,
+  getReadyStockByIdAndDate,
+} from "@/lib/api/produk";
 import Loading from "@/components/ui/loading";
+import { createKeranjang } from "@/lib/api/keranjang";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 export default function page({ params }: { params: { id: number } }) {
+  const { currentUser } = useCurrentUserStore();
   const [indexImageSelected, setIndexImageSelected] = useState(0);
   const [quantity, setQuantity] = useState("1");
+
   const { data, isLoading } = getProdukById(params.id);
-  // const data: IProduk = {
-  //   id_produk: "1",
-  //   image: [
-  //     { image: "https://atmaimages.blob.core.windows.net/images/Brownies.png" },
-  //     {
-  //       image:
-  //         "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //     },
-  //     {
-  //       image:
-  //         "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //     },
-  //     {
-  //       image:
-  //         "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //     },
-  //     {
-  //       image:
-  //         "https://atmaimages.blob.core.windows.net/images/Choco creamy latte.png",
-  //     },
-  //   ],
-  //   thumbnail: {
-  //     image: "https://atmaimages.blob.core.windows.net/images/Brownies.png",
-  //   },
-  //   harga_jual: "300000",
-  //   kapasitas: "20",
-  //   nama: "Lapis Surabaya",
-  //   ukuran: "20x20 cm",
-  //   terjual: "10",
-  //   detail_stok: [
-  //     { tanggal: "2024-04-27T14:11:40Z", stok: "20" },
-  //     { tanggal: "2024-04-28T14:11:40Z", stok: "19" },
-  //     { tanggal: "2024-04-29T14:11:40Z", stok: "16" },
-  //     { tanggal: "2024-05-01T14:11:40Z", stok: "20" },
-  //     { tanggal: "2024-05-02T14:11:40Z", stok: "20" },
-  //     { tanggal: "2024-05-03T14:11:40Z", stok: "20" },
-  //     { tanggal: "2024-05-04T14:11:40Z", stok: "20" },
-  //   ],
-  // };
+
+  const date = new Date();
+  date.setDate(date.getDate());
+  const stok = getStokByIdAndDate(params.id, date.toDateString());
+  const ready_stock = getReadyStockByIdAndDate(params.id, date.toDateString());
+
+  const onQuantityChangeHandler = (value: any) => {
+    const newQuantity = Math.max(1, parseInt(quantity) + value).toString();
+    setQuantity(newQuantity);
+    console.log(newQuantity);
+  };
+
+  const onSubmitHandler = (values: any) => {
+    const data = {
+      id_pelanggan: currentUser?.id_pelanggan,
+      id_produk: params.id,
+      jumlah: quantity,
+    };
+    createKeranjang(data);
+  };
 
   return (
     <UserWrapper className="space-y-8">
-      {data && !isLoading ? (
+      {!isLoading &&
+      data &&
+      stok.data &&
+      !stok.isLoading &&
+      ready_stock.data &&
+      !ready_stock.isLoading ? (
         <div className="flex flex-col gap-4 lg:flex-row">
           {/* Image display */}
           <div className="flex h-max flex-col gap-4 sm:flex-row md:h-max md:flex-col lg:h-max lg:w-1/4">
             <Image
-              src={(data.thumbnail as { image: string }).image}
+              src={data?.thumbnail?.image}
               alt={data.nama}
               className="aspect-square h-full max-h-96 w-full rounded-lg object-cover sm:w-4/5 md:w-full"
               width={"500"}
@@ -69,10 +63,10 @@ export default function page({ params }: { params: { id: number } }) {
             />
             <ScrollArea className="h-max sm:h-96 sm:w-1/5 md:h-max md:w-full lg:h-full">
               <div className="flex gap-2 sm:flex-col sm:gap-4 md:flex-row lg:h-max ">
-                {data.images!.map((image: any, index: number) => (
+                {data.images!.map((image: { image: string }, index: number) => (
                   <Image
-                    src={(image as { image: string }).image}
-                    alt={`${(image as { image: string }).image}-${index}`}
+                    src={image.image}
+                    alt={data.nama}
                     key={index}
                     className={`aspect-square h-max w-1/5 cursor-pointer rounded-lg object-cover sm:w-full md:w-1/5 ${
                       index == indexImageSelected
@@ -96,21 +90,24 @@ export default function page({ params }: { params: { id: number } }) {
               <p className="text-h3">
                 {data.nama} {data.ukuran}
               </p>
-              <p>Terjual {data.terjual}</p>
             </div>
             <p className="text-h2">{toRupiah(parseInt(data.harga_jual))}</p>
             <div className="space-y-3">
               <p className="text-h4">Kapasitas Stok</p>
+              <div className="flex justify-between gap-4 space-y-2 text-slate-500">
+                <p>Ready Stock</p>
+                <p>{ready_stock.data.ready_stock} Stok</p>
+              </div>
               <div>
-                {/* {data.detail_stok!.map((stock, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between gap-4 space-y-2 text-slate-500"
-                >
-                  <p>{toIndonesiaDate(stock.tanggal)}</p>
-                  <p>{stock.stok} Stok</p>
-                </div>
-              ))} */}
+                {stok.data.map((stock: any, index: number) => (
+                  <div
+                    key={index}
+                    className="flex justify-between gap-4 space-y-2 text-slate-500"
+                  >
+                    <p>{toIndonesiaDate(stock.date)}</p>
+                    <p>{stock.stock} Stok</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -118,13 +115,8 @@ export default function page({ params }: { params: { id: number } }) {
           {/* Quantity Card */}
           <ProductQuantityCard
             quantity={quantity}
-            onQuantityChange={(value) => {
-              const newQuantity = Math.max(
-                1,
-                parseInt(quantity) + value,
-              ).toString();
-              setQuantity(newQuantity);
-            }}
+            onQuantityChange={onQuantityChangeHandler}
+            onSubmit={onSubmitHandler}
           />
         </div>
       ) : (

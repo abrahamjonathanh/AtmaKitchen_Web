@@ -13,8 +13,14 @@ import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { BadgePercent, CreditCard, Truck } from "lucide-react";
 import { IPesananv2 } from "@/lib/interfaces";
 import UserInvoice from "@/app/_components/userInvoice";
+import { getPoinByIdPelanggan, getPoinByTotalHarga } from "@/lib/api/poin";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
+  const { currentUser } = useCurrentUserStore();
+  const getPoin = getPoinByTotalHarga(data?.total_pesanan);
+  const poinUser = getPoinByIdPelanggan(currentUser?.id_pelanggan!);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -125,12 +131,20 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                   )}
                 </p>
               </div>
-              <p className="text-body text-slate-500">
-                Anda memperoleh{" "}
-                <span className="font-medium text-orange-600">112 poin</span>{" "}
-                dari transaksi ini.
-              </p>
-              <UserInvoice data={data!} />
+              {!getPoin.isLoading && (
+                <p className="text-body text-slate-500">
+                  Anda memperoleh{" "}
+                  <span className="font-medium text-orange-600">
+                    {getPoin.data} poin
+                  </span>{" "}
+                  dari transaksi ini.
+                </p>
+              )}
+              <UserInvoice
+                data={data!}
+                poin={getPoin.data}
+                poinUser={poinUser.data}
+              />
             </div>
           </DialogDescription>
         </DialogHeader>

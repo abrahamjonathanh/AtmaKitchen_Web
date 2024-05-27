@@ -77,6 +77,27 @@ export const getHampersById = (id: number) => {
   };
 };
 
+export const getStokByIdAndDate = (id: number, date: any) => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/hampers/stok/${id}/${date}`,
+    fetcher,
+  );
+
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+    data = {
+      stok: null,
+    };
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};
+
 export const createHampers = async (data: IHampers) => {
   try {
     // Boiler template for fetching api
