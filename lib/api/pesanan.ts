@@ -39,7 +39,7 @@ export const getAllRiwayatPesananByPelangganId = async (
 
 export const getAllPesanan = () => {
   let { data, error, isLoading, isValidating } = useSWR(
-    `${process.env.BASE_API}/pesanan`,
+    `${process.env.BASE_API}/pesanan/perlu-dikonfirmasi`,
     fetcher,
   );
 
@@ -486,6 +486,37 @@ export const tolakPesananById = async (id: string) => {
   }
 };
 
+export const uploadPaymentProof = async (
+  id_pelanggan: string,
+  id_pesanan: string,
+  file: File
+): Promise<void> => {
+  const formData = new FormData();
+  formData.append("bukti_pembayaran", file);  
+  console.log(file);
+console.log(formData);
+  try {
+    const response = await axiosInstance().post(
+      `/pelanggan/${id_pelanggan}/pesanan/${id_pesanan}/upload-bukti-pembayaran`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",  // Ensure correct content type
+          
+        },
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error("File upload failed");
+    }
+    
+    toast.success(response?.data?.message);
+  } catch (error) {
+    toast.error("Terjadi kesalahan...");
+    throw new Error("File upload failed: " + error);
+  }
+};
 
 export const getAllPesananConfirmation = async () => {
     let { data, error, isLoading, isValidating } = useSWR(
