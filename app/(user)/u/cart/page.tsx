@@ -89,6 +89,7 @@ export default function page() {
     };
 
     if (produk.length > 0 || produk_hampers.length > 0) {
+      // console.log(data);
       createPesanan(data);
       deleteAllDetailKeranjangByIdPelanggan(currentUser?.id_pelanggan!);
     }
