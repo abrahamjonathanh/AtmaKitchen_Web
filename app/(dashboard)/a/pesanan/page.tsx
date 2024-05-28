@@ -8,6 +8,7 @@ import Loading from "@/components/ui/loading";
 import {
   getAllPesanan,
   getAllPesananInProcess,
+  getAllPesananNeedConfirmPayment,
   getAllPesananPaymentVerified,
   // getAllPesananRejected,
 } from "@/lib/api/pesanan";
@@ -16,41 +17,61 @@ import { useTitle } from "@/lib/hooks";
 
 export default function page() {
   useTitle("AtmaKitchen | Pesanan");
-  const { data, isLoading } = getAllPesanan();
+  const allPesanan = getAllPesanan();
+  // const { data, isLoading } = getAllPesanan();
+  const needConfirm = getAllPesananNeedConfirmPayment();
+  const paymentVerified = getAllPesananPaymentVerified();
+
   const process = getAllPesananInProcess();
   // const rejected = getAllPesananRejected();
   // const paymentVerified = getAllPesananPaymentVerified();
 
   return (
-    // Boiler template for dashboard
-    // Please do not change nor delete it unless you know what you are doing
     <DashboardWrapper navTitle="Pesanan">
       <BreadcrumbWithSeparator currentPage="Pesanan" />
-      <Tabs defaultValue="confirm">
+      <Tabs defaultValue="semua">
         <TabsList>
-          <TabsTrigger value="confirm">Menunggu Konfirmasi</TabsTrigger>
-          <TabsTrigger value="payment">Menunggu Pembayaran</TabsTrigger>
-          <TabsTrigger value="delivery">Menunggu Ongkir</TabsTrigger>
+          <TabsTrigger value="semua">Semua</TabsTrigger>
+          <TabsTrigger value="confirm">Konfirmasi Pembayaran</TabsTrigger>
+          {/* <TabsTrigger value="payment">Menunggu Pembayaran</TabsTrigger> */}
+          {/* <TabsTrigger value="delivery">Menunggu Ongkir</TabsTrigger> */}
           <TabsTrigger value="paymentverified">Pembayaran Diterima</TabsTrigger>
-          <TabsTrigger value="process">Diproses</TabsTrigger>
+          {/* <TabsTrigger value="process">Diproses</TabsTrigger>
           <TabsTrigger value="accepted">Diterima</TabsTrigger>
           <TabsTrigger value="sent">Dikirim</TabsTrigger>
-          <TabsTrigger value="rejected">Ditolak</TabsTrigger>
+          <TabsTrigger value="rejected">Ditolak</TabsTrigger> */}
         </TabsList>
+        <TabsContent value="semua">
+          {allPesanan.data && !allPesanan.isLoading ? (
+            <DataTable
+              columns={columns(allPesanan.mutate)}
+              data={allPesanan.data}
+            />
+          ) : (
+            <Loading />
+          )}
+        </TabsContent>
         <TabsContent value="confirm">
-          {data && !isLoading ? (
-            <DataTable columns={columns} data={data} />
+          {needConfirm.data && !needConfirm.isLoading ? (
+            <DataTable
+              columns={columns(needConfirm.mutate)}
+              data={needConfirm.data}
+            />
           ) : (
             <Loading />
           )}
         </TabsContent>
         <TabsContent value="paymentverified">
-          {/* {paymentVerified.data && !paymentVerified.isLoading ? (
-            <DataTable columns={columns} data={paymentVerified.data} />
-          ) : (
+          {paymentVerified.data && !paymentVerified.isLoading ? (
+            <DataTable
+              columns={columns(paymentVerified.mutate)}
+              data={paymentVerified.data}
+            />
+          ) : paymentVerified.isLoading ? (
             <Loading />
-          )} */}
-          <p>Blm ada</p>
+          ) : (
+            <p>Data tidak ditemukan</p>
+          )}
         </TabsContent>
         {/* <TabsContent value="rejected">
           {rejected.data && !rejected.isLoading ? (
@@ -59,13 +80,13 @@ export default function page() {
             <Loading />
           )}
         </TabsContent> */}
-        <TabsContent value="process">
+        {/* <TabsContent value="process">
           {process.data && !process.isLoading ? (
-            <DataTable columns={columns} data={process.data} />
+            <DataTable columns={columns(process)} data={process.data} />
           ) : (
             <Loading />
           )}
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
       {/* {data && !isLoading ? (
         <DataTable columns={columns} data={data} />

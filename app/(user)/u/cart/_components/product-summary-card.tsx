@@ -43,7 +43,9 @@ const formSchema = z.object({
   }),
   poin: z.string().optional(),
   pengiriman: z.string().optional(),
-  id_metode_pembayaran: z.string(),
+  id_metode_pembayaran: z.string({
+    required_error: "Metode pembayaran tidak boleh kosong",
+  }),
 });
 
 export default function ProductSummaryCard({
@@ -119,7 +121,7 @@ export default function ProductSummaryCard({
           <Separator />
           <div className="flex items-center justify-between">
             <p className="text-slate-500">Poin Kamu</p>
-            <p className="font-medium">{toThousand(dataPoin.data)} Poin</p>
+            <p className="font-medium">{toThousand(dataPoin.data ?? 0)} Poin</p>
           </div>
 
           <form
@@ -151,7 +153,7 @@ export default function ProductSummaryCard({
                   id="isUseAll"
                 />
                 <Label htmlFor="isUseAll">
-                  Pakai semua poin ({toThousand(dataPoin.data)})
+                  Pakai semua poin ({toThousand(dataPoin.data ?? 0)})
                 </Label>
               </div>
               <FormDescription className="text-slate-500">
@@ -308,7 +310,7 @@ export default function ProductSummaryCard({
               variant={"default"}
               className="flex w-full items-center gap-1"
             >
-              Saya sudah bayar <ShieldCheck size={"16"} />
+              Buat Pesanan <ShieldCheck size={"16"} />
             </Button>
           </form>
         </div>

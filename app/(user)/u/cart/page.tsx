@@ -17,13 +17,14 @@ import { useCurrentUserStore } from "@/lib/state/user-store";
 import { addDays } from "date-fns";
 import { deleteAllDetailKeranjangByIdPelanggan } from "@/lib/api/keranjang";
 import { getStokByIdAndDate } from "@/lib/api/produk";
-
+import Cookies from "js-cookie";
+import { getCurrentUserWithToken } from "@/lib/api/auth";
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");
   const [isLoading, setIsLoading] = useState(false);
   const [isAddingAlamat, setIsAddingAlamat] = useState(false);
   const [alamat, setAlamat] = useState<IAlamat | null>(null);
-  const { currentUser } = useCurrentUserStore();
+  const { currentUser, refresh } = useCurrentUserStore();
 
   const responseStock = getStokByIdAndDate(1, "2024-05-27");
   console.log(responseStock.data);
@@ -68,7 +69,7 @@ export default function page() {
     setAlamat(values);
   };
 
-  const onSubmitHandler = (values: any) => {
+  const onSubmitHandler = async (values: any) => {
     isAddingAlamat ? alamat : setAlamat(null);
     const produk: (IProduk & { jumlah: number })[] = [];
     const produk_hampers: (IHampers & { jumlah: number })[] = [];
@@ -98,6 +99,11 @@ export default function page() {
       // console.log(data);
       createPesanan(data);
       deleteAllDetailKeranjangByIdPelanggan(currentUser?.id_pelanggan!);
+      customerCart.mutate();
+
+      const token = Cookies.get("token");
+      const user = await getCurrentUserWithToken(token!);
+      refresh(user?.data.data);
     }
   };
 
@@ -123,9 +129,6 @@ export default function page() {
     }
   }, [alamat]);
 
-  const getStok = () => {
-    // const response = getStokByIdAndDate(customerCart.data)
-  };
   return (
     <UserWrapper className="space-y-8 bg-slate-50">
       <div className="flex flex-col-reverse gap-4 lg:flex-row">
@@ -160,6 +163,8 @@ export default function page() {
                   </div>
                 </div>
               </>
+            ) : !customerCart.data ? (
+              <p>Data keranjang tidak tersedia!</p>
             ) : (
               <Loading />
             )}

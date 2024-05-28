@@ -2,7 +2,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,10 +15,11 @@ import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { Plus, ShieldCheck } from "lucide-react";
 import Loading from "@/components/ui/loading";
-import { IPesanan } from "@/lib/interfaces";
+import { IPesanan, IPesananv2 } from "@/lib/interfaces";
 import { Badge } from "@/components/ui/badge";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import UpdateDialog from "@/components/updateDialog";
+import Link from "next/link";
 
 export default function VerifikasiForm({
   isEditable = false,
@@ -64,7 +65,16 @@ export default function VerifikasiForm({
               <Badge variant={"outline"}>{data?.id_pesanan}</Badge>
             </span>
           </div>
-          <p className="text-large">{data?.pelanggan?.nama}</p>
+          <p className="text-large">
+            {data?.pelanggan?.nama}{" "}
+            <Link
+              href={data?.bukti_pembayaran!}
+              target="_blank"
+              className={buttonVariants({ variant: "link" })}
+            >
+              Lihat Bukti
+            </Link>
+          </p>
           <p>{data?.pelanggan?.telepon}</p>
         </div>
         <div className="w-full space-y-1 rounded-lg border border-slate-200 p-4 md:w-2/5">

@@ -20,6 +20,7 @@ interface CurrentUserState {
   login: (user: User) => void;
   logout: () => void;
   currentUser?: User | null;
+  refresh: (user: User) => void;
 }
 
 export const useCurrentUserStore = create<CurrentUserState>()(
@@ -29,6 +30,7 @@ export const useCurrentUserStore = create<CurrentUserState>()(
       role: undefined,
       login: (user: User) => set({ currentUser: user, isLoggedIn: true }),
       logout: () => set({ isLoggedIn: false, currentUser: null }),
+      refresh: (user: User) => set({ currentUser: user }),
     }),
     {
       name: "auth-storage",

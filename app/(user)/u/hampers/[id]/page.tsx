@@ -1,7 +1,5 @@
 "use client";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { UserWrapper } from "@/components/user-wrapper";
-import { IHampers } from "@/lib/interfaces";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -11,10 +9,11 @@ import { getHampersById, getStokByIdAndDate } from "@/lib/api/hampers";
 import Loading from "@/components/ui/loading";
 import { createKeranjang } from "@/lib/api/keranjang";
 import { useCurrentUserStore } from "@/lib/state/user-store";
-
+import { IDetailHampers } from "@/lib/interfaces";
+import Cookies from "js-cookie";
+import { getCurrentUserWithToken } from "@/lib/api/auth";
 export default function page({ params }: { params: { id: number } }) {
-  const { currentUser } = useCurrentUserStore();
-  const [indexImageSelected, setIndexImageSelected] = useState(0);
+  const { currentUser, refresh } = useCurrentUserStore();
   const [quantity, setQuantity] = useState("1");
 
   const { data, isLoading } = getHampersById(params.id);
@@ -29,13 +28,17 @@ export default function page({ params }: { params: { id: number } }) {
     console.log(newQuantity);
   };
 
-  const onSubmitHandler = (values: any) => {
+  const onSubmitHandler = async (values: any) => {
     const data = {
       id_pelanggan: currentUser?.id_pelanggan,
       id_produk_hampers: params.id,
       jumlah: quantity,
     };
     createKeranjang(data);
+
+    const token = Cookies.get("token");
+    const user = await getCurrentUserWithToken(token!);
+    refresh(user?.data.data);
   };
 
   return (
@@ -60,6 +63,24 @@ export default function page({ params }: { params: { id: number } }) {
               </p>
             </div>
             <p className="text-h2">{toRupiah(parseInt(data.harga_jual))}</p>
+            <div className="space-y-3">
+              <p className="text-h4">Isi Paket</p>
+              <div className="space-y-2">
+                {data.detail_hampers.map(
+                  (hampers: IDetailHampers, index: number) => (
+                    <div
+                      className="flex items-center justify-between text-slate-500"
+                      key={index}
+                    >
+                      <p>
+                        {hampers.produk.nama} {hampers.produk.ukuran}
+                      </p>{" "}
+                      <p>1 Buah</p>
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
             <div className="space-y-3">
               <p className="text-h4">Kapasitas Stok</p>
               <div>

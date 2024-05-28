@@ -47,15 +47,41 @@ export default function UserInvoice({
             </div>
             <div className="flex justify-between">
               <p>Tanggal pesan</p>
-              <p>{toIndonesiaDate(data.tgl_order)}</p>
+              <p>
+                {toIndonesiaDate(data.tgl_order, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
             </div>
             <div className="flex justify-between">
               <p>Lunas pada</p>
-              <p>{toIndonesiaDate(data.verified_at!)}</p>
+              <p>
+                {toIndonesiaDate(data.verified_at!, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
             </div>
             <div className="flex justify-between">
               <p>Tanggal Ambil</p>
-              {data.accepted_at && <p>{toIndonesiaDate(data.accepted_at!)}</p>}
+              {data.accepted_at && (
+                <p>
+                  {toIndonesiaDate(data.accepted_at!, {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              )}
             </div>
           </div>
           <div>
@@ -113,6 +139,7 @@ export default function UserInvoice({
           <div>
             <p>Poin dari pesanan ini: {poin}</p>
             <p>Total poin customer: {poinUser}</p>
+            {/* Salah ini total poin harusnya ambil setiap invoice berapa total nya terakhir */}
           </div>
         </div>
       </div>

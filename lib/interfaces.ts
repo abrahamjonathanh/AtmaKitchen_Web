@@ -98,12 +98,14 @@ export type IHampers = {
   nama: string;
   harga_jual: string;
   image?: HTMLImageElement | StaticImageData;
-  detail_hampers?: {
-    id_detail_hampers: string;
-    id_produk_hampers?: string;
-    id_produk?: string;
-    produk: IProduk;
-  }[];
+  detail_hampers?: IDetailHampers[];
+};
+
+export type IDetailHampers = {
+  id_detail_hampers: string;
+  id_produk_hampers?: string;
+  id_produk?: string;
+  produk: IProduk;
 };
 
 export type IAkun = {
@@ -139,8 +141,8 @@ export type IBahanBaku = {
   stok_minumum?: string;
   satuan: string;
   updated_at: string; //terkahir diperbaharui
-  nama_bahan_baku?:string;
-  total_kekurangan?: number; 
+  nama_bahan_baku?: string;
+  total_kekurangan?: number;
 };
 
 export type IPenitip = {
@@ -201,6 +203,7 @@ export interface IPesanan {
   verified_at: string | null;
   jenis_pengiriman?: string;
   nama?: string;
+  bukti_pembayaran?: string;
   pelanggan?: {
     id_pelanggan: number;
     id_akun?: number;
@@ -274,6 +277,7 @@ export interface IPesananv2 {
   verified_at?: string;
   accepted_at?: string | null;
   created_at?: string;
+  bukti_pembayaran?: string;
   detail_pesanan?: IDetailPesanan[];
   status_pesanan_latest?: IStatusPesanan;
   pengiriman?: IPengiriman;

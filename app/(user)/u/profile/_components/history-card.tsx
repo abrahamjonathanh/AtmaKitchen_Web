@@ -1,16 +1,25 @@
 // components/UserHistoryCard.tsx
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Truck } from "lucide-react";
+import {
+  Box,
+  Check,
+  CheckCheck,
+  Clock,
+  CreditCard,
+  Hand,
+  ShoppingBag,
+  Truck,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import React, { useRef } from "react";
 import { cn, toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import DetailTransaksiDialog from "./detail-transaksi-dialog";
 import { IDetailPesanan, IPesananv2 } from "@/lib/interfaces";
-import { uploadPaymentProof } from "@/lib/api/pesanan";
 
 export default function UserHistoryCard({
   data,
@@ -21,30 +30,42 @@ export default function UserHistoryCard({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    console.log(file);
-    if (file) {
-      try {
-        const response = await uploadPaymentProof(
-          data.id_pelanggan,
-          data.id_pesanan,
-          file,
-        );
-        console.log(response);
-        // Handle successful upload (e.g., show a success message or update the UI)
-      } catch (error) {
-        console.error("File upload failed", error);
-        // Handle upload failure (e.g., show an error message)
-      }
-    }
-  };
-
-  const handlePayClick = () => {
-    fileInputRef.current?.click();
-  };
+  const statusBadges: {
+    code: string;
+    variant:
+      | "lime"
+      | "emerald"
+      | "sky"
+      | "violet"
+      | "fuchsia"
+      | "rose"
+      | "gray"
+      | "success"
+      | "alert"
+      | "failed";
+    icon: React.ReactNode;
+  }[] = [
+    { code: "Selesai", variant: "success", icon: <Check size={"16"} /> },
+    { code: "Menunggu ongkir", variant: "alert", icon: <Clock size={"16"} /> },
+    { code: "Sudah dibayar", variant: "sky", icon: <CreditCard size={"16"} /> },
+    {
+      code: "Pembayaran Valid",
+      variant: "sky",
+      icon: <CheckCheck size={"16"} />,
+    },
+    { code: "Ditolak", variant: "failed", icon: <X size={"16"} /> },
+    { code: "Diterima", variant: "sky", icon: <Check size={"16"} /> },
+    { code: "Diproses", variant: "sky", icon: <Box size={"16"} /> },
+    { code: "Siap dipickup", variant: "sky", icon: <Hand size={"16"} /> },
+    {
+      code: "Sedang dikirim kurir",
+      variant: "sky",
+      icon: <Truck size={"16"} />,
+    },
+    { code: "Sudah dipickup", variant: "sky", icon: <Truck size={"16"} /> },
+  ];
+  const statusVariant = (status: string) =>
+    statusBadges.find((badge) => badge.code == status);
 
   return (
     <div className="space-y-4 rounded-lg border border-slate-200 p-4">
@@ -57,8 +78,11 @@ export default function UserHistoryCard({
           </p>
           <p className="text-body font-medium">#{data.id_pesanan}</p>
         </span>
-        <Badge variant={"alert"} className="flex items-center gap-1 capitalize">
-          <Truck size={"16"} />
+        <Badge
+          variant={statusVariant(data.status_pesanan_latest?.status!)?.variant}
+          className="flex items-center gap-1 capitalize"
+        >
+          {statusVariant(data.status_pesanan_latest?.status!)?.icon}
           {data.status_pesanan_latest?.status ?? "Unknown"}
         </Badge>
       </div>
@@ -94,37 +118,38 @@ export default function UserHistoryCard({
         <p className="text-body text-slate-500">Total</p>
         <p className="font-medium">
           {toRupiah(
-            parseInt(data.total_setelah_diskon) + data.pengiriman?.harga!,
+            parseInt(data.total_setelah_diskon) +
+              (data.pengiriman?.harga! ? data.pengiriman?.harga! : 0),
           )}
         </p>
       </div>
       <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
-        <p className="text-body w-full text-slate-500">
+        {/* <p className="text-body w-full text-slate-500">
           Anda mendapatkan{" "}
           <span className="font-semibold text-orange-600">
             {parseInt(data.total_diskon_poin) / 100} poin
           </span>{" "}
           dari transaksi ini.
-        </p>
+        </p> */}
         <div className="flex w-full justify-end space-x-4">
           <DetailTransaksiDialog data={data} />
-          {!isAdmin && data.total_dibayarkan && (
-            <>
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-                accept="image/*"
-              />
-              <button
+          {!isAdmin &&
+            !data.bukti_pembayaran &&
+            data.status_pesanan_latest?.status != "Selesai" && (
+              <Link
+                href={`/u/cart/payment/${data.id_pesanan}`}
                 className={cn(buttonVariants({ variant: "default" }))}
-                onClick={handlePayClick}
               >
                 Bayar
-              </button>
-            </>
-          )}
+              </Link>
+            )}
+          {!isAdmin &&
+            data.total_dibayarkan &&
+            !data.accepted_at &&
+            (data.status_pesanan_latest?.status == "Sedang dikirim kurir" ||
+              data.status_pesanan_latest?.status == "Sudah Dipickup") && (
+              <Button>Terima Pesanan</Button>
+            )}
         </div>
       </div>
     </div>

@@ -89,7 +89,7 @@ export const deleteAllDetailKeranjangByIdPelanggan = async (id: string) => {
     }
 
     // ✅ Use toast when its done
-    toast.success(response?.data?.message);
+    // toast.success(response?.data?.message);
 
     return response;
   } catch (error: any) {

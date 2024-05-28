@@ -18,6 +18,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toRupiah } from "@/lib/utils";
+import ConfirmDialog from "@/components/confirmDialog";
 const formSchema = z.object({
   jarak: z.string().min(1, { message: "Jarak Kirim tidak boleh kosong" }),
 });
@@ -111,19 +112,21 @@ export default function JarakKirimForm({
             <Button variant={"outline"} onClick={() => router.back()}>
               Batal
             </Button>
-            <Button type="submit" className="flex gap-2" disabled={isLoading}>
-              {isLoading ? (
-                <Loading />
-              ) : isEditable ? (
-                <>
-                  Ubah <Pencil size={"16"} />
-                </>
-              ) : (
-                <>
-                  Tambah <Plus size={"16"} />
-                </>
-              )}
-            </Button>
+            <ConfirmDialog submitTitle="Tambah" title="Tambah Jarak Kirim">
+              <Button type="submit" className="flex gap-2" disabled={isLoading}>
+                {isLoading ? (
+                  <Loading />
+                ) : isEditable ? (
+                  <>
+                    Ubah <Pencil size={"16"} />
+                  </>
+                ) : (
+                  <>
+                    Tambah <Plus size={"16"} />
+                  </>
+                )}
+              </Button>
+            </ConfirmDialog>
           </div>
         </form>
       </Form>

@@ -65,20 +65,22 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                     {data?.jenis_pengiriman}
                   </p>
                 </div>
-                <div className="flex justify-between gap-4">
-                  <p className="text-body text-slate-500">Alamat</p>
-                  <div className="flex flex-col items-end">
-                    <p className="text-body font-medium text-black">
-                      {data?.pengiriman?.nama}
-                    </p>
-                    <p className="text-body text-black">
-                      {data?.pengiriman?.telepon}
-                    </p>
-                    <p className="text-body text-right text-black">
-                      {data?.pengiriman?.alamat}
-                    </p>
+                {data?.jenis_pengiriman != "Ambil Sendiri" && (
+                  <div className="flex justify-between gap-4">
+                    <p className="text-body text-slate-500">Alamat</p>
+                    <div className="flex flex-col items-end">
+                      <p className="text-body font-medium text-black">
+                        {data?.pengiriman?.nama}
+                      </p>
+                      <p className="text-body text-black">
+                        {data?.pengiriman?.telepon}
+                      </p>
+                      <p className="text-body text-right text-black">
+                        {data?.pengiriman?.alamat}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <Separator />
               <div className="space-y-1.5">
@@ -125,9 +127,8 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                 <p className="font-medium text-black">Total Belanja</p>
                 <p className="font-medium text-black">
                   {toRupiah(
-                    parseInt(
-                      data?.total_setelah_diskon! + data?.pengiriman?.harga,
-                    ),
+                    parseInt(data?.total_setelah_diskon!) +
+                      (data?.pengiriman?.harga! ? data?.pengiriman?.harga! : 0),
                   )}
                 </p>
               </div>

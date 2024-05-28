@@ -2,14 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { toRupiah } from "@/lib/utils";
 import Image from "next/image";
-import { useState } from "react";
-import Brownies from "@/public/products/Brownies.png";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Loading from "@/components/ui/loading";
 import { IDetailKeranjang } from "@/lib/interfaces";
 import { deleteDetailKeranjangById } from "@/lib/api/keranjang";
-import { mutate } from "swr";
+import ConfirmDialog from "@/components/confirmDialog";
+import { useState } from "react";
 
 export default function ProductCart({
   data,
@@ -30,6 +29,8 @@ export default function ProductCart({
   isLoading: boolean;
   onReload?: () => void;
 }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const onQuantityChange = async (value: number) => {
     try {
       const newQuantity = Math.max(1, data.jumlah + value);
@@ -46,8 +47,15 @@ export default function ProductCart({
   };
 
   const onDeleteButtonClick = () => {
-    deleteDetailKeranjangById(parseInt(data.id_detail_keranjang));
-    onReload!();
+    try {
+      setIsDeleting(true);
+      deleteDetailKeranjangById(parseInt(data.id_detail_keranjang));
+      onReload!();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -76,13 +84,17 @@ export default function ProductCart({
           </p>
         </div>
         <div className="flex w-full items-center justify-end gap-4">
-          <Button
-            variant={"ghost"}
-            className="text-slate-500"
-            onClick={onDeleteButtonClick}
+          <ConfirmDialog
+            onSubmit={onDeleteButtonClick}
+            title={`Hapus ${data.produk ? data.produk?.nama : data.hampers?.nama} dari keranjang`}
+            isLoading={isDeleting}
+            submitTitle="Hapus"
           >
-            <Trash2 size={"16"} />
-          </Button>
+            <Button variant={"ghost"} className="text-slate-500">
+              <Trash2 size={"16"} />
+            </Button>
+          </ConfirmDialog>
+
           <div className="flex items-center gap-0">
             <Button
               variant={"ghost"}

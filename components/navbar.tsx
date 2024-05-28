@@ -71,13 +71,13 @@ export function Navbar() {
         <Link href={"/"}>
           <Image src={LogoOrange} alt="AtmaKitchen Logo" />
         </Link>
-        <div className="hidden gap-4 lg:flex">
+        {/* <div className="hidden gap-4 lg:flex">
           {navbar.map((data, index) => (
             <Button variant={"link"} className="text-black" key={index}>
               <Link href={data.href}>{data.title}</Link>
             </Button>
           ))}
-        </div>
+        </div> */}
         <div className="flex gap-4">
           <Link href={"/login"}>
             <Button>Masuk</Button>
@@ -306,9 +306,11 @@ export function NavbarUser() {
               )}
             >
               <ShoppingCart size={"24"} />
-              <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
-                {currentUser.count_keranjang?.detail_keranjang_count}
-              </div>
+              {currentUser.count_keranjang?.detail_keranjang_count && (
+                <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
+                  {currentUser.count_keranjang?.detail_keranjang_count}
+                </div>
+              )}
             </Link>
           </>
         )}

@@ -6,7 +6,11 @@ import {
   ArrowUpDown,
   Box,
   Check,
+  CheckCheck,
+  Clock,
+  CreditCard,
   Grab,
+  Hand,
   MoreHorizontal,
   Truck,
   X,
@@ -21,10 +25,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toRupiah } from "@/lib/utils";
+import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteDialog from "@/components/deleteDialog";
 import { usePathname, useRouter } from "next/navigation";
 import { IPesanan, IPesananv2 } from "@/lib/interfaces";
@@ -38,8 +42,12 @@ import { useFormStatus } from "react-dom";
 import { axiosInstance } from "@/lib/axiosInstance";
 import BahanBakuDialog from "@/components/bahanBakuDialog";
 import { toast } from "sonner";
+import { useCurrentUserStore } from "@/lib/state/user-store";
+import ConfirmDialog from "@/components/confirmDialog";
+import UpdateDialog from "@/components/updateDialog";
+import PesananConfirmDialog from "@/components/pesananConfirmDialog";
 
-export const columns: ColumnDef<IPesananv2>[] = [
+export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
   {
     accessorKey: "id_pesanan",
     header: ({ column }) => {
@@ -89,6 +97,25 @@ export const columns: ColumnDef<IPesananv2>[] = [
     },
   },
   {
+    accessorKey: "tgl_order",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Untuk Tanggal
+          <ArrowUpDown className="ml-2" size={"12"} />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <div className="px-4">{toIndonesiaDate(row.getValue("tgl_order"))}</div>
+      );
+    },
+  },
+  {
     accessorKey: "tagihan",
     accessorFn: (row) =>
       (row.id_metode_pembayaran! as unknown as { nama: string }).nama,
@@ -97,7 +124,12 @@ export const columns: ColumnDef<IPesananv2>[] = [
       return (
         <div className="line-clamp-2">
           <Badge variant={"outline"}>{row.getValue("tagihan")}</Badge>{" "}
-          {toRupiah(parseInt(row.original.total_setelah_diskon.toString()))}
+          {toRupiah(
+            parseInt(row.original.total_setelah_diskon.toString()) +
+              (row.original?.pengiriman?.harga!
+                ? row.original?.pengiriman?.harga!
+                : 0),
+          )}
         </div>
       );
     },
@@ -145,24 +177,49 @@ export const columns: ColumnDef<IPesananv2>[] = [
           | "fuchsia"
           | "rose"
           | "gray"
-          | "success";
+          | "success"
+          | "alert"
+          | "failed";
+        icon: React.ReactNode;
       }[] = [
-        { code: "Pesanan diterima", variant: "lime" },
-        { code: "Pembayaran diterima", variant: "success" },
-        { code: "Menunggu ongkir", variant: "emerald" },
-        { code: "Menunggu pembayaran", variant: "sky" },
-        { code: "Menunggu konfirmasi pembayaran", variant: "violet" },
-        { code: "Pesanan diproses", variant: "fuchsia" },
-        { code: "Pesanan dikirim", variant: "rose" },
-        { code: "Pesanan ditolak", variant: "gray" },
+        { code: "Selesai", variant: "success", icon: <Check size={"16"} /> },
+        {
+          code: "Menunggu ongkir",
+          variant: "alert",
+          icon: <Clock size={"16"} />,
+        },
+        {
+          code: "Menunggu pembayaran",
+          variant: "alert",
+          icon: <Clock size={"16"} />,
+        },
+        {
+          code: "Sudah dibayar",
+          variant: "sky",
+          icon: <CreditCard size={"16"} />,
+        },
+        {
+          code: "Pembayaran valid",
+          variant: "sky",
+          icon: <CheckCheck size={"16"} />,
+        },
+        { code: "Ditolak", variant: "failed", icon: <X size={"16"} /> },
+        { code: "Diterima", variant: "sky", icon: <Check size={"16"} /> },
+        { code: "Diproses", variant: "sky", icon: <Box size={"16"} /> },
+        { code: "Siap dipickup", variant: "sky", icon: <Hand size={"16"} /> },
+        {
+          code: "Sedang dikirim kurir",
+          variant: "sky",
+          icon: <Truck size={"16"} />,
+        },
+        { code: "Sudah dipickup", variant: "sky", icon: <Truck size={"16"} /> },
       ];
-
-      const statusBadge = statusBadges.find(
+      const statusVariant = statusBadges.find(
         (badge) => badge.code == row.getValue("status"),
       );
       return (
         <div className="px-4">
-          <Badge variant={statusBadge?.variant}>{statusBadge?.code}</Badge>
+          <Badge variant={statusVariant?.variant}>{statusVariant?.code}</Badge>
         </div>
       );
     },
@@ -177,15 +234,18 @@ export const columns: ColumnDef<IPesananv2>[] = [
       const router = useRouter(); // // Copy this for create, update, delete
       const [isLoading, setIsLoading] = useState(false); // // Copy this for create, update, delete
       const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+      const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
       const [confirmingAction, setConfirmingAction] = useState<
         "accepted" | "rejected" | null
       >(null);
       const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false); // State untuk menampilkan dialog bahan baku
-
+      const { currentUser } = useCurrentUserStore();
       const handleConfirmation = (action: "accepted" | "rejected") => {
         setConfirmingAction(action);
         setConfirmDialogOpen(true);
       };
+
+      const [kekuranganData, setKekuranganData] = useState([]);
 
       const onDeleteHandler = async () => {
         try {
@@ -268,12 +328,25 @@ export const columns: ColumnDef<IPesananv2>[] = [
               console.error("Invalid type for pesananId:", typeof pesananId);
             }
           }
-          mutate("/api/pesanan");
+          onRefresh!();
         } catch (error) {
           console.error(`Failed to mark order as ${status}: `, error);
         } finally {
           setIsLoading(false);
           setIsOpen(false);
+          setConfirmDialogOpen(false);
+        }
+      };
+
+      const getBahanBakuKurang = async () => {
+        try {
+          const response = await fetchBahanBaku(row.getValue("id_pesanan"));
+          console.log(response.data.total_kekurangan_per_bahan_baku);
+
+          setKekuranganData(response.data.total_kekurangan_per_bahan_baku);
+          console.log(kekuranganData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
       };
 
@@ -298,7 +371,9 @@ export const columns: ColumnDef<IPesananv2>[] = [
               >
                 Verifikasi pembayaran
               </DropdownMenuItem>
-              <DropdownMenuItem>Batalkan pesanan</DropdownMenuItem>
+              {currentUser?.akun?.role?.role == "Manager Operasional" && (
+                <DropdownMenuItem>Batalkan pesanan</DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Truck size={"16"} /> Siap dikirim
@@ -318,18 +393,55 @@ export const columns: ColumnDef<IPesananv2>[] = [
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <Check size={"16"} /> Selesai
               </DropdownMenuItem>
-              <DropdownMenuLabel>MO ONLY</DropdownMenuLabel>
-              <DropdownMenuItem>Lihat Pesanan</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleUpdateStatus("accepted")}>
-                <Check size={"16"} /> Diproses
-              </DropdownMenuItem>
+              {currentUser?.akun?.role?.role == "Manager Operasional" && (
+                <>
+                  <DropdownMenuItem>Lihat Pesanan</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setConfirmDialogOpen(true)}>
+                    <Check size={"16"} /> Diproses
+                  </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => handleUpdateStatus("rejected")}>
-                <X size={"16"} /> Ditolak
-              </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setRejectDialogOpen(true)}>
+                    <X size={"16"} /> Ditolak
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
+          <PesananConfirmDialog
+            isOpen={confirmDialogOpen}
+            setIsOpen={setConfirmDialogOpen}
+            title="Terima pesanan untuk diproses"
+            buttonText="Terima"
+            onSubmit={() => handleUpdateStatus("accepted")}
+            isLoading={isLoading}
+          >
+            {row.original.detail_pesanan?.map((data, index) => (
+              <div className="flex items-center justify-between" key={index}>
+                <p>
+                  {data.nama_produk} {data.produk?.ukuran}
+                </p>
+                <p>
+                  {data.jumlah} x {toRupiah(parseInt(data.harga))}
+                </p>
+              </div>
+            ))}
+            {/* {kekuranganData!.map((data: any, index: number) => (
+              <div key={index}>
+                <p>
+                  {data.nama_bahan_baku} {data.total_kekurangan}
+                </p>
+              </div>
+            ))} */}
+          </PesananConfirmDialog>
+
+          <DeleteDialog
+            isOpen={rejectDialogOpen}
+            setIsOpen={setRejectDialogOpen}
+            title="Tolak"
+            onSubmit={() => handleUpdateStatus("rejected")}
+          />
+
           <DeleteDialog
             isOpen={isOpen}
             setIsOpen={setIsOpen}

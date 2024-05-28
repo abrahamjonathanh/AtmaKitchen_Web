@@ -15,9 +15,10 @@ import {
 import Loading from "@/components/ui/loading";
 import { createKeranjang } from "@/lib/api/keranjang";
 import { useCurrentUserStore } from "@/lib/state/user-store";
-
+import { getCurrentUserWithToken } from "@/lib/api/auth";
+import Cookies from "js-cookie";
 export default function page({ params }: { params: { id: number } }) {
-  const { currentUser } = useCurrentUserStore();
+  const { currentUser, refresh } = useCurrentUserStore();
   const [indexImageSelected, setIndexImageSelected] = useState(0);
   const [quantity, setQuantity] = useState("1");
 
@@ -34,13 +35,17 @@ export default function page({ params }: { params: { id: number } }) {
     console.log(newQuantity);
   };
 
-  const onSubmitHandler = (values: any) => {
+  const onSubmitHandler = async (values: any) => {
     const data = {
       id_pelanggan: currentUser?.id_pelanggan,
       id_produk: params.id,
       jumlah: quantity,
     };
     createKeranjang(data);
+
+    const token = Cookies.get("token");
+    const user = await getCurrentUserWithToken(token!);
+    refresh(user?.data.data);
   };
 
   return (
