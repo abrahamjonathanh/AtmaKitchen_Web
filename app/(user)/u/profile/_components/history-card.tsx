@@ -1,4 +1,3 @@
-// components/UserHistoryCard.tsx
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Truck } from "lucide-react";
@@ -25,15 +24,10 @@ export default function UserHistoryCard({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
-    console.log(file);
+    console.log("Selected File:", file); // Debugging file selection
     if (file) {
       try {
-        const response = await uploadPaymentProof(
-          data.id_pelanggan,
-          data.id_pesanan,
-          file,
-        );
-        console.log(response);
+        await uploadPaymentProof(data.id_pelanggan, data.id_pesanan, file);
         // Handle successful upload (e.g., show a success message or update the UI)
       } catch (error) {
         console.error("File upload failed", error);

@@ -39,7 +39,7 @@ export const getAllRiwayatPesananByPelangganId = async (
 
 export const getAllPesanan = () => {
   let { data, error, isLoading, isValidating } = useSWR(
-    `${process.env.BASE_API}/pesanan/perlu-dikonfirmasi`,
+    `${process.env.BASE_API}/pesanan`,
     fetcher,
   );
 
@@ -498,7 +498,7 @@ console.log(formData);
   try {
     const response = await axiosInstance().post(
       `/pelanggan/${id_pelanggan}/pesanan/${id_pesanan}/upload-bukti-pembayaran`,
-      formData,
+      file,
       {
         headers: {
           "Content-Type": "multipart/form-data",  // Ensure correct content type
@@ -519,11 +519,11 @@ console.log(formData);
 };
 
 export const getAllPesananConfirmation = async () => {
-    let { data, error, isLoading, isValidating } = useSWR(
-      `${process.env.BASE_API}/pesanan/perlu-dikonfirmasi`,
-      fetcher,
-    );
-   
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/pesanan/perlu-dikonfirmasi`,
+    fetcher,
+  );
+
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
     data = [
@@ -581,8 +581,8 @@ export const getAllPesananConfirmation = async () => {
     isError: error,
     isValidating,
   };
-
 };
+
 
 export const createPesanan = async (data: any) => {
   try {

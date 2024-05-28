@@ -7,6 +7,7 @@ import { columns } from "./columns";
 import Loading from "@/components/ui/loading";
 import {
   getAllPesanan,
+  getAllPesananConfirmation,
   getAllPesananInProcess,
   getAllPesananPaymentVerified,
   // getAllPesananRejected,
@@ -14,13 +15,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTitle } from "@/lib/hooks";
 
-export default function page() {
+export default async function page() {
   useTitle("AtmaKitchen | Pesanan");
   const { data, isLoading } = getAllPesanan();
   const process = getAllPesananInProcess();
   // const rejected = getAllPesananRejected();
   // const paymentVerified = getAllPesananPaymentVerified();
-
+  const confirmation = getAllPesananConfirmation();
   return (
     // Boiler template for dashboard
     // Please do not change nor delete it unless you know what you are doing
@@ -28,6 +29,7 @@ export default function page() {
       <BreadcrumbWithSeparator currentPage="Pesanan" />
       <Tabs defaultValue="confirm">
         <TabsList>
+          <TabsTrigger value="all">Semua Pesanan</TabsTrigger>
           <TabsTrigger value="confirm">Menunggu Konfirmasi</TabsTrigger>
           <TabsTrigger value="payment">Menunggu Pembayaran</TabsTrigger>
           <TabsTrigger value="delivery">Menunggu Ongkir</TabsTrigger>
@@ -37,9 +39,16 @@ export default function page() {
           <TabsTrigger value="sent">Dikirim</TabsTrigger>
           <TabsTrigger value="rejected">Ditolak</TabsTrigger>
         </TabsList>
-        <TabsContent value="confirm">
+        <TabsContent value="all">
           {data && !isLoading ? (
             <DataTable columns={columns} data={data} />
+          ) : (
+            <Loading />
+          )}
+        </TabsContent>
+        <TabsContent value="confirm">
+          {(await confirmation).data && !(await confirmation).isLoading ? (
+            <DataTable columns={columns} data={(await confirmation).data} />
           ) : (
             <Loading />
           )}
