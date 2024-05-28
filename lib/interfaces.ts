@@ -139,8 +139,8 @@ export type IBahanBaku = {
   stok_minumum?: string;
   satuan: string;
   updated_at: string; //terkahir diperbaharui
-  nama_bahan_baku?:string;
-  total_kekurangan?: number; 
+  nama_bahan_baku?: string;
+  total_kekurangan?: number;
 };
 
 export type IPenitip = {
@@ -295,6 +295,7 @@ export interface IDetailKeranjang {
   produk?: IProduk;
   hampers?: IHampers;
   jumlah: number;
+  ready_stock?: number;
 }
 
 export interface IKeranjang {

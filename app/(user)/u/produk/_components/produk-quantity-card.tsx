@@ -74,6 +74,7 @@ export default function ProductQuantityCard({
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="flex items-center gap-1">
             <Button
+              type="button"
               variant={"outline"}
               size={"sm"}
               onClick={() => {
@@ -102,6 +103,7 @@ export default function ProductQuantityCard({
               )}
             />
             <Button
+              type="button"
               variant={"outline"}
               size={"sm"}
               onClick={() => {
@@ -168,9 +170,9 @@ export default function ProductQuantityCard({
             Perbarui Tanggal
           </Button> */}
           <div className="flex items-center justify-between gap-4">
-            <Button variant={"outline"} className="w-full">
+            {/* <Button variant={"outline"} className="w-full">
               Beli
-            </Button>
+            </Button> */}
             <Button type="submit" className="flex w-full gap-2">
               Keranjang <ShoppingCart size={"16"} />
             </Button>

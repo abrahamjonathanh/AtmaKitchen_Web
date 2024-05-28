@@ -163,9 +163,9 @@ export const getPesananById = (id: string) => {
   return { data, isLoading, error, isValidating };
 };
 
-export const getCartsByCustomerId = (customerId: number) => {
+export const getCartsByCustomerId = (customerId: number, date: any) => {
   const { data, isLoading, error, isValidating, mutate } = useSWR(
-    `${process.env.BASE_API}/keranjang/${customerId}`,
+    `${process.env.BASE_API}/keranjang/${customerId}/${date}`,
     fetcher,
   );
 
@@ -426,8 +426,6 @@ export const getAllPesananPaymentVerified = () => {
     isError: error,
     isValidating,
   };
-
-  
 };
 
 export const terimaPesananById = async (id: string) => {
@@ -437,17 +435,16 @@ export const terimaPesananById = async (id: string) => {
     if (response.status === 500) {
       toast.warning("Database is down! Switching to fakeAPI");
 
-      const response = await axios.post(
-        `https://fakestoreapi.com/products/`,
-      );
+      const response = await axios.post(`https://fakestoreapi.com/products/`);
 
       return response;
     }
 
-
     toast.success(response?.data?.message);
 
-    const ambilBahanBakuResponse = await axiosInstance().get(`/pesanan/${id}/bahan-baku`);
+    const ambilBahanBakuResponse = await axiosInstance().get(
+      `/pesanan/${id}/bahan-baku`,
+    );
     return ambilBahanBakuResponse.data;
 
     toast.info(ambilBahanBakuResponse?.data?.message);
@@ -472,9 +469,7 @@ export const tolakPesananById = async (id: string) => {
     if (response.status === 500) {
       toast.warning("Database is down! Switching to fakeAPI");
 
-      const response = await axios.post(
-        `https://fakestoreapi.com/products/`,
-      );
+      const response = await axios.post(`https://fakestoreapi.com/products/`);
 
       return response;
     }
@@ -489,28 +484,27 @@ export const tolakPesananById = async (id: string) => {
 export const uploadPaymentProof = async (
   id_pelanggan: string,
   id_pesanan: string,
-  file: File
+  file: File,
 ): Promise<void> => {
   const formData = new FormData();
-  formData.append("bukti_pembayaran", file);  
+  formData.append("bukti_pembayaran", file);
   console.log(file);
-console.log(formData);
+  console.log(formData);
   try {
     const response = await axiosInstance().post(
       `/pelanggan/${id_pelanggan}/pesanan/${id_pesanan}/upload-bukti-pembayaran`,
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",  // Ensure correct content type
-          
+          "Content-Type": "multipart/form-data", // Ensure correct content type
         },
-      }
+      },
     );
 
     if (response.status !== 200) {
       throw new Error("File upload failed");
     }
-    
+
     toast.success(response?.data?.message);
   } catch (error) {
     toast.error("Terjadi kesalahan...");
@@ -519,11 +513,11 @@ console.log(formData);
 };
 
 export const getAllPesananConfirmation = async () => {
-    let { data, error, isLoading, isValidating } = useSWR(
-      `${process.env.BASE_API}/pesanan/perlu-dikonfirmasi`,
-      fetcher,
-    );
-   
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/pesanan/perlu-dikonfirmasi`,
+    fetcher,
+  );
+
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
     data = [
@@ -581,7 +575,6 @@ export const getAllPesananConfirmation = async () => {
     isError: error,
     isValidating,
   };
-
 };
 
 export const createPesanan = async (data: any) => {

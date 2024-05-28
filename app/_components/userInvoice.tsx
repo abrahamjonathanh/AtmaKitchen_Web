@@ -93,7 +93,10 @@ export default function UserInvoice({
               <p>Total</p>
               <p>
                 {toRupiah(
-                  parseInt(data.pengiriman?.harga + data.total_pesanan),
+                  parseInt(
+                    (data.pengiriman?.harga ? data.pengiriman?.harga : 0) +
+                      data.total_pesanan,
+                  ),
                 )}
               </p>
             </div>
@@ -105,7 +108,10 @@ export default function UserInvoice({
               <p>Total</p>
               <p>
                 {toRupiah(
-                  parseInt(data.total_setelah_diskon + data.pengiriman?.harga),
+                  parseInt(
+                    data.total_setelah_diskon +
+                      (data.pengiriman?.harga ? data.pengiriman?.harga : 0),
+                  ),
                 )}
               </p>
             </div>
