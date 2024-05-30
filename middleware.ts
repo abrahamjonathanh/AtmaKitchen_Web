@@ -63,6 +63,29 @@ const PROTECTED_ROUTES = [
       "/a/dashboard",
     ],
   },
+  {
+    role: "Manager Operasional",
+    default: "/a/karyawan",
+    routes: [
+      "/u/produk",
+      "/a/produk",
+      "/a/hampers",
+      "/a/jabatan",
+      "/a/promo",
+      "/a/pesanan",
+      "/a/jarak-kirim",
+      "/a/akun",
+      "/a/karyawan",
+      "/a/penitip",
+      "/a/pelanggan",
+      "/a/bahan-baku",
+      "/a/pemesanan-bahan-baku",
+      "/a/resep",
+      "/a/pengeluaran-lainnya",
+      "/a/profile",
+      "/a/dashboard",
+    ],
+  },
 ];
 
 export async function middleware(request: NextRequest) {

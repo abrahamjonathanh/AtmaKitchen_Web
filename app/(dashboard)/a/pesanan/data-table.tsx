@@ -26,6 +26,7 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import PenjualanBulananReport from "@/app/_components/penjualanBulananReport";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -77,6 +78,7 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
 
+        <PenjualanBulananReport />
         {/* <Link
           href={pathname + "/create"}
           className={cn(
