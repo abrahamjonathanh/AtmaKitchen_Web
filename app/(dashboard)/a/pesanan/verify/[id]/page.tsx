@@ -1,7 +1,10 @@
 "use client";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
-import { createPembayaranByIdPesanan, getPesananById } from "@/lib/api/pesanan";
+import {
+  createConfirmPembayaranByIdPesanan,
+  getPesananById,
+} from "@/lib/api/pesanan";
 import { useTitle } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -16,11 +19,15 @@ export default function page({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data, isValidating } = getPesananById(params.id);
+
   const onUpdateHandler = async (values: any) => {
     try {
       setIsLoading(true);
       console.log(values);
-      const response = await createPembayaranByIdPesanan(params.id, values);
+      const response = await createConfirmPembayaranByIdPesanan(
+        params.id,
+        values,
+      );
 
       if (response?.status == 200 || response?.status == 201) {
         mutate("/a/pesanan");

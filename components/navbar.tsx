@@ -306,7 +306,7 @@ export function NavbarUser() {
               )}
             >
               <ShoppingCart size={"24"} />
-              {currentUser.count_keranjang?.detail_keranjang_count && (
+              {currentUser.count_keranjang?.detail_keranjang_count != 0 && (
                 <div className="absolute -end-1 -top-1 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-orange-600 text-xs font-bold text-white dark:border-gray-900">
                   {currentUser.count_keranjang?.detail_keranjang_count}
                 </div>

@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { BadgeProps } from "@/components/ui/badge";
 import Cookies from "js-cookie";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -64,4 +65,53 @@ export const categoryBadge = (value: number | string): BadgeProps => {
   return roleBadge
     ? { variant: roleBadge.variant, children: roleBadge.label }
     : { variant: "violet", children: "Unknown Category" };
+};
+
+export const statusPesananBadge = (value: string): BadgeProps => {
+  const statusBadges: {
+    code:
+      | "Menunggu pembayaran"
+      | "Menunggu ongkir"
+      | "Dibatalkan otomatis"
+      | "Sudah dibayar"
+      | "Pembayaran Valid"
+      | "Ditolak"
+      | "Diterima"
+      | "Diproses"
+      | "Siap dipickup"
+      | "Sedang dikirim kurir"
+      | "Sudah dipickup"
+      | "Selesai"
+      | "Unknown";
+    variant:
+      | "lime"
+      | "emerald"
+      | "sky"
+      | "violet"
+      | "fuchsia"
+      | "rose"
+      | "gray"
+      | "success"
+      | "alert"
+      | "failed";
+    icon?: React.ReactNode;
+  }[] = [
+    { code: "Menunggu pembayaran", variant: "alert" },
+    { code: "Menunggu ongkir", variant: "alert" },
+    { code: "Dibatalkan otomatis", variant: "gray" },
+    { code: "Sudah dibayar", variant: "sky" },
+    { code: "Pembayaran Valid", variant: "sky" },
+    { code: "Diterima", variant: "lime" },
+    { code: "Ditolak", variant: "failed" },
+    { code: "Diproses", variant: "violet" },
+    { code: "Siap dipickup", variant: "emerald" },
+    { code: "Sedang dikirim kurir", variant: "emerald" },
+    { code: "Sudah dipickup", variant: "emerald" },
+    { code: "Selesai", variant: "success" },
+  ];
+
+  const statusBadge = statusBadges.find((badge) => badge.code == value);
+  return statusBadge
+    ? { variant: statusBadge.variant, children: statusBadge.code }
+    : { variant: "violet", children: "Unknown" };
 };

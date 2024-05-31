@@ -9,6 +9,9 @@ import { IDetailKeranjang } from "@/lib/interfaces";
 import { deleteDetailKeranjangById } from "@/lib/api/keranjang";
 import ConfirmDialog from "@/components/confirmDialog";
 import { useState } from "react";
+import Cookies from "js-cookie";
+import { getCurrentUserWithToken } from "@/lib/api/auth";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 export default function ProductCart({
   data,
@@ -29,6 +32,7 @@ export default function ProductCart({
   isLoading: boolean;
   onReload?: () => void;
 }) {
+  const { refresh } = useCurrentUserStore();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const onQuantityChange = async (value: number) => {
@@ -46,11 +50,19 @@ export default function ProductCart({
     }
   };
 
-  const onDeleteButtonClick = () => {
+  const onDeleteButtonClick = async () => {
     try {
       setIsDeleting(true);
-      deleteDetailKeranjangById(parseInt(data.id_detail_keranjang));
-      onReload!();
+      const response = await deleteDetailKeranjangById(
+        parseInt(data.id_detail_keranjang),
+      );
+
+      if (response?.status === 200 || response?.status === 201) {
+        const token = Cookies.get("token");
+        const user = await getCurrentUserWithToken(token!);
+        refresh(user?.data.data);
+        onReload!();
+      }
     } catch (error) {
       console.error(error);
     } finally {

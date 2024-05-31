@@ -113,7 +113,7 @@ export default function UserInvoice({
                 Ongkos Kirim (rad.{" "}
                 {data.pengiriman?.jarak ? data.pengiriman?.jarak : 0} km)
               </p>
-              <p>{toRupiah(data.pengiriman?.harga!)}</p>
+              <p>{toRupiah(data.pengiriman?.harga! ?? 0)}</p>
             </div>
             <div className="flex justify-between">
               <p>Total</p>

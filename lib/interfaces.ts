@@ -260,6 +260,7 @@ export interface IDetailPesanan {
   harga: string;
   jumlah: string;
   produk?: IProduk;
+  hampers?: IHampers;
 }
 
 export interface IPesananv2 {
@@ -281,6 +282,10 @@ export interface IPesananv2 {
   detail_pesanan?: IDetailPesanan[];
   status_pesanan_latest?: IStatusPesanan;
   pengiriman?: IPengiriman;
+  points?: {
+    poin: number;
+    is_double_poin: boolean;
+  };
 }
 
 export interface IStatusPesanan {
