@@ -549,3 +549,21 @@ export const getAllPendapatanBulananByYear = () => {
 
   return { data, error, isLoading, isValidating, mutate };
 };
+
+export const getPesananByMonth = (date: any) => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/pesanan/laporan/${date}`,
+    fetcher,
+  );
+
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};
