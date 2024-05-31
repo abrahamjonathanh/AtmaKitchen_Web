@@ -46,6 +46,7 @@ import { useCurrentUserStore } from "@/lib/state/user-store";
 import ConfirmDialog from "@/components/confirmDialog";
 import UpdateDialog from "@/components/updateDialog";
 import PesananConfirmDialog from "@/components/pesananConfirmDialog";
+import TolakDialog from "@/components/tolakDialog";
 
 export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
   {
@@ -435,7 +436,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             ))} */}
           </PesananConfirmDialog>
 
-          <DeleteDialog
+          <TolakDialog
             isOpen={rejectDialogOpen}
             setIsOpen={setRejectDialogOpen}
             title="Tolak"

@@ -52,7 +52,7 @@ export const getAllPesanan = () => {
     isLoading,
     error,
     isValidating,
-    mutate
+    mutate,
   };
 };
 
@@ -71,7 +71,7 @@ export const getAllPesananNeedConfirmPayment = () => {
     isLoading,
     error,
     isValidating,
-    mutate
+    mutate,
   };
 };
 
@@ -90,7 +90,7 @@ export const getAllPesananPaymentVerified = () => {
     isLoading,
     error,
     isValidating,
-    mutate
+    mutate,
   };
 };
 
@@ -155,9 +155,9 @@ export const getPesananById = (id: string) => {
   return { data, isLoading, error, isValidating };
 };
 
-export const getCartsByCustomerId = (customerId: number) => {
+export const getCartsByCustomerId = (customerId: number, date: any) => {
   const { data, isLoading, error, isValidating, mutate } = useSWR(
-    `${process.env.BASE_API}/keranjang/${customerId}`,
+    `${process.env.BASE_API}/keranjang/${customerId}/${date}`,
     fetcher,
   );
 
@@ -373,9 +373,9 @@ export const terimaPesananById = async (id: string) => {
     const ambilBahanBakuResponse = await axiosInstance().get(
       `/pesanan/${id}/bahan-baku`,
     );
-    return ambilBahanBakuResponse.data;
-
     toast.info(ambilBahanBakuResponse?.data?.message);
+
+    return ambilBahanBakuResponse.data;
   } catch (error: any) {
     toast.error("Terjadi kesalahan saat menerima pesanan...");
     throw error;

@@ -14,23 +14,25 @@ import Loading from "@/components/ui/loading";
 import { IAlamat, IDetailKeranjang, IHampers, IProduk } from "@/lib/interfaces";
 import UserAlamatCard from "./_components/user-alamat-card";
 import { useCurrentUserStore } from "@/lib/state/user-store";
-import { addDays } from "date-fns";
+import { addDays, setDate } from "date-fns";
 import { deleteAllDetailKeranjangByIdPelanggan } from "@/lib/api/keranjang";
-import { getStokByIdAndDate } from "@/lib/api/produk";
-import Cookies from "js-cookie";
-import { getCurrentUserWithToken } from "@/lib/api/auth";
+import { getStokByIdAndDate, getReadyStockByIdAndDate } from "@/lib/api/produk";
+import { toast } from "sonner";
+
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");
   const [isLoading, setIsLoading] = useState(false);
   const [isAddingAlamat, setIsAddingAlamat] = useState(false);
   const [alamat, setAlamat] = useState<IAlamat | null>(null);
-  const { currentUser, refresh } = useCurrentUserStore();
+  const [dob, setDob] = useState(new Date());
+  const { currentUser } = useCurrentUserStore();
 
-  const responseStock = getStokByIdAndDate(1, "2024-05-27");
-  console.log(responseStock.data);
+  const dobDate = new Date(dob);
+  dobDate.setDate(dobDate.getDate() + 1);
 
   const customerCart = getCartsByCustomerId(
     parseInt(currentUser?.id_pelanggan ?? "1"),
+    dobDate.toISOString().split("T")[0],
   );
 
   const updateQuantityInCustomerCartHandler = async ({
@@ -69,10 +71,15 @@ export default function page() {
     setAlamat(values);
   };
 
-  const onSubmitHandler = async (values: any) => {
+  const onDobHandler = (values: any) => {
+    setDob(values);
+  };
+
+  const onSubmitHandler = (values: any) => {
     isAddingAlamat ? alamat : setAlamat(null);
     const produk: (IProduk & { jumlah: number })[] = [];
     const produk_hampers: (IHampers & { jumlah: number })[] = [];
+    let isReadyStock = true;
 
     customerCart.data.detail_keranjang.forEach((item: any) => {
       if (item.hampers === null) {
@@ -96,23 +103,30 @@ export default function page() {
     };
 
     if (produk.length > 0 || produk_hampers.length > 0) {
+      customerCart.data.detail_keranjang.forEach((item: any) => {
+        if (item.ready_stock == 0) {
+          isReadyStock = false;
+          return;
+        }
+      });
       // console.log(data);
-      createPesanan(data);
-      deleteAllDetailKeranjangByIdPelanggan(currentUser?.id_pelanggan!);
+      isReadyStock
+        ? createPesanan(data)
+        : toast.warning("Stok produk tidak cukup");
       customerCart.mutate();
-
-      const token = Cookies.get("token");
-      const user = await getCurrentUserWithToken(token!);
-      refresh(user?.data.data);
+    } else {
+      toast.warning("Keranjang masih kosong");
     }
   };
 
   const calculateTotalHarga = () => {
     let totalHarga = 0;
+    // console.log(customerCart.data.detail_keranjang);
     !customerCart.isLoading &&
       customerCart.data.detail_keranjang &&
       customerCart.data.detail_keranjang.forEach((item: any) => {
         if (item.hampers === null) {
+          console.log(item.produk);
           totalHarga += item.produk.harga_jual * item.jumlah;
         } else if (item.produk === null) {
           totalHarga += item.hampers.harga_jual * item.jumlah;
@@ -175,6 +189,7 @@ export default function page() {
           totalHarga={totalHarga}
           isEditable
           onUpdatePengiriman={onPengirimanHandler}
+          onUpdateDob={onDobHandler}
           onSubmit={onSubmitHandler}
         />
       </div>

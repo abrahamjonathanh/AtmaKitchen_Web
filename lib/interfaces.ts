@@ -299,6 +299,7 @@ export interface IDetailKeranjang {
   produk?: IProduk;
   hampers?: IHampers;
   jumlah: number;
+  ready_stock?: number;
 }
 
 export interface IKeranjang {

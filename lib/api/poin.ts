@@ -35,3 +35,20 @@ export const getPoinByTotalHarga = (total_harga: any) => {
     isValidating,
   };
 };
+
+export const getPoinByIdPesanan = (
+  id_pelanggan: string,
+  id_pesanan: string,
+) => {
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/poin/pesanan/${id_pelanggan}/${id_pesanan}`,
+    fetcher,
+  );
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+  };
+};

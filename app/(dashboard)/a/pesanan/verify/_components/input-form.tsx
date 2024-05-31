@@ -40,7 +40,7 @@ export default function VerifikasiForm({
       .string()
       .transform((str) => Number(str)) // Convert to number before validation
       .refine((num) => num >= (data?.total_setelah_diskon ?? 1), {
-        message: `Total dibayarkan harus lebih besar atau sama dengan tagihan (${toRupiah(data?.total_setelah_diskon! + data?.pengiriman?.harga! ?? 0)})`,
+        message: `Total dibayarkan harus lebih besar atau sama dengan tagihan (${toRupiah(data?.total_setelah_diskon!)})`,
       }),
   });
   const [isOpen, setIsOpen] = useState(false);
@@ -86,9 +86,7 @@ export default function VerifikasiForm({
               </Badge>
             </span>
           </div>
-          <p className="text-large">
-            {toRupiah(data?.total_setelah_diskon! + data?.pengiriman?.harga!)}
-          </p>
+          <p className="text-large">{toRupiah(data?.total_setelah_diskon!)}</p>
           <p>{(data?.id_metode_pembayaran as { nama: string }).nama}</p>
         </div>
       </div>

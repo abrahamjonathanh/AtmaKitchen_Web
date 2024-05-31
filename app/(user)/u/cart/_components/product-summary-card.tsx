@@ -54,12 +54,14 @@ export default function ProductSummaryCard({
   data,
   onSubmit = (values) => console.log(values),
   onUpdatePengiriman = (values) => console.log(values),
+  onUpdateDob = (values) => console.log(values),
 }: {
   totalHarga: number;
   isEditable?: boolean;
   data?: any;
   onSubmit?: (values: z.infer<typeof formSchema>) => void;
   onUpdatePengiriman?: (values: boolean) => void;
+  onUpdateDob?: (values: any) => void;
 }) {
   const { currentUser } = useCurrentUserStore();
   const [isUseAll, setIsUseAll] = useState(false);
@@ -82,6 +84,10 @@ export default function ProductSummaryCard({
   useEffect(() => {
     onUpdatePengiriman(pengirimanValue != "Ambil Sendiri");
   }, [pengirimanValue, onUpdatePengiriman]);
+
+  useEffect(() => {
+    onUpdateDob(form.watch("dob").toISOString().split("T")[0]);
+  }, [form.watch("dob"), onUpdateDob]);
 
   const metodePembayaran = getAllMetodePembayaran();
   const dataPoin = getPoinByIdPelanggan(currentUser?.id_pelanggan!);
@@ -216,6 +222,7 @@ export default function ProductSummaryCard({
               name="pengiriman"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Jenis Pengiriman</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -272,7 +279,7 @@ export default function ProductSummaryCard({
               />
             )}
             <Separator />
-            {form.watch("pengiriman") === "Ambil Sendiri" && (
+            {form.watch("id_metode_pembayaran") === "1" && (
               <>
                 <FormDescription className="flex items-center gap-1 text-slate-500">
                   Virtual Account:
@@ -290,7 +297,13 @@ export default function ProductSummaryCard({
                 <FormDescription className="flex items-center gap-1 text-slate-500">
                   Nominal Transfer:
                   <span className="font-medium text-black ">
-                    {toRupiah(15000000)}
+                    {toRupiah(
+                      totalHarga -
+                        parseInt(
+                          form.watch("poin") ? form.watch("poin")! : "0",
+                        ) *
+                          100,
+                    )}
                   </span>{" "}
                   <Copy
                     size={"16"}

@@ -59,17 +59,11 @@ export default function page({ params }: { params: { id: string } }) {
                 ),
               )}
             </div>
-            <div className="flex items-center justify-between">
-              <p>Total Ongkos Kirim </p>
-              <p>{toRupiah(data.pengiriman.harga)}</p>
-            </div>
 
             <Separator />
             <div className="flex items-center justify-between">
               <p className="text-h4">Total Tagihan </p>
-              <p className="text-h4">
-                {toRupiah(data.total_setelah_diskon + data.pengiriman.harga)}
-              </p>
+              <p className="text-h4">{toRupiah(data.total_setelah_diskon)}</p>
             </div>
           </div>
           <PaymentForm

@@ -13,13 +13,16 @@ import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { BadgePercent, CreditCard, Truck } from "lucide-react";
 import { IPesananv2 } from "@/lib/interfaces";
 import UserInvoice from "@/app/_components/userInvoice";
-import { getPoinByIdPelanggan, getPoinByTotalHarga } from "@/lib/api/poin";
+import { getPoinByIdPesanan, getPoinByTotalHarga } from "@/lib/api/poin";
 import { useCurrentUserStore } from "@/lib/state/user-store";
 
 export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
   const { currentUser } = useCurrentUserStore();
   const getPoin = getPoinByTotalHarga(data?.total_pesanan);
-  const poinUser = getPoinByIdPelanggan(currentUser?.id_pelanggan!);
+  const poinUser = getPoinByIdPesanan(
+    currentUser?.id_pelanggan!,
+    data?.id_pesanan!,
+  );
 
   return (
     <Dialog>

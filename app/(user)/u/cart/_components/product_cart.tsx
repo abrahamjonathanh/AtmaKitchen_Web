@@ -71,10 +71,14 @@ export default function ProductCart({
       />
       <div className="flex w-full flex-col gap-4">
         <div className="flex items-center justify-between">
-          <p className="overflow line-clamp-1 font-medium">
-            {data.produk ? data.produk?.nama : data.hampers?.nama}{" "}
-            {data.produk ? data.produk?.ukuran : ""}
-          </p>
+          <div>
+            <p className="overflow line-clamp-1 font-medium">
+              {data.produk ? data.produk?.nama : data.hampers?.nama}{" "}
+              {data.produk ? data.produk?.ukuran : ""}
+            </p>
+            <p>Stok: {data.ready_stock}</p>
+          </div>
+
           <p className="text-large">
             {data.produk?.harga_jual
               ? toRupiah(parseInt(data.produk.harga_jual.toString()))
