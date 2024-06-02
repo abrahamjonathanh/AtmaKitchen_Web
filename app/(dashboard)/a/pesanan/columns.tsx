@@ -277,56 +277,44 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
           setIsLoading(true);
           const pesananId = row.getValue("id_pesanan") as string;
           if (status === "accepted") {
-            if (
-              typeof pesananId === "string" ||
-              typeof pesananId === "number"
-            ) {
-              await pesananAcceptedById(pesananId.toString());
-              const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-              setPesananId(pesananId);
-              setIsBahanBakuDialogOpen(true);
+            await pesananAcceptedById(pesananId);
+            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
+            // setPesananId(pesananId);
+            // setIsBahanBakuDialogOpen(true);
 
-              if (
-                bahanBakuData &&
-                bahanBakuData.data &&
-                bahanBakuData.data.total_kekurangan_per_bahan_baku
-              ) {
-                const kekuranganBahanBaku =
-                  bahanBakuData.data.total_kekurangan_per_bahan_baku;
+            // if (
+            //   bahanBakuData &&
+            //   bahanBakuData.data &&
+            //   bahanBakuData.data.total_kekurangan_per_bahan_baku
+            // ) {
+            //   const kekuranganBahanBaku =
+            //     bahanBakuData.data.total_kekurangan_per_bahan_baku;
 
-                const bahanBakuList = kekuranganBahanBaku.map(
-                  (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
-                    nama: bahan.nama_bahan_baku,
-                    kekurangan: bahan.total_kekurangan,
-                  }),
-                );
+            //   const bahanBakuList = kekuranganBahanBaku.map(
+            //     (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
+            //       nama: bahan.nama_bahan_baku,
+            //       kekurangan: bahan.total_kekurangan,
+            //     }),
+            //   );
 
-                if (bahanBakuList.length > 0) {
-                  // Tampilkan informasi dalam satu toast
-                  const message = `${bahanBakuData.message}:<br />${bahanBakuList
-                    .map(
-                      (bahan: { nama: any; kekurangan: any }) => `
-                      &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
-                      &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
-                    )
-                    .join("<br /><br />")}`;
-                  toast.info(message);
-                } else {
-                  console.error(
-                    "Data bahan baku tidak dalam format yang benar.",
-                  );
-                }
-              } else {
-                console.error("Data bahan baku sudah lengkap.");
-              }
-            } else {
-              console.error("Invalid type for pesananId:", typeof pesananId);
-            }
+            //   if (bahanBakuList.length > 0) {
+            //     // Tampilkan informasi dalam satu toast
+            //     const message = `${bahanBakuData.message}:<br />${bahanBakuList
+            //       .map(
+            //         (bahan: { nama: any; kekurangan: any }) => `
+            //           &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
+            //           &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
+            //       )
+            //       .join("<br /><br />")}`;
+            //     toast.info(message);
+            //   } else {
+            //     console.error("Data bahan baku tidak dalam format yang benar.");
+            //   }
+            // } else {
+            //   console.error("Data bahan baku sudah lengkap.");
+            // }
           } else if (status === "rejected") {
-            await updateStatusPesanan({
-              data: { status: "Ditolak" },
-              id_pesanan: pesananId,
-            });
+            await tolakPesananById(pesananId);
           } else {
             // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
             // console.log(bahanBakuData);
