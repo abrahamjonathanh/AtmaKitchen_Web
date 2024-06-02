@@ -14,10 +14,10 @@ import Loading from "@/components/ui/loading";
 import { IAlamat, IDetailKeranjang, IHampers, IProduk } from "@/lib/interfaces";
 import UserAlamatCard from "./_components/user-alamat-card";
 import { useCurrentUserStore } from "@/lib/state/user-store";
-import { addDays, setDate } from "date-fns";
-import { deleteAllDetailKeranjangByIdPelanggan } from "@/lib/api/keranjang";
-import { getStokByIdAndDate, getReadyStockByIdAndDate } from "@/lib/api/produk";
+import { addDays } from "date-fns";
 import { toast } from "sonner";
+import { getCurrentUserWithToken } from "@/lib/api/auth";
+import Cookies from "js-cookie";
 
 export default function page() {
   useTitle("AtmaKitchen | Keranjang");
@@ -25,16 +25,43 @@ export default function page() {
   const [isAddingAlamat, setIsAddingAlamat] = useState(false);
   const [alamat, setAlamat] = useState<IAlamat | null>(null);
   const [dob, setDob] = useState(new Date());
-  const { currentUser } = useCurrentUserStore();
+  const { currentUser, refresh } = useCurrentUserStore();
 
   const dobDate = new Date(dob);
   dobDate.setDate(dobDate.getDate() + 1);
 
+  const onPengirimanHandler = (values: boolean) => {
+    setIsAddingAlamat(values);
+  };
+
+  const onAlamatHandler = (values: IAlamat) => {
+    setAlamat(values);
+  };
+
+  const onDobHandler = (values: any) => {
+    setDob(values);
+  };
+
+  /**
+   * Retrieves the customer's cart based on the customer ID and date of birth.
+   *
+   * @param {number} customerId - The ID of the customer.
+   * @param {string} dob - The date of birth of the customer in ISO format (YYYY-MM-DD).
+   * @returns {Cart[]} - An array of cart items belonging to the customer.
+   */
   const customerCart = getCartsByCustomerId(
     parseInt(currentUser?.id_pelanggan ?? "1"),
     dobDate.toISOString().split("T")[0],
   );
 
+  /**
+   * Updates the quantity of a product in the customer's cart.
+   *
+   * @param {Object} params - The parameters for updating the quantity.
+   * @param {number} params.newQuantity - The new quantity of the product.
+   * @param {number} params.idProduk - The ID of the product.
+   * @param {number} params.idDetailKeranjang - The ID of the cart detail.
+   */
   const updateQuantityInCustomerCartHandler = async ({
     newQuantity,
     idProduk,
@@ -63,19 +90,11 @@ export default function page() {
     }
   };
 
-  const onPengirimanHandler = (values: boolean) => {
-    setIsAddingAlamat(values);
-  };
-
-  const onAlamatHandler = (values: IAlamat) => {
-    setAlamat(values);
-  };
-
-  const onDobHandler = (values: any) => {
-    setDob(values);
-  };
-
-  const onSubmitHandler = (values: any) => {
+  /**
+   * Handles the form submission event.
+   * @param values - The form values.
+   */
+  const onSubmitHandler = async (values: any) => {
     isAddingAlamat ? alamat : setAlamat(null);
     const produk: (IProduk & { jumlah: number })[] = [];
     const produk_hampers: (IHampers & { jumlah: number })[] = [];
@@ -109,24 +128,31 @@ export default function page() {
           return;
         }
       });
-      // console.log(data);
-      isReadyStock
-        ? createPesanan(data)
-        : toast.warning("Stok produk tidak cukup");
+      if (isReadyStock) {
+        const response = await createPesanan(data);
+
+        if (response?.status === 200 || response?.status === 201) {
+          const token = Cookies.get("token");
+          const user = await getCurrentUserWithToken(token!);
+          refresh(user?.data.data);
+        }
+      } else toast.warning("Stok produk tidak cukup");
       customerCart.mutate();
     } else {
       toast.warning("Keranjang masih kosong");
     }
   };
 
+  /**
+   * Calculates the total price of items in the customer's cart.
+   * @returns The total price of items in the cart.
+   */
   const calculateTotalHarga = () => {
     let totalHarga = 0;
-    // console.log(customerCart.data.detail_keranjang);
     !customerCart.isLoading &&
       customerCart.data.detail_keranjang &&
       customerCart.data.detail_keranjang.forEach((item: any) => {
         if (item.hampers === null) {
-          console.log(item.produk);
           totalHarga += item.produk.harga_jual * item.jumlah;
         } else if (item.produk === null) {
           totalHarga += item.hampers.harga_jual * item.jumlah;
@@ -151,7 +177,6 @@ export default function page() {
             <UserAlamatCard onAlamatHandler={onAlamatHandler} />
           )}
           <div className="space-y-4">
-            {/* TODO: Update keranjang API harusnya 1 orang cuman ada 1 keranjang */}
             {!customerCart.isLoading &&
             !customerCart.error &&
             !customerCart.isValidating &&

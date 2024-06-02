@@ -12,6 +12,7 @@ import { useCurrentUserStore } from "@/lib/state/user-store";
 import { IDetailHampers } from "@/lib/interfaces";
 import Cookies from "js-cookie";
 import { getCurrentUserWithToken } from "@/lib/api/auth";
+
 export default function page({ params }: { params: { id: number } }) {
   const { currentUser, refresh } = useCurrentUserStore();
   const [quantity, setQuantity] = useState("1");
@@ -25,20 +26,21 @@ export default function page({ params }: { params: { id: number } }) {
   const onQuantityChangeHandler = (value: any) => {
     const newQuantity = Math.max(1, parseInt(quantity) + value).toString();
     setQuantity(newQuantity);
-    console.log(newQuantity);
   };
 
-  const onSubmitHandler = async (values: any) => {
+  const onSubmitHandler = async () => {
     const data = {
       id_pelanggan: currentUser?.id_pelanggan,
       id_produk_hampers: params.id,
       jumlah: quantity,
     };
-    createKeranjang(data);
+    const response = await createKeranjang(data);
 
-    const token = Cookies.get("token");
-    const user = await getCurrentUserWithToken(token!);
-    refresh(user?.data.data);
+    if (response?.status === 200 || response?.status === 201) {
+      const token = Cookies.get("token");
+      const user = await getCurrentUserWithToken(token!);
+      refresh(user?.data.data);
+    }
   };
 
   return (

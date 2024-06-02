@@ -1,7 +1,6 @@
 "use client";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { UserWrapper } from "@/components/user-wrapper";
-import { IProduk } from "@/lib/interfaces";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -17,7 +16,8 @@ import { createKeranjang } from "@/lib/api/keranjang";
 import { useCurrentUserStore } from "@/lib/state/user-store";
 import { getCurrentUserWithToken } from "@/lib/api/auth";
 import Cookies from "js-cookie";
-export default function page({ params }: { params: { id: number } }) {
+
+export default function Page({ params }: { params: { id: number } }) {
   const { currentUser, refresh } = useCurrentUserStore();
   const [indexImageSelected, setIndexImageSelected] = useState(0);
   const [quantity, setQuantity] = useState("1");
@@ -32,20 +32,22 @@ export default function page({ params }: { params: { id: number } }) {
   const onQuantityChangeHandler = (value: any) => {
     const newQuantity = Math.max(1, parseInt(quantity) + value).toString();
     setQuantity(newQuantity);
-    console.log(newQuantity);
   };
 
-  const onSubmitHandler = async (values: any) => {
+  const onSubmitHandler = async () => {
     const data = {
       id_pelanggan: currentUser?.id_pelanggan,
       id_produk: params.id,
       jumlah: quantity,
     };
-    createKeranjang(data);
 
-    const token = Cookies.get("token");
-    const user = await getCurrentUserWithToken(token!);
-    refresh(user?.data.data);
+    const response = await createKeranjang(data);
+
+    if (response?.status === 200 || response?.status === 201) {
+      const token = Cookies.get("token");
+      const user = await getCurrentUserWithToken(token!);
+      refresh(user?.data.data);
+    }
   };
 
   return (
@@ -65,6 +67,7 @@ export default function page({ params }: { params: { id: number } }) {
               className="aspect-square h-full max-h-96 w-full rounded-lg object-cover sm:w-4/5 md:w-full"
               width={"500"}
               height={"500"}
+              priority
             />
             <ScrollArea className="h-max sm:h-96 sm:w-1/5 md:h-max md:w-full lg:h-full">
               <div className="flex gap-2 sm:flex-col sm:gap-4 md:flex-row lg:h-max ">
@@ -74,7 +77,7 @@ export default function page({ params }: { params: { id: number } }) {
                     alt={data.nama}
                     key={index}
                     className={`aspect-square h-max w-1/5 cursor-pointer rounded-lg object-cover sm:w-full md:w-1/5 ${
-                      index == indexImageSelected
+                      index === indexImageSelected
                         ? "brightness-100"
                         : "brightness-50"
                     } transition hover:brightness-100`}

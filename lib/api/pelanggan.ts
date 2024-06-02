@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { toast } from "sonner";
-import { IPelanggan, IRiwayatPesanan } from "../interfaces";
+import { IPelanggan, IPesananv2, IRiwayatPesanan } from "../interfaces";
 import { fetcher } from "../utils";
 import useSWR from "swr";
 import { axiosInstance } from "../axiosInstance";
@@ -46,17 +46,6 @@ export const getPelangganById = (id: number) => {
 
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
-    const data: IPelanggan = {
-      id_pelanggan: "1",
-      nama: "Sasa",
-      tgl_lahir: "1990-01-01",
-      status: "1",
-      akun: {
-        email: "sasa@gmail.com",
-        id_role: "1",
-      },
-    };
-    return { data, isLoading, error, isValidating };
   }
 
   return {

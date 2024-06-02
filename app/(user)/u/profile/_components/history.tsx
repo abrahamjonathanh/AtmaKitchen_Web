@@ -20,7 +20,7 @@ export default function UserHistory({ id_user }: { id_user: string }) {
   return data && !isLoading ? (
     <div className="space-y-4">
       <p className="text-h4">Riwayat Pesanan Saya</p>
-      <UserListHistory data={data.histori_pesanan} />
+      <UserListHistory data={data} />
     </div>
   ) : (
     <Loading />
@@ -41,6 +41,12 @@ export const UserListHistory = ({
     },
   });
 
+  /**
+   * Filters the data based on the search query and returns the filtered data.
+   * @param data - The data to be filtered.
+   * @param form - The form object containing the search query.
+   * @returns The filtered data.
+   */
   const filteredData = data
     .map((pesanan) => {
       const matchingDetailPesanan = pesanan.detail_pesanan!.filter((detail) =>
@@ -48,14 +54,11 @@ export const UserListHistory = ({
           .toLowerCase()
           .includes(form.watch("searchQuery")!.toLowerCase()),
       );
-      // If there are matching products, return a new pesanan object with only the matching detail_pesanan
       return matchingDetailPesanan.length > 0
         ? { ...pesanan, detail_pesanan: matchingDetailPesanan }
         : null;
-
-      // return matchingDetailPesanan.length > 0 ? pesanan : null;
     })
-    .filter((pesanan) => pesanan); // Filter out null values
+    .filter((pesanan) => pesanan);
 
   return (
     <>

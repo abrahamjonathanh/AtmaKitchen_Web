@@ -35,7 +35,7 @@ import { IPesanan, IPesananv2 } from "@/lib/interfaces";
 import { deleteKaryawanById } from "@/lib/api/karyawan";
 import {
   fetchBahanBaku,
-  terimaPesananById,
+  pesananAcceptedById,
   tolakPesananById,
   updateStatusPesanan,
 } from "@/lib/api/pesanan";
@@ -281,7 +281,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
               typeof pesananId === "string" ||
               typeof pesananId === "number"
             ) {
-              await terimaPesananById(pesananId.toString());
+              await pesananAcceptedById(pesananId.toString());
               const bahanBakuData = await fetchBahanBaku(pesananId.toString());
               setPesananId(pesananId);
               setIsBahanBakuDialogOpen(true);

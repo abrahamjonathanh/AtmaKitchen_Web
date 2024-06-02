@@ -206,9 +206,15 @@ export const updateQuantityInCustomerCart = async (
   }
 };
 
-export const createPembayaranByIdPesanan = async (
+/**
+ * Creates a confirmation of payment for a specific order by its ID.
+ * @param id_pesanan - The ID of the order.
+ * @param data - The data containing the total amount paid.
+ * @returns A Promise that resolves to the response from the server.
+ */
+export const createConfirmPembayaranByIdPesanan = async (
   id_pesanan: String,
-  data: any,
+  data: { total_dibayarkan: number },
 ) => {
   try {
     const response = await axiosInstance().put(
@@ -356,10 +362,12 @@ export const getAllPesananInProcess = () => {
 //   };
 // };
 
-export const terimaPesananById = async (id: string) => {
+export const pesananAcceptedById = async (id_pesanan: string) => {
   try {
-    const response = await axiosInstance().post(`/pesanan/${id}/terima`);
-    // toast.success("Pesanan berhasil diterima!");
+    const response = await axiosInstance().post(
+      `/pesanan/${id_pesanan}/terima`,
+    );
+
     if (response.status === 500) {
       toast.warning("Database is down! Switching to fakeAPI");
 
@@ -371,7 +379,7 @@ export const terimaPesananById = async (id: string) => {
     toast.success(response?.data?.message);
 
     const ambilBahanBakuResponse = await axiosInstance().get(
-      `/pesanan/${id}/bahan-baku`,
+      `/pesanan/${id_pesanan}/bahan-baku`,
     );
     toast.info(ambilBahanBakuResponse?.data?.message);
 
@@ -409,6 +417,13 @@ export const tolakPesananById = async (id: string) => {
   }
 };
 
+/**
+ * Uploads the payment proof for a specific order.
+ * @param id_pelanggan - The ID of the customer.
+ * @param id_pesanan - The ID of the order.
+ * @param file - The file containing the payment proof.
+ * @throws Throws an error if the file upload fails.
+ */
 export const uploadPaymentProof = async (
   id_pelanggan: string,
   id_pesanan: string,
@@ -420,7 +435,7 @@ export const uploadPaymentProof = async (
       { bukti_pembayaran: file },
       {
         headers: {
-          "Content-Type": "multipart/form-data", // Ensure correct content type
+          "Content-Type": "multipart/form-data",
         },
       },
     );
@@ -503,16 +518,12 @@ export const getAllPesananConfirmation = async () => {
 
 export const createPesanan = async (data: any) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    console.log(data);
     const response = await axiosInstance().post(`/pesanan`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/json",
       },
     });
-    // Check if the database down
     if (response.status === 500) {
       toast.warning("Database is down! Switching to fakeAPI");
 
@@ -524,7 +535,6 @@ export const createPesanan = async (data: any) => {
       return response;
     }
 
-    // ✅ Use toast when its done
     toast.success(response?.data?.message);
 
     return response;

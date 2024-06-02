@@ -1,17 +1,11 @@
 "use client";
 
 import axios from "axios";
-import { IDetailKeranjang } from "../interfaces";
-import { fetcher } from "../utils";
-import useSWR from "swr";
 import { toast } from "sonner";
 import { axiosInstance } from "../axiosInstance";
 
 export const createKeranjang = async (data: any) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    console.log(data);
     const response = await axiosInstance().post(`/keranjang`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -30,8 +24,10 @@ export const createKeranjang = async (data: any) => {
       return response;
     }
 
-    // ✅ Use toast when its done
-    toast.success(response?.data?.message);
+    if (response.status === 200 || response.status === 201) {
+      // ✅ Use toast when its done
+      toast.success(response?.data?.message);
+    }
 
     return response;
   } catch (error: any) {
