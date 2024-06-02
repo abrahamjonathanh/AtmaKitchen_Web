@@ -15,10 +15,10 @@ export default function PesananConfirmDialog({
   isOpen = false,
   setIsOpen,
   title = "Title...",
-  description = "Tindakkan ini tidak dapat diulang ketika anda menekan Hapus.",
+  buttonText = "Submit...", // Move this line above the 'description' parameter
+  description = `Tindakkan ini tidak dapat diulang ketika anda menekan ${buttonText}.`,
   onSubmit,
   isLoading = false,
-  buttonText = "Submit...",
   children,
 }: {
   isOpen?: boolean;

@@ -37,6 +37,7 @@ import {
   fetchBahanBaku,
   terimaPesananById,
   tolakPesananById,
+  updateStatusPesanan,
 } from "@/lib/api/pesanan";
 import { useFormStatus } from "react-dom";
 import { axiosInstance } from "@/lib/axiosInstance";
@@ -234,6 +235,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
       const router = useRouter(); // // Copy this for create, update, delete
       const [isLoading, setIsLoading] = useState(false); // // Copy this for create, update, delete
+      const [DiprosesDialogOpen, setDiprosesDialogOpen] = useState(false);
       const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
       const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
       const [confirmingAction, setConfirmingAction] = useState<
@@ -268,11 +270,13 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
         }
       };
 
-      const handleUpdateStatus = async (status: "accepted" | "rejected") => {
+      const handleUpdateStatus = async (
+        status: "accepted" | "rejected" | "process",
+      ) => {
         try {
           setIsLoading(true);
+          const pesananId = row.getValue("id_pesanan") as string;
           if (status === "accepted") {
-            const pesananId = row.getValue("id_pesanan") as string;
             if (
               typeof pesananId === "string" ||
               typeof pesananId === "number"
@@ -318,16 +322,18 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             } else {
               console.error("Invalid type for pesananId:", typeof pesananId);
             }
+          } else if (status === "rejected") {
+            await updateStatusPesanan({
+              data: { status: "Ditolak" },
+              id_pesanan: pesananId,
+            });
           } else {
-            const pesananId = row.getValue("id_pesanan");
-            if (
-              typeof pesananId === "string" ||
-              typeof pesananId === "number"
-            ) {
-              await tolakPesananById(pesananId.toString());
-            } else {
-              console.error("Invalid type for pesananId:", typeof pesananId);
-            }
+            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
+            // console.log(bahanBakuData);
+            await updateStatusPesanan({
+              data: { status: "Diproses" },
+              id_pesanan: pesananId,
+            });
           }
           onRefresh!();
         } catch (error) {
@@ -399,11 +405,13 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                   <DropdownMenuItem>Lihat Pesanan</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setConfirmDialogOpen(true)}>
-                    <Check size={"16"} /> Diproses
+                    <Check size={"16"} /> Diterima
                   </DropdownMenuItem>
-
                   <DropdownMenuItem onClick={() => setRejectDialogOpen(true)}>
                     <X size={"16"} /> Ditolak
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDiprosesDialogOpen(true)}>
+                    <Clock size={"16"} /> Diproses
                   </DropdownMenuItem>
                 </>
               )}
@@ -434,6 +442,26 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))} */}
+          </PesananConfirmDialog>
+
+          <PesananConfirmDialog
+            isOpen={DiprosesDialogOpen}
+            setIsOpen={setDiprosesDialogOpen}
+            title="Proses Pesanan"
+            buttonText="Proses"
+            onSubmit={() => handleUpdateStatus("process")}
+            isLoading={isLoading}
+          >
+            {row.original.detail_pesanan?.map((data, index) => (
+              <div className="flex items-center justify-between" key={index}>
+                <p>
+                  {data.nama_produk} {data.produk?.ukuran}
+                </p>
+                <p>
+                  {data.jumlah} x {toRupiah(parseInt(data.harga))}
+                </p>
+              </div>
+            ))}
           </PesananConfirmDialog>
 
           <TolakDialog
