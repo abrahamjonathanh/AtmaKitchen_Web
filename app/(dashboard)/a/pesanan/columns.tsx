@@ -25,7 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toIndonesiaDate, toRupiah } from "@/lib/utils";
+import { statusPesananBadge, toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 import { useEffect, useState } from "react";
@@ -35,16 +35,20 @@ import { IPesanan, IPesananv2 } from "@/lib/interfaces";
 import { deleteKaryawanById } from "@/lib/api/karyawan";
 import {
   fetchBahanBaku,
+  getBahanBakuUsage,
   pesananAcceptedById,
   tolakPesananById,
   updateStatusPesanan,
+  useBahanBaku,
 } from "@/lib/api/pesanan";
 import { useFormStatus } from "react-dom";
 import { axiosInstance } from "@/lib/axiosInstance";
 import BahanBakuDialog from "@/components/bahanBakuDialog";
 import { toast } from "sonner";
 import { useCurrentUserStore } from "@/lib/state/user-store";
-import ConfirmDialog from "@/components/confirmDialog";
+import ConfirmDialog, {
+  ConfirmDialogCustomChildren,
+} from "@/components/confirmDialog";
 import UpdateDialog from "@/components/updateDialog";
 import PesananConfirmDialog from "@/components/pesananConfirmDialog";
 import TolakDialog from "@/components/tolakDialog";
@@ -169,59 +173,10 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       );
     },
     cell: ({ row }) => {
-      const statusBadges: {
-        code: string;
-        variant:
-          | "lime"
-          | "emerald"
-          | "sky"
-          | "violet"
-          | "fuchsia"
-          | "rose"
-          | "gray"
-          | "success"
-          | "alert"
-          | "failed";
-        icon: React.ReactNode;
-      }[] = [
-        { code: "Selesai", variant: "success", icon: <Check size={"16"} /> },
-        {
-          code: "Menunggu ongkir",
-          variant: "alert",
-          icon: <Clock size={"16"} />,
-        },
-        {
-          code: "Menunggu pembayaran",
-          variant: "alert",
-          icon: <Clock size={"16"} />,
-        },
-        {
-          code: "Sudah dibayar",
-          variant: "sky",
-          icon: <CreditCard size={"16"} />,
-        },
-        {
-          code: "Pembayaran valid",
-          variant: "sky",
-          icon: <CheckCheck size={"16"} />,
-        },
-        { code: "Ditolak", variant: "failed", icon: <X size={"16"} /> },
-        { code: "Diterima", variant: "sky", icon: <Check size={"16"} /> },
-        { code: "Diproses", variant: "sky", icon: <Box size={"16"} /> },
-        { code: "Siap dipickup", variant: "sky", icon: <Hand size={"16"} /> },
-        {
-          code: "Sedang dikirim kurir",
-          variant: "sky",
-          icon: <Truck size={"16"} />,
-        },
-        { code: "Sudah dipickup", variant: "sky", icon: <Truck size={"16"} /> },
-      ];
-      const statusVariant = statusBadges.find(
-        (badge) => badge.code == row.getValue("status"),
-      );
+      const statusBadge = statusPesananBadge(row.getValue("status"));
       return (
         <div className="px-4">
-          <Badge variant={statusVariant?.variant}>{statusVariant?.code}</Badge>
+          <Badge variant={statusBadge.variant}>{statusBadge.children}</Badge>
         </div>
       );
     },
@@ -238,10 +193,14 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       const [DiprosesDialogOpen, setDiprosesDialogOpen] = useState(false);
       const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
       const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+      const [detailPesananDialogOpen, setDetailPesananDialogOpen] =
+        useState(false);
       const [confirmingAction, setConfirmingAction] = useState<
         "accepted" | "rejected" | null
       >(null);
-      const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false); // State untuk menampilkan dialog bahan baku
+      const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false);
+      const [isBahanBakuUsageDialogOpen, setIsBahanBakuUsageDialogOpen] =
+        useState(false);
       const { currentUser } = useCurrentUserStore();
       const handleConfirmation = (action: "accepted" | "rejected") => {
         setConfirmingAction(action);
@@ -249,7 +208,8 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       };
 
       const [kekuranganData, setKekuranganData] = useState([]);
-
+      const [pemakaianData, setPemakaianData] = useState([]);
+      // let bahanBakuData = [{}];
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
@@ -258,17 +218,21 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             row.getValue("id_karyawan"),
           );
 
-          // Auto refresh data when success.
           if (response?.status == 200 || response?.status == 201) {
             mutate("/karyawan"); // For auto refresh
           }
         } catch (error: any) {
           console.error("Error deleting karyawan: " + error);
         } finally {
-          setIsLoading(false); //For stop the loading process
-          setIsOpen(false); // For close the dialog
+          setIsLoading(false);
+          setIsOpen(false);
         }
       };
+
+      // useEffect(() => {
+      //   console.log(kekuranganData);
+      //   console.log(isBahanBakuDialogOpen);
+      // }, [kekuranganData, isBahanBakuDialogOpen]);
 
       const handleUpdateStatus = async (
         status: "accepted" | "rejected" | "process",
@@ -276,52 +240,22 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
         try {
           setIsLoading(true);
           const pesananId = row.getValue("id_pesanan") as string;
+
           if (status === "accepted") {
             await pesananAcceptedById(pesananId);
-            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-            // setPesananId(pesananId);
-            // setIsBahanBakuDialogOpen(true);
-
-            // if (
-            //   bahanBakuData &&
-            //   bahanBakuData.data &&
-            //   bahanBakuData.data.total_kekurangan_per_bahan_baku
-            // ) {
-            //   const kekuranganBahanBaku =
-            //     bahanBakuData.data.total_kekurangan_per_bahan_baku;
-
-            //   const bahanBakuList = kekuranganBahanBaku.map(
-            //     (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
-            //       nama: bahan.nama_bahan_baku,
-            //       kekurangan: bahan.total_kekurangan,
-            //     }),
-            //   );
-
-            //   if (bahanBakuList.length > 0) {
-            //     // Tampilkan informasi dalam satu toast
-            //     const message = `${bahanBakuData.message}:<br />${bahanBakuList
-            //       .map(
-            //         (bahan: { nama: any; kekurangan: any }) => `
-            //           &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
-            //           &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
-            //       )
-            //       .join("<br /><br />")}`;
-            //     toast.info(message);
-            //   } else {
-            //     console.error("Data bahan baku tidak dalam format yang benar.");
-            //   }
-            // } else {
-            //   console.error("Data bahan baku sudah lengkap.");
-            // }
           } else if (status === "rejected") {
             await tolakPesananById(pesananId);
           } else {
-            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-            // console.log(bahanBakuData);
-            await updateStatusPesanan({
-              data: { status: "Diproses" },
-              id_pesanan: pesananId,
-            });
+            const data = await fetchBahanBaku(pesananId);
+            if (data.data.length == 0) {
+              await updateStatusPesanan({
+                data: { status: "Diproses" },
+                id_pesanan: pesananId,
+              });
+              await useBahanBaku(pesananId);
+            } else {
+              toast.error("Masih ada bahan baku yang kurang!");
+            }
           }
           onRefresh!();
         } catch (error) {
@@ -330,18 +264,6 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
           setIsLoading(false);
           setIsOpen(false);
           setConfirmDialogOpen(false);
-        }
-      };
-
-      const getBahanBakuKurang = async () => {
-        try {
-          const response = await fetchBahanBaku(row.getValue("id_pesanan"));
-          console.log(response.data.total_kekurangan_per_bahan_baku);
-
-          setKekuranganData(response.data.total_kekurangan_per_bahan_baku);
-          console.log(kekuranganData);
-        } catch (error) {
-          console.error("Error fetching data:", error);
         }
       };
 
@@ -356,55 +278,129 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <Link href={`${pathname}/${row.getValue("id_karyawan")}`}> */}
-              <DropdownMenuItem
-                onClick={() =>
-                  router.push(
-                    `${pathname}/verify/${row.getValue("id_pesanan")}`,
-                  )
-                }
-              >
-                Verifikasi pembayaran
-              </DropdownMenuItem>
-              {currentUser?.akun?.role?.role == "Manager Operasional" && (
-                <DropdownMenuItem>Batalkan pesanan</DropdownMenuItem>
+              {currentUser?.akun?.role?.role == "Admin" && (
+                <DropdownMenuItem
+                  onClick={() =>
+                    router.push(
+                      `${pathname}/verify/${row.getValue("id_pesanan")}`,
+                    )
+                  }
+                >
+                  Verifikasi pembayaran
+                </DropdownMenuItem>
               )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Truck size={"16"} /> Siap dikirim
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Grab size={"16"} /> Siap diambil
-              </DropdownMenuItem>
-              {/* <DropdownMenuItem
-                onClick={() =>
-                  router.push(`${pathname}/${row.getValue("id_karyawan")}`)
-                }
+              <DropdownMenuItem
+                onClick={() => {
+                  setDetailPesananDialogOpen(true);
+                }}
               >
-                <Pencil size={"16"} /> Ubah
-              </DropdownMenuItem> */}
-              {/* </Link> */}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Check size={"16"} /> Selesai
+                Lihat Pesanan
               </DropdownMenuItem>
+
+              {row.getValue("status") == "Diterima" && (
+                <DropdownMenuItem
+                  onClick={async () => {
+                    const bahanBakuData = await fetchBahanBaku(
+                      row.getValue("id_pesanan"),
+                    );
+                    setKekuranganData(bahanBakuData.data);
+                    setIsBahanBakuDialogOpen(true);
+                  }}
+                >
+                  Lihat Kekurangan Bahan Baku
+                </DropdownMenuItem>
+              )}
+
+              {(row.getValue("status") == "Diproses" ||
+                row.getValue("status") == "Siap dipickup" ||
+                row.getValue("status") == "Sedang dikirim kurir" ||
+                row.getValue("status") == "Sudah dipickup" ||
+                row.getValue("status") == "Selesai") && (
+                <DropdownMenuItem
+                  onClick={async () => {
+                    const bahanBakuData = await getBahanBakuUsage(
+                      row.getValue("id_pesanan"),
+                    );
+                    setPemakaianData(bahanBakuData.data);
+                    setIsBahanBakuUsageDialogOpen(true);
+                  }}
+                >
+                  Lihat Pemakaian Bahan Baku
+                </DropdownMenuItem>
+              )}
+
+              {currentUser?.akun?.role?.role == "Admin" && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Truck size={"16"} /> Siap dikirim
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Grab size={"16"} /> Siap dipickup
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              {(row.getValue("status") == "Sudah dipickup" ||
+                row.getValue("status") == "Sedang dikirim kurir") && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                    <Check size={"16"} /> Selesai
+                  </DropdownMenuItem>
+                </>
+              )}
               {currentUser?.akun?.role?.role == "Manager Operasional" && (
                 <>
-                  <DropdownMenuItem>Lihat Pesanan</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setConfirmDialogOpen(true)}>
-                    <Check size={"16"} /> Diterima
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setRejectDialogOpen(true)}>
-                    <X size={"16"} /> Ditolak
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDiprosesDialogOpen(true)}>
-                    <Clock size={"16"} /> Diproses
-                  </DropdownMenuItem>
+                  {row.getValue("status") !== "Ditolak" &&
+                    row.getValue("status") !== "Diterima" &&
+                    row.getValue("status") !== "Diproses" &&
+                    row.getValue("status") !== "Siap dipickup" &&
+                    row.getValue("status") !== "Sedang dikirim kurir" &&
+                    row.getValue("status") !== "Sudah dipickup" &&
+                    row.getValue("status") !== "Selesai" && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => setConfirmDialogOpen(true)}
+                        >
+                          <Check size={"16"} /> Diterima
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setRejectDialogOpen(true)}
+                        >
+                          <X size={"16"} /> Ditolak
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  {row.getValue("status") == "Diterima" && (
+                    <DropdownMenuItem
+                      onClick={() => setDiprosesDialogOpen(true)}
+                    >
+                      <Clock size={"16"} /> Diproses
+                    </DropdownMenuItem>
+                  )}
                 </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <ConfirmDialogCustomChildren
+            isOpen={detailPesananDialogOpen}
+            setIsOpen={setDetailPesananDialogOpen}
+            title="Detail Pesanan"
+            // onSubmit={() => console.log("SUBMITTED")}
+          >
+            {row.original.detail_pesanan?.map((data, index) => (
+              <div className="flex items-center justify-between" key={index}>
+                <p>{data.nama_produk}</p>
+                <p>
+                  {data.jumlah} x {toRupiah(parseInt(data.harga))}
+                </p>
+              </div>
+            ))}
+          </ConfirmDialogCustomChildren>
+
           <PesananConfirmDialog
             isOpen={confirmDialogOpen}
             setIsOpen={setConfirmDialogOpen}
@@ -423,6 +419,8 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
+            {kekuranganData.length && <p>Showing</p>}
+
             {/* {kekuranganData!.map((data: any, index: number) => (
               <div key={index}>
                 <p>
@@ -450,6 +448,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
+            {kekuranganData.length && <p>Showing</p>}
           </PesananConfirmDialog>
 
           <TolakDialog
@@ -466,6 +465,20 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             description="Tindakkan ini tidak dapat diulang ketika anda menekan Hapus."
             onSubmit={onDeleteHandler}
             isLoading={isLoading}
+          />
+
+          <BahanBakuDialog
+            isOpen={isBahanBakuDialogOpen}
+            setIsOpen={setIsBahanBakuDialogOpen}
+            title="Kekurangan Bahan Baku"
+            bahanBakuData={kekuranganData as []}
+          />
+
+          <BahanBakuDialog
+            isOpen={isBahanBakuUsageDialogOpen}
+            setIsOpen={setIsBahanBakuUsageDialogOpen}
+            title="Pemakaian Bahan Baku"
+            bahanBakuData={pemakaianData as []}
           />
         </>
       );

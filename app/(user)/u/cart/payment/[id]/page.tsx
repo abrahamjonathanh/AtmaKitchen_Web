@@ -15,8 +15,11 @@ import { useRouter } from "next/navigation";
 export default function page({ params }: { params: { id: string } }) {
   useTitle("AtmaKitchen | Pembayaran");
   const { data, isLoading } = getPesananById(params.id);
+
   const { currentUser } = useCurrentUserStore();
+
   const [isUploading, setIsUploading] = useState(false);
+
   const router = useRouter();
   const uploadBuktiPembayaran = async (values: any) => {
     try {
@@ -38,8 +41,8 @@ export default function page({ params }: { params: { id: string } }) {
   return (
     <UserWrapper className="flex flex-col gap-4 lg:flex-row">
       {!isLoading ? (
-        <div className="flex items-start gap-4">
-          <div className="space-y-4 rounded-lg border border-slate-200 p-4 lg:w-1/4">
+        <div className="flex flex-col items-start gap-4 lg:flex-row">
+          <div className="w-full space-y-4 rounded-lg border border-slate-200 p-4 lg:w-1/2 xl:w-1/4">
             <div>
               <div className="flex items-center justify-between">
                 <p>Total Belanja </p>
@@ -59,11 +62,20 @@ export default function page({ params }: { params: { id: string } }) {
                 ),
               )}
             </div>
-
+            {data.pengiriman && (
+              <div className="flex items-center justify-between">
+                <p>Total Ongkir </p>
+                <p>{toRupiah(data.pengiriman.harga)}</p>
+              </div>
+            )}
             <Separator />
             <div className="flex items-center justify-between">
               <p className="text-h4">Total Tagihan </p>
-              <p className="text-h4">{toRupiah(data.total_setelah_diskon)}</p>
+              <p className="text-h4">
+                {toRupiah(
+                  data.total_setelah_diskon + (data.pengiriman?.harga ?? 0),
+                )}
+              </p>
             </div>
           </div>
           <PaymentForm

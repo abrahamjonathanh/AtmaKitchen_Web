@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { Plus, ShieldCheck } from "lucide-react";
 import Loading from "@/components/ui/loading";
-import { IPesanan, IPesananv2 } from "@/lib/interfaces";
+import { IPesanan } from "@/lib/interfaces";
 import { Badge } from "@/components/ui/badge";
 import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import UpdateDialog from "@/components/updateDialog";
@@ -32,18 +32,18 @@ export default function VerifikasiForm({
   onSubmit?: (values: any) => void;
   isLoading?: boolean;
 }) {
-  console.log(`⚠️ Verifikasi Pembayaran editable mode: ${isEditable}`);
   const router = useRouter();
   const formSchema = z.object({
     id_pesanan: z.string().optional(),
     total_dibayarkan: z
       .string()
-      .transform((str) => Number(str)) // Convert to number before validation
+      .transform((str) => Number(str))
       .refine((num) => num >= (data?.total_setelah_diskon ?? 1), {
         message: `Total dibayarkan harus lebih besar atau sama dengan tagihan (${toRupiah(data?.total_setelah_diskon!)})`,
       }),
   });
   const [isOpen, setIsOpen] = useState(false);
+
   // Define form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,7 +86,11 @@ export default function VerifikasiForm({
               </Badge>
             </span>
           </div>
-          <p className="text-large">{toRupiah(data?.total_setelah_diskon!)}</p>
+          <p className="text-large">
+            {toRupiah(
+              data?.total_setelah_diskon! + (data?.pengiriman?.harga ?? 0),
+            )}
+          </p>
           <p>{(data?.id_metode_pembayaran as { nama: string }).nama}</p>
         </div>
       </div>
@@ -119,7 +123,7 @@ export default function VerifikasiForm({
               Batal
             </Button>
             <Button
-              type="submit"
+              type="button"
               className="flex gap-2"
               disabled={isLoading}
               onClick={() => setIsOpen(true)}

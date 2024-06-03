@@ -227,13 +227,17 @@ export const createConfirmPembayaranByIdPesanan = async (
     }
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+    const errorFields = Object.keys(error.response.data.message);
+    errorFields.forEach((field) => {
+      return toast.error(error.response.data.message[field]);
+    });
   }
 };
 
 export const getAllPesananInProcess = () => {
-  let { data, error, isLoading, isValidating } = useSWR(
+  let { data, error, isLoading, isValidating, mutate } = useSWR(
     `${process.env.BASE_API}/pesanan/in-process`,
     fetcher,
   );
@@ -294,6 +298,7 @@ export const getAllPesananInProcess = () => {
     isLoading,
     isError: error,
     isValidating,
+    mutate,
   };
 };
 
@@ -376,14 +381,15 @@ export const pesananAcceptedById = async (id_pesanan: string) => {
       return response;
     }
 
-    toast.success(response?.data?.message);
+    return response.data;
+    // toast.success(response?.data?.message);
 
-    const ambilBahanBakuResponse = await axiosInstance().get(
-      `/pesanan/${id_pesanan}/bahan-baku`,
-    );
-    toast.info(ambilBahanBakuResponse?.data?.message);
+    // const ambilBahanBakuResponse = await axiosInstance().get(
+    //   `/pesanan/${id_pesanan}/bahan-baku`,
+    // );
+    // toast.info(ambilBahanBakuResponse?.data?.message);
 
-    return ambilBahanBakuResponse.data;
+    // return ambilBahanBakuResponse.data;
   } catch (error: any) {
     toast.error("Terjadi kesalahan saat menerima pesanan...");
     throw error;
@@ -446,6 +452,7 @@ export const uploadPaymentProof = async (
 
     toast.success(response?.data?.message);
   } catch (error) {
+    console.log(error);
     toast.error("Terjadi kesalahan...");
     throw new Error("File upload failed: " + error);
   }
@@ -631,6 +638,44 @@ export const updateStatusPesanan = async ({
     }
 
     // ✅ Use toast when its done
+    toast.success(response?.data?.message);
+
+    return response;
+  } catch (error: any) {
+    if (error.response.data.message) {
+      const errorFields = Object.keys(error.response.data.message);
+      errorFields.forEach((field) => {
+        toast.error(error.response.data.message[field]);
+      });
+    } else {
+      toast.error("Oh no! terjadi kesalahan...");
+    }
+    console.error(error.response.data.message);
+  }
+};
+
+export const getBahanBakuUsage = async (id: string) => {
+  try {
+    const response = await axiosInstance().get(
+      `/pesanan/bahan-baku-usage/${id}`,
+    );
+    return response.data; // Return the data received from the API call
+  } catch (error) {
+    console.error("Error fetching bahan baku:", error);
+    throw error; // Rethrow the error for handling in the component
+  }
+};
+
+export const useBahanBaku = async (id: string) => {
+  try {
+    const response = await axiosInstance().post(
+      `/pesanan/bahan-baku/use/${id}`,
+    );
+    if (response.status === 500) {
+      toast.warning("Database is down! Switching to fakeAPI");
+      return;
+    }
+
     toast.success(response?.data?.message);
 
     return response;

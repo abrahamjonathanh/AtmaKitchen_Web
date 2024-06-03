@@ -38,7 +38,7 @@ export default function PaymentForm({
   }, [selectedImages, form]);
 
   return (
-    <div className="lg:w-1/2">
+    <div className="lg:w-1/2 xl:w-3/4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -66,7 +66,7 @@ export default function PaymentForm({
             control={form.control}
             name="image"
             render={({ field: { onChange } }) => (
-              <FormItem className="w-max">
+              <FormItem className="w-full">
                 <FormControl>
                   <Input
                     type="file"
@@ -84,13 +84,12 @@ export default function PaymentForm({
           />
 
           <p className="text-body text-slate-500">
-            Besar file: maksimum 10.000.000 bytes (10 Megabytes). Ekstensi file
-            yang diperbolehkan: .JPG .JPEG .PNG. Maksimal unggah 5 foto per
-            produk.
+            Besar file: maksimum 10.240.000 bytes (10 Megabytes). Ekstensi file
+            yang diperbolehkan: .JPG .JPEG .PNG.
           </p>
 
           <ConfirmDialog
-            title="Upload bukti pembayaran"
+            title="Upload Bukti Pembayaran"
             onSubmit={() => onSubmit(form.getValues())}
             isLoading={isLoading}
           >
