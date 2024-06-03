@@ -74,7 +74,7 @@ export const statusPesananBadge = (value: string): BadgeProps => {
       | "Menunggu ongkir"
       | "Dibatalkan otomatis"
       | "Sudah dibayar"
-      | "Pembayaran Valid"
+      | "Pembayaran valid"
       | "Ditolak"
       | "Diterima"
       | "Diproses"
@@ -100,7 +100,7 @@ export const statusPesananBadge = (value: string): BadgeProps => {
     { code: "Menunggu ongkir", variant: "alert" },
     { code: "Dibatalkan otomatis", variant: "gray" },
     { code: "Sudah dibayar", variant: "sky" },
-    { code: "Pembayaran Valid", variant: "sky" },
+    { code: "Pembayaran valid", variant: "sky" },
     { code: "Diterima", variant: "lime" },
     { code: "Ditolak", variant: "failed" },
     { code: "Diproses", variant: "violet" },

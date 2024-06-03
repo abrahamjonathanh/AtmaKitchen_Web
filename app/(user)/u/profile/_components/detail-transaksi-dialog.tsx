@@ -18,7 +18,7 @@ import { useCurrentUserStore } from "@/lib/state/user-store";
 
 export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
   const { currentUser } = useCurrentUserStore();
-  const getPoin = getPoinByTotalHarga(data?.total_pesanan);
+  // const getPoin = getPoinByTotalHarga(data?.total_pesanan);
   const poinUser = getPoinByIdPesanan(
     currentUser?.id_pelanggan!,
     data?.id_pesanan!,
@@ -135,20 +135,24 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                   )}
                 </p>
               </div>
-              {!getPoin.isLoading && (
+              {data?.points?.poin && (
                 <p className="text-body text-slate-500">
                   Anda memperoleh{" "}
                   <span className="font-medium text-orange-600">
-                    {getPoin.data} poin
+                    {data?.points?.poin} poin
                   </span>{" "}
                   dari transaksi ini.
                 </p>
               )}
-              <UserInvoice
-                data={data!}
-                poin={getPoin.data}
-                poinUser={poinUser.data}
-              />
+              {data?.bukti_pembayaran &&
+                data.accepted_at &&
+                data.verified_at && (
+                  <UserInvoice
+                    data={data!}
+                    // poin={getPoin.data}
+                    poinUser={poinUser.data}
+                  />
+                )}
             </div>
           </DialogDescription>
         </DialogHeader>

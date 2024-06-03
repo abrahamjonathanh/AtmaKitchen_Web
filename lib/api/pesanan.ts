@@ -227,13 +227,17 @@ export const createConfirmPembayaranByIdPesanan = async (
     }
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+    const errorFields = Object.keys(error.response.data.message);
+    errorFields.forEach((field) => {
+      return toast.error(error.response.data.message[field]);
+    });
   }
 };
 
 export const getAllPesananInProcess = () => {
-  let { data, error, isLoading, isValidating } = useSWR(
+  let { data, error, isLoading, isValidating, mutate } = useSWR(
     `${process.env.BASE_API}/pesanan/in-process`,
     fetcher,
   );
@@ -294,6 +298,7 @@ export const getAllPesananInProcess = () => {
     isLoading,
     isError: error,
     isValidating,
+    mutate,
   };
 };
 
@@ -446,6 +451,7 @@ export const uploadPaymentProof = async (
 
     toast.success(response?.data?.message);
   } catch (error) {
+    console.log(error);
     toast.error("Terjadi kesalahan...");
     throw new Error("File upload failed: " + error);
   }

@@ -10,11 +10,11 @@ import { getPoinByIdPelanggan } from "@/lib/api/poin";
 
 export default function UserInvoice({
   data,
-  poin,
+  // poin,
   poinUser,
 }: {
   data: IPesananv2;
-  poin: number;
+  // poin: number;
   poinUser: number;
 }) {
   const componentRef = useRef<HTMLDivElement>(null);
@@ -143,7 +143,7 @@ export default function UserInvoice({
             </div>
           </div>
           <div>
-            <p>Poin dari pesanan ini: {poin}</p>
+            <p>Poin dari pesanan ini: {data.points?.poin}</p>
             <p>Total poin customer: {poinUser}</p>
             {/* Salah ini total poin harusnya ambil setiap invoice berapa total nya terakhir */}
           </div>
