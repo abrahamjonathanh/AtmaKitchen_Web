@@ -38,6 +38,7 @@ export default function page() {
           {/* <TabsTrigger value="payment">Menunggu Pembayaran</TabsTrigger> */}
           {/* <TabsTrigger value="delivery">Menunggu Ongkir</TabsTrigger> */}
           <TabsTrigger value="paymentverified">Pembayaran Diterima</TabsTrigger>
+          <TabsTrigger value="process">Dalam Proses</TabsTrigger>
           {/* <TabsTrigger value="process">Diproses</TabsTrigger>
           <TabsTrigger value="accepted">Diterima</TabsTrigger>
           <TabsTrigger value="sent">Dikirim</TabsTrigger>
@@ -71,6 +72,15 @@ export default function page() {
               data={paymentVerified.data}
             />
           ) : paymentVerified.isLoading ? (
+            <Loading />
+          ) : (
+            <p>Data tidak ditemukan</p>
+          )}
+        </TabsContent>
+        <TabsContent value="process">
+          {process.data && !process.isLoading ? (
+            <DataTable columns={columns(process.mutate)} data={process.data} />
+          ) : process.isLoading ? (
             <Loading />
           ) : (
             <p>Data tidak ditemukan</p>

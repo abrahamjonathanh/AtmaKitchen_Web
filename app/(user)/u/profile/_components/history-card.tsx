@@ -84,6 +84,12 @@ export default function UserHistoryCard({
       </div>
       <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
         <p className="text-body w-full text-slate-500">
+          {data.points?.is_double_poin && (
+            <span className="text-green-600">
+              <span className="font-medium ">Selamat Ulang Tahun! </span>
+              <span>Poin Anda digandakan. </span>
+            </span>
+          )}
           Anda mendapatkan{" "}
           <span className="font-semibold text-orange-600">
             {toThousand(data.points?.poin ?? 0)} poin
