@@ -52,7 +52,7 @@ export default function PesananConfirmDialog({
             onClick={onSubmit}
             disabled={isLoading}
           >
-            {isLoading ? <Loading title="Deleting..." /> : buttonText}
+            {isLoading ? <Loading /> : buttonText}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -376,14 +376,15 @@ export const pesananAcceptedById = async (id_pesanan: string) => {
       return response;
     }
 
-    toast.success(response?.data?.message);
+    return response.data;
+    // toast.success(response?.data?.message);
 
-    const ambilBahanBakuResponse = await axiosInstance().get(
-      `/pesanan/${id_pesanan}/bahan-baku`,
-    );
-    toast.info(ambilBahanBakuResponse?.data?.message);
+    // const ambilBahanBakuResponse = await axiosInstance().get(
+    //   `/pesanan/${id_pesanan}/bahan-baku`,
+    // );
+    // toast.info(ambilBahanBakuResponse?.data?.message);
 
-    return ambilBahanBakuResponse.data;
+    // return ambilBahanBakuResponse.data;
   } catch (error: any) {
     toast.error("Terjadi kesalahan saat menerima pesanan...");
     throw error;

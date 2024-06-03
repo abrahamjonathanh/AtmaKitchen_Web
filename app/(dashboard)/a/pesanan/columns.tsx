@@ -241,7 +241,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       const [confirmingAction, setConfirmingAction] = useState<
         "accepted" | "rejected" | null
       >(null);
-      const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false); // State untuk menampilkan dialog bahan baku
+      const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false);
       const { currentUser } = useCurrentUserStore();
       const handleConfirmation = (action: "accepted" | "rejected") => {
         setConfirmingAction(action);
@@ -249,7 +249,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       };
 
       const [kekuranganData, setKekuranganData] = useState([]);
-
+      // let bahanBakuData = [{}];
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
@@ -258,17 +258,21 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             row.getValue("id_karyawan"),
           );
 
-          // Auto refresh data when success.
           if (response?.status == 200 || response?.status == 201) {
             mutate("/karyawan"); // For auto refresh
           }
         } catch (error: any) {
           console.error("Error deleting karyawan: " + error);
         } finally {
-          setIsLoading(false); //For stop the loading process
-          setIsOpen(false); // For close the dialog
+          setIsLoading(false);
+          setIsOpen(false);
         }
       };
+
+      // useEffect(() => {
+      //   console.log(kekuranganData);
+      //   console.log(isBahanBakuDialogOpen);
+      // }, [kekuranganData, isBahanBakuDialogOpen]);
 
       const handleUpdateStatus = async (
         status: "accepted" | "rejected" | "process",
@@ -276,48 +280,15 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
         try {
           setIsLoading(true);
           const pesananId = row.getValue("id_pesanan") as string;
+
           if (status === "accepted") {
-            await pesananAcceptedById(pesananId);
-            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-            // setPesananId(pesananId);
-            // setIsBahanBakuDialogOpen(true);
-
-            // if (
-            //   bahanBakuData &&
-            //   bahanBakuData.data &&
-            //   bahanBakuData.data.total_kekurangan_per_bahan_baku
-            // ) {
-            //   const kekuranganBahanBaku =
-            //     bahanBakuData.data.total_kekurangan_per_bahan_baku;
-
-            //   const bahanBakuList = kekuranganBahanBaku.map(
-            //     (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
-            //       nama: bahan.nama_bahan_baku,
-            //       kekurangan: bahan.total_kekurangan,
-            //     }),
-            //   );
-
-            //   if (bahanBakuList.length > 0) {
-            //     // Tampilkan informasi dalam satu toast
-            //     const message = `${bahanBakuData.message}:<br />${bahanBakuList
-            //       .map(
-            //         (bahan: { nama: any; kekurangan: any }) => `
-            //           &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
-            //           &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
-            //       )
-            //       .join("<br /><br />")}`;
-            //     toast.info(message);
-            //   } else {
-            //     console.error("Data bahan baku tidak dalam format yang benar.");
-            //   }
-            // } else {
-            //   console.error("Data bahan baku sudah lengkap.");
-            // }
+            const bahanBakuData = await fetchBahanBaku(pesananId);
+            // console.log(bahanBakuData.data);
+            setKekuranganData(bahanBakuData.data);
+            setIsBahanBakuDialogOpen(true);
           } else if (status === "rejected") {
             await tolakPesananById(pesananId);
           } else {
-            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-            // console.log(bahanBakuData);
             await updateStatusPesanan({
               data: { status: "Diproses" },
               id_pesanan: pesananId,
@@ -405,6 +376,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+
           <PesananConfirmDialog
             isOpen={confirmDialogOpen}
             setIsOpen={setConfirmDialogOpen}
@@ -423,6 +395,8 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
+            {kekuranganData.length && <p>Showing</p>}
+
             {/* {kekuranganData!.map((data: any, index: number) => (
               <div key={index}>
                 <p>
@@ -450,6 +424,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
+            {kekuranganData.length && <p>Showing</p>}
           </PesananConfirmDialog>
 
           <TolakDialog
@@ -466,6 +441,13 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             description="Tindakkan ini tidak dapat diulang ketika anda menekan Hapus."
             onSubmit={onDeleteHandler}
             isLoading={isLoading}
+          />
+
+          <BahanBakuDialog
+            isOpen={isBahanBakuDialogOpen}
+            setIsOpen={setIsBahanBakuDialogOpen}
+            title="Kekurangan Bahan Baku"
+            bahanBakuData={kekuranganData as []}
           />
         </>
       );
