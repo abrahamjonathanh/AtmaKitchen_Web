@@ -52,20 +52,26 @@ const BahanBakuDialog: React.FC<{
               <div className="text-red-500">{error}</div>
             ) : (
               <div>
-                <h3 className="mb-4 text-xl font-semibold">Data Bahan Baku</h3>
+                <h3 className="mb-4 text-xl font-semibold">Data {title}</h3>
                 <ul>
                   {bahanBakuData.map((bahan: any, index: number) => (
                     <li key={index} className="mb-2">
                       <p>Nama: {bahan.nama}</p>
                       <p>
-                        Stok yang dibutuhkan: {bahan.total} {bahan.satuan}
+                        Stok yang {bahan.stok ? "dibutuhkan" : "digunakan"}:{" "}
+                        {bahan.total} {bahan.satuan}
                       </p>
-                      <p>
-                        Stok saat ini: {bahan.stok} {bahan.satuan}
-                      </p>
-                      <p>
-                        Kekurangan: {bahan.total - bahan.stok} {bahan.satuan}
-                      </p>
+                      {bahan.stok && (
+                        <div>
+                          <p>
+                            Stok saat ini: {bahan.stok} {bahan.satuan}
+                          </p>
+                          <p>
+                            Kekurangan: {bahan.total - bahan.stok}{" "}
+                            {bahan.satuan}
+                          </p>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>

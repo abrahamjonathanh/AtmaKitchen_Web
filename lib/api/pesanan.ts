@@ -653,3 +653,41 @@ export const updateStatusPesanan = async ({
     console.error(error.response.data.message);
   }
 };
+
+export const getBahanBakuUsage = async (id: string) => {
+  try {
+    const response = await axiosInstance().get(
+      `/pesanan/bahan-baku-usage/${id}`,
+    );
+    return response.data; // Return the data received from the API call
+  } catch (error) {
+    console.error("Error fetching bahan baku:", error);
+    throw error; // Rethrow the error for handling in the component
+  }
+};
+
+export const useBahanBaku = async (id: string) => {
+  try {
+    const response = await axiosInstance().post(
+      `/pesanan/bahan-baku/use/${id}`,
+    );
+    if (response.status === 500) {
+      toast.warning("Database is down! Switching to fakeAPI");
+      return;
+    }
+
+    toast.success(response?.data?.message);
+
+    return response;
+  } catch (error: any) {
+    if (error.response.data.message) {
+      const errorFields = Object.keys(error.response.data.message);
+      errorFields.forEach((field) => {
+        toast.error(error.response.data.message[field]);
+      });
+    } else {
+      toast.error("Oh no! terjadi kesalahan...");
+    }
+    console.error(error.response.data.message);
+  }
+};
