@@ -10,6 +10,7 @@ import {
   getAllPesananInProcess,
   getAllPesananNeedConfirmPayment,
   getAllPesananPaymentVerified,
+  getPesananToday,
   // getAllPesananRejected,
 } from "@/lib/api/pesanan";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,6 +22,7 @@ export default function page() {
   // const { data, isLoading } = getAllPesanan();
   const needConfirm = getAllPesananNeedConfirmPayment();
   const paymentVerified = getAllPesananPaymentVerified();
+  const processedToday = getPesananToday();
 
   const process = getAllPesananInProcess();
   // const rejected = getAllPesananRejected();
@@ -41,6 +43,7 @@ export default function page() {
           <TabsTrigger value="accepted">Diterima</TabsTrigger>
           <TabsTrigger value="sent">Dikirim</TabsTrigger>
           <TabsTrigger value="rejected">Ditolak</TabsTrigger> */}
+          <TabsTrigger value="processedToday">Diproses Hari Ini</TabsTrigger>
         </TabsList>
         <TabsContent value="semua">
           {allPesanan.data && !allPesanan.isLoading ? (
@@ -97,6 +100,18 @@ export default function page() {
             <Loading />
           )}
         </TabsContent> */}
+        <TabsContent value="processedToday">
+          {processedToday.data && !processedToday.isLoading ? (
+            <DataTable
+              columns={columns(processedToday.mutate)}
+              data={processedToday.data}
+            />
+          ) : processedToday.isLoading ? (
+            <Loading />
+          ) : (
+            <p>Data tidak ditemukan</p>
+          )}
+        </TabsContent>
       </Tabs>
       {/* {data && !isLoading ? (
         <DataTable columns={columns} data={data} />

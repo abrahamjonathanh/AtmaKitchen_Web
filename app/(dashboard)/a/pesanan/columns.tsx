@@ -37,6 +37,7 @@ import {
   fetchBahanBaku,
   pesananAcceptedById,
   tolakPesananById,
+  updateStatusPesanan,
 } from "@/lib/api/pesanan";
 import { useFormStatus } from "react-dom";
 import { axiosInstance } from "@/lib/axiosInstance";
@@ -187,6 +188,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       const { mutate } = useSWRConfig(); // // Copy this for create, update, delete
       const router = useRouter(); // // Copy this for create, update, delete
       const [isLoading, setIsLoading] = useState(false); // // Copy this for create, update, delete
+      const [DiprosesDialogOpen, setDiprosesDialogOpen] = useState(false);
       const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
       const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
       const [detailPesananDialogOpen, setDetailPesananDialogOpen] =
@@ -223,66 +225,58 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
         }
       };
 
-      const handleUpdateStatus = async (status: "accepted" | "rejected") => {
+      const handleUpdateStatus = async (
+        status: "accepted" | "rejected" | "process",
+      ) => {
         try {
           setIsLoading(true);
+          const pesananId = row.getValue("id_pesanan") as string;
           if (status === "accepted") {
-            const pesananId = row.getValue("id_pesanan") as string;
-            if (
-              typeof pesananId === "string" ||
-              typeof pesananId === "number"
-            ) {
-              await pesananAcceptedById(pesananId.toString());
-              const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-              setPesananId(pesananId);
-              setIsBahanBakuDialogOpen(true);
+            await pesananAcceptedById(pesananId);
+            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
+            // setPesananId(pesananId);
+            // setIsBahanBakuDialogOpen(true);
 
-              if (
-                bahanBakuData &&
-                bahanBakuData.data &&
-                bahanBakuData.data.total_kekurangan_per_bahan_baku
-              ) {
-                const kekuranganBahanBaku =
-                  bahanBakuData.data.total_kekurangan_per_bahan_baku;
+            // if (
+            //   bahanBakuData &&
+            //   bahanBakuData.data &&
+            //   bahanBakuData.data.total_kekurangan_per_bahan_baku
+            // ) {
+            //   const kekuranganBahanBaku =
+            //     bahanBakuData.data.total_kekurangan_per_bahan_baku;
 
-                const bahanBakuList = kekuranganBahanBaku.map(
-                  (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
-                    nama: bahan.nama_bahan_baku,
-                    kekurangan: bahan.total_kekurangan,
-                  }),
-                );
+            //   const bahanBakuList = kekuranganBahanBaku.map(
+            //     (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
+            //       nama: bahan.nama_bahan_baku,
+            //       kekurangan: bahan.total_kekurangan,
+            //     }),
+            //   );
 
-                if (bahanBakuList.length > 0) {
-                  // Tampilkan informasi dalam satu toast
-                  const message = `${bahanBakuData.message}:<br />${bahanBakuList
-                    .map(
-                      (bahan: { nama: any; kekurangan: any }) => `
-                      &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
-                      &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
-                    )
-                    .join("<br /><br />")}`;
-                  toast.info(message);
-                } else {
-                  console.error(
-                    "Data bahan baku tidak dalam format yang benar.",
-                  );
-                }
-              } else {
-                console.error("Data bahan baku sudah lengkap.");
-              }
-            } else {
-              console.error("Invalid type for pesananId:", typeof pesananId);
-            }
+            //   if (bahanBakuList.length > 0) {
+            //     // Tampilkan informasi dalam satu toast
+            //     const message = `${bahanBakuData.message}:<br />${bahanBakuList
+            //       .map(
+            //         (bahan: { nama: any; kekurangan: any }) => `
+            //           &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
+            //           &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
+            //       )
+            //       .join("<br /><br />")}`;
+            //     toast.info(message);
+            //   } else {
+            //     console.error("Data bahan baku tidak dalam format yang benar.");
+            //   }
+            // } else {
+            //   console.error("Data bahan baku sudah lengkap.");
+            // }
+          } else if (status === "rejected") {
+            await tolakPesananById(pesananId);
           } else {
-            const pesananId = row.getValue("id_pesanan");
-            if (
-              typeof pesananId === "string" ||
-              typeof pesananId === "number"
-            ) {
-              await tolakPesananById(pesananId.toString());
-            } else {
-              console.error("Invalid type for pesananId:", typeof pesananId);
-            }
+            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
+            // console.log(bahanBakuData);
+            await updateStatusPesanan({
+              data: { status: "Diproses" },
+              id_pesanan: pesananId,
+            });
           }
           onRefresh!();
         } catch (error) {
@@ -362,6 +356,9 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                   <DropdownMenuItem onClick={() => setRejectDialogOpen(true)}>
                     <X size={"16"} /> Ditolak
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDiprosesDialogOpen(true)}>
+                    <Clock size={"16"} /> Diproses
+                  </DropdownMenuItem>
                 </>
               )}
               {row.getValue("status") == "Diterima" && (
@@ -413,6 +410,26 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))} */}
+          </PesananConfirmDialog>
+
+          <PesananConfirmDialog
+            isOpen={DiprosesDialogOpen}
+            setIsOpen={setDiprosesDialogOpen}
+            title="Proses Pesanan"
+            buttonText="Proses"
+            onSubmit={() => handleUpdateStatus("process")}
+            isLoading={isLoading}
+          >
+            {row.original.detail_pesanan?.map((data, index) => (
+              <div className="flex items-center justify-between" key={index}>
+                <p>
+                  {data.nama_produk} {data.produk?.ukuran}
+                </p>
+                <p>
+                  {data.jumlah} x {toRupiah(parseInt(data.harga))}
+                </p>
+              </div>
+            ))}
           </PesananConfirmDialog>
 
           <TolakDialog
