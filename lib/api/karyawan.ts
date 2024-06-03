@@ -214,3 +214,33 @@ export const updateKaryawanProfile = async (data: {
     toast.error("Oh no! terjadi kesalahan...");
   }
 };
+
+export const laporanPresensiGaji = async (year: string, month: string) => {
+  try {
+    // Boiler template for fetching api
+    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
+    const response = await axiosInstance().get(`/laporan-presensi/${year}/${month}`);
+
+    // Check if the database down
+    if (response.status === 500) {
+      toast.warning("Database is down! Switching to fakeAPI");
+    
+      return response;
+    }
+
+    // ✅ Use toast when its done
+    toast.success(response?.data?.message);
+
+    return response;
+  } catch (error: any) {
+    if (error.response.data.message) {
+      const errorFields = Object.keys(error.response.data.message);
+      errorFields.forEach((field) => {
+        toast.error(error.response.data.message[field]);
+      });
+    } else {
+      toast.error("Oh no! terjadi kesalahan...");
+    }
+    console.error(error.response.data.message);
+  }
+};

@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-export default function PenjualanBulananReport() {
+export default function PresensiReport() {
   const componentRef = useRef<HTMLDivElement>(null);
   const { currentUser } = useCurrentUserStore();
 
@@ -58,7 +58,7 @@ export default function PenjualanBulananReport() {
 
   const { data, error, isLoading, isValidating } = useSWR(
     selectedMonth
-      ? `${process.env.BASE_API}/pesanan/laporan/${selectedYear}-${selectedMonth}-01`
+      ? `${process.env.BASE_API}/laporan-presensi/${selectedYear}/${selectedMonth}`
       : null,
     fetcher,
   );
@@ -66,10 +66,12 @@ export default function PenjualanBulananReport() {
   useEffect(() => {
     if (data) {
       setReportData({ data, isLoading, isError: error, isValidating });
+      console.log(reportData);
     }
   }, [data, error, isLoading, isValidating]);
 
   const handlePrintReport = () => {
+    console.log("MASUKKK");
     if (selectedMonth) {
       console.log(data);
       setReportData({ data, isLoading, isError: error, isValidating });
@@ -120,7 +122,7 @@ export default function PenjualanBulananReport() {
             </Button>
           )}
           content={() => componentRef.current}
-          documentTitle={`Bahan Baku Report ${toIndonesiaDate(new Date().toString())}`}
+          documentTitle={`Presensi Report ${toIndonesiaDate(new Date().toString())}`}
         />
       </div>
 
@@ -135,7 +137,7 @@ export default function PenjualanBulananReport() {
               <p>Jln. Centralpark No.10 Yogyakarta</p>
             </div>
             <div>
-              <p className="font-bold underline">LAPORAN PENJUALAN BULANAN</p>
+              <p className="font-bold underline">LAPORAN PRESENSI</p>
               <p>Bulan : {toIndonesiaDate(selectedMonth, { month: "long" })}</p>
               <p>Tahun : {selectedYear.toString()}</p>
               <p>Tanggal cetak: {toIndonesiaDate(new Date().toString())}</p>
@@ -143,24 +145,30 @@ export default function PenjualanBulananReport() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-black">Produk</TableHead>
-                  <TableHead className="text-black">Kuantitas</TableHead>
-                  <TableHead className="text-black">Harga</TableHead>
-                  <TableHead className="text-black">Jumlah Uang</TableHead>
+                  <TableHead className="text-black">Nama</TableHead>
+                  <TableHead className="text-black">Jumlah Hadir</TableHead>
+                  <TableHead className="text-black">Jumlah Bolos</TableHead>
+                  <TableHead className="text-black">Honor Harian</TableHead>
+                  <TableHead className="text-black">Bonus Rajin</TableHead>
+                  <TableHead className="text-black">Total</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {reportData.data.map((data: any, index: number) => (
                   <TableRow key={index}>
                     <TableCell className="py-2 font-normal">
-                      {data.produk}
+                      {data.nama}
                     </TableCell>
-                    <TableCell className="py-2">{data.kuantitas}</TableCell>
+                    <TableCell className="py-2">{data.jumlah_hadir}</TableCell>
+                    <TableCell className="py-2">{data.jumlah_bolos}</TableCell>
                     <TableCell className="py-2">
-                      {toRupiah(parseInt(data.harga))}
+                      {toRupiah(parseInt(data.honor_harian))}
                     </TableCell>
                     <TableCell className="py-2">
-                      {toRupiah(parseInt(data.jumlah_uang))}
+                      {toRupiah(parseInt(data.bonus_rajin))}
+                    </TableCell>
+                    <TableCell className="py-2">
+                      {toRupiah(parseInt(data.total))}
                     </TableCell>
                   </TableRow>
                 ))}
