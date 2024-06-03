@@ -316,3 +316,15 @@ export interface IMetodePembayaran {
   id_metode_pembayaran: number;
   nama: string;
 }
+
+export interface IPenarikanSaldo {
+  pelanggan?: IPelanggan;
+  akun?: IAkun;
+  id_penarikan_saldo: number;
+  id_akun: number;
+  nama_bank: string;
+  nomor_rekening: string;
+  transfer_at: string;
+  jumlah_penarikan: number;
+  status: string;
+}

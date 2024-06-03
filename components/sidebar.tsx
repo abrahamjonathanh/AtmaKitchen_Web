@@ -141,7 +141,7 @@ export function Sidebar({ className }: { className?: string }) {
         {
           title: "Penarikan Saldo",
           icon: <CreditCard size={"16"} />,
-          link: "",
+          link: "/a/penarikan-saldo",
         },
       ],
     },
