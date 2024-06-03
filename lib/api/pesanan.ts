@@ -464,6 +464,11 @@ export const getAllPesananConfirmation = async () => {
     fetcher,
   );
 
+  let { data, error, isLoading, isValidating } = useSWR(
+    `${process.env.BASE_API}/pesanan/perlu-dikonfirmasi`,
+    fetcher,
+  );
+
   if (!isLoading && error) {
     toast.warning("Database is down! Switching to fakeAPI");
     data = [
@@ -522,6 +527,7 @@ export const getAllPesananConfirmation = async () => {
     isValidating,
   };
 };
+
 
 export const createPesanan = async (data: any) => {
   try {

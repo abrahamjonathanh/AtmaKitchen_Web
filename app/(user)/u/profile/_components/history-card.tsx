@@ -1,4 +1,3 @@
-// components/UserHistoryCard.tsx
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag } from "lucide-react";

@@ -7,6 +7,7 @@ import { columns } from "./columns";
 import Loading from "@/components/ui/loading";
 import {
   getAllPesanan,
+  getAllPesananConfirmation,
   getAllPesananInProcess,
   getAllPesananNeedConfirmPayment,
   getAllPesananPaymentVerified,
@@ -16,7 +17,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTitle } from "@/lib/hooks";
 
-export default function page() {
+export default async function page() {
   useTitle("AtmaKitchen | Pesanan");
   const allPesanan = getAllPesanan();
   // const { data, isLoading } = getAllPesanan();
@@ -27,7 +28,7 @@ export default function page() {
   const process = getAllPesananInProcess();
   // const rejected = getAllPesananRejected();
   // const paymentVerified = getAllPesananPaymentVerified();
-
+  const confirmation = getAllPesananConfirmation();
   return (
     <DashboardWrapper navTitle="Pesanan">
       <BreadcrumbWithSeparator currentPage="Pesanan" />
@@ -61,6 +62,13 @@ export default function page() {
               columns={columns(needConfirm.mutate)}
               data={needConfirm.data}
             />
+          ) : (
+            <Loading />
+          )}
+        </TabsContent>
+        <TabsContent value="confirm">
+          {(await confirmation).data && !(await confirmation).isLoading ? (
+            <DataTable columns={columns} data={(await confirmation).data} />
           ) : (
             <Loading />
           )}
