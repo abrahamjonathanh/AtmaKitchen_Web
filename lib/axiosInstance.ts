@@ -6,7 +6,7 @@ export const axiosInstance = () => {
 
   const axiosClient = axios.create({
     baseURL: `${process.env.BASE_API}`,
-    timeout: 5000,
+    timeout: 10000,
     headers: {
       Accept: "application/json",
       Authorization: `Bearer ${token}`,

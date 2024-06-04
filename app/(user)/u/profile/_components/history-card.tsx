@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useReducer } from "react";
 import {
   cn,
   statusPesananBadge,
@@ -16,14 +16,53 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import DetailTransaksiDialog from "./detail-transaksi-dialog";
 import { IDetailPesanan, IPesananv2 } from "@/lib/interfaces";
+import { updateStatusPesanan } from "@/lib/api/pesanan";
+import { ConfirmDialogCustomChildren } from "@/components/confirmDialog";
 
 export default function UserHistoryCard({
   data,
   isAdmin,
+  onRefresh,
 }: {
   data: IPesananv2;
   isAdmin: boolean;
+  onRefresh?: () => void;
 }) {
+  const [isDialogOpen, setIsDialogOpen] = useReducer(
+    (state: any, action: any) => {
+      switch (action.type) {
+        case "OPEN":
+          return {
+            isOpen: true,
+            value: action.value,
+            isLoading: action.isLoading,
+          };
+        case "CLOSE":
+          return { isOpen: false, value: undefined, isLoading: false };
+        default:
+          return state;
+      }
+    },
+    { isOpen: false, value: undefined, isLoading: false },
+  );
+
+  const onAcceptPesanan = async () => {
+    try {
+      setIsDialogOpen({ type: "OPEN", isLoading: true });
+      const response = await updateStatusPesanan({
+        data: { status: "Diterima" },
+        id_pesanan: data.id_pesanan,
+      });
+
+      if (response?.status == 200 || response?.status == 201) {
+        onRefresh!();
+      }
+    } catch (error) {
+    } finally {
+      setIsDialogOpen({ type: "CLOSE" });
+    }
+  };
+
   return (
     <div className="space-y-4 rounded-lg border border-slate-200 p-4">
       <div className="flex items-center justify-between">
@@ -113,8 +152,27 @@ export default function UserHistoryCard({
             !data.accepted_at &&
             (data.status_pesanan_latest?.status == "Sedang dikirim kurir" ||
               data.status_pesanan_latest?.status == "Sudah Dipickup") && (
-              <Button>Terima Pesanan</Button>
+              <Button
+                type="button"
+                onClick={() =>
+                  setIsDialogOpen({ type: "OPEN", isLoading: false })
+                }
+              >
+                Terima Pesanan
+              </Button>
             )}
+          <ConfirmDialogCustomChildren
+            isLoading={isDialogOpen.isLoading}
+            isOpen={isDialogOpen.isOpen}
+            setIsOpen={(isOpen) =>
+              setIsDialogOpen({ type: isOpen ? "OPEN" : "CLOSE" })
+            }
+            title="Terima pesanan"
+            description="Apakah pesanan Anda sudah diterima dengan baik?"
+            onSubmit={onAcceptPesanan}
+          >
+            <p>HEY</p>
+          </ConfirmDialogCustomChildren>
         </div>
       </div>
     </div>

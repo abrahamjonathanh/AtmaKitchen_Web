@@ -60,12 +60,12 @@ const PROTECTED_ROUTES = [
       "/a/resep",
       "/a/pengeluaran-lainnya",
       "/a/profile",
-      "/a/dashboard",
+      // "/a/dashboard",
     ],
   },
   {
     role: "Manager Operasional",
-    default: "/a/karyawan",
+    default: "/a/dashboard",
     routes: [
       "/u/produk",
       "/a/produk",

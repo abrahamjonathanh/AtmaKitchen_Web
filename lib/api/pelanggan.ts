@@ -39,7 +39,7 @@ export const getAllPelanggan = () => {
 };
 
 export const getPelangganById = (id: number) => {
-  const { data, error, isLoading, isValidating } = useSWR(
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
     `${process.env.BASE_API}/pelanggan/${id}`,
     fetcher,
   );
@@ -53,6 +53,7 @@ export const getPelangganById = (id: number) => {
     isLoading,
     error,
     isValidating,
+    mutate,
   };
 };
 

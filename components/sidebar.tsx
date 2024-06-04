@@ -23,15 +23,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 interface ContentType {
   title: string;
   icon?: ReactNode;
   link: string;
   more?: ContentType[];
+  access_role?: string[];
 }
 
 interface SidebarType {
@@ -40,112 +42,124 @@ interface SidebarType {
 }
 
 export function Sidebar({ className }: { className?: string }) {
-  const sidebarData: SidebarType[] = [
-    {
-      title: "Toko",
-      content: [
-        {
-          title: "Beranda",
-          icon: <Home size={"16"} />,
-          link: "",
-        },
-        {
-          title: "Produk",
-          icon: <Box size={"16"} />,
-          link: "",
-          more: [
-            { title: "Produk Biasa", link: "/a/produk" },
-            { title: "Produk Hampers", link: "/a/hampers" },
-          ],
-        },
-        {
-          title: "Promo",
-          icon: <BadgePercent size={"16"} />,
-          link: "/a/promo",
-        },
-        { title: "Jabatan", icon: <UserCog size={"16"} />, link: "/a/jabatan" },
-      ],
-    },
-    {
-      title: "Pesanan",
-      content: [
-        {
-          title: "Pesanan",
-          icon: <ScrollText size={"16"} />,
-          link: "/a/pesanan",
-        },
-        {
-          title: "Jarak Kirim",
-          icon: <Truck size={"16"} />,
-          link: "/a/jarak-kirim",
-        },
-      ],
-    },
-    {
-      title: "Pengguna",
-      content: [
-        {
-          title: "Pengguna",
-          icon: <User2 size={"16"} />,
-          link: "",
-          more: [
-            {
-              title: "Semua Akun",
-              link: "/a/akun",
-            },
-            {
-              title: "Karyawan",
-              link: "/a/karyawan",
-            },
-            {
-              title: "Penitip",
-              link: "/a/penitip",
-            },
-            {
-              title: "Pelanggan",
-              link: "/a/pelanggan",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "Operasional",
-      content: [
-        {
-          title: "Bahan Baku",
-          icon: <Warehouse size={"16"} />,
-          link: "/a/bahan-baku",
-        },
-        {
-          title: "Pemesanan Bahan Baku",
-          icon: <Boxes size={"16"} />,
-          link: "/a/pemesanan-bahan-baku",
-        },
-        { title: "Resep", icon: <BookOpen size={"16"} />, link: "/a/resep" },
-      ],
-    },
-    {
-      title: "Keuangan",
-      content: [
-        {
-          title: "Arus Kas",
-          icon: <AreaChart size={"16"} />,
-          link: "/a/pengeluaran-lainnya",
-        },
-        {
-          title: "Pembayaran Gaji",
-          icon: <DollarSign size={"16"} />,
-          link: "",
-        },
-        {
-          title: "Penarikan Saldo",
-          icon: <CreditCard size={"16"} />,
-          link: "",
-        },
-      ],
-    },
-  ];
+  const { currentUser } = useCurrentUserStore();
+
+  const sidebarData: SidebarType[] = useMemo(
+    () => [
+      {
+        title: "Toko",
+        content: [
+          {
+            title: "Beranda",
+            icon: <Home size={"16"} />,
+            link: "/a/dashboard",
+            access_role: ["Owner", "Manager Operasional"],
+          },
+          {
+            title: "Produk",
+            icon: <Box size={"16"} />,
+            link: "",
+            more: [
+              { title: "Produk Biasa", link: "/a/produk" },
+              { title: "Produk Hampers", link: "/a/hampers" },
+            ],
+          },
+          {
+            title: "Promo",
+            icon: <BadgePercent size={"16"} />,
+            link: "/a/promo",
+          },
+          {
+            title: "Jabatan",
+            icon: <UserCog size={"16"} />,
+            link: "/a/jabatan",
+          },
+        ],
+      },
+      {
+        title: "Pesanan",
+        content: [
+          {
+            title: "Pesanan",
+            icon: <ScrollText size={"16"} />,
+            link: "/a/pesanan",
+          },
+          {
+            title: "Jarak Kirim",
+            icon: <Truck size={"16"} />,
+            link: "/a/jarak-kirim",
+          },
+        ],
+      },
+      {
+        title: "Pengguna",
+        content: [
+          {
+            title: "Pengguna",
+            icon: <User2 size={"16"} />,
+            link: "",
+            more: [
+              {
+                title: "Semua Akun",
+                link: "/a/akun",
+              },
+              {
+                title: "Karyawan",
+                link: "/a/karyawan",
+              },
+              {
+                title: "Penitip",
+                link: "/a/penitip",
+              },
+              {
+                title: "Pelanggan",
+                link: "/a/pelanggan",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Operasional",
+        content: [
+          {
+            title: "Bahan Baku",
+            icon: <Warehouse size={"16"} />,
+            link: "/a/bahan-baku",
+          },
+          {
+            title: "Pemesanan Bahan Baku",
+            icon: <Boxes size={"16"} />,
+            link: "/a/pemesanan-bahan-baku",
+          },
+          { title: "Resep", icon: <BookOpen size={"16"} />, link: "/a/resep" },
+        ],
+      },
+      {
+        title: "Keuangan",
+        content: [
+          {
+            title: "Arus Kas",
+            icon: <AreaChart size={"16"} />,
+            link: "/a/pengeluaran-lainnya",
+          },
+          {
+            title: "Pembayaran Gaji",
+            icon: <DollarSign size={"16"} />,
+            link: "",
+          },
+          {
+            title: "Penarikan Saldo",
+            icon: <CreditCard size={"16"} />,
+            link: "",
+          },
+        ],
+      },
+    ],
+    [],
+  );
+
+  console.log(currentUser?.akun.role?.role);
   return (
     <div
       className={cn(

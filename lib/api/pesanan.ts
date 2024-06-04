@@ -611,9 +611,6 @@ export const updateStatusPesanan = async ({
   id_pesanan: string;
 }) => {
   try {
-    // Boiler template for fetching api
-    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
-    console.log(data);
     const response = await axiosInstance().post(
       `/pesanan/status/${id_pesanan}`,
       data,
@@ -641,14 +638,58 @@ export const updateStatusPesanan = async ({
 
     return response;
   } catch (error: any) {
-    if (error.response.data.message) {
-      const errorFields = Object.keys(error.response.data.message);
-      errorFields.forEach((field) => {
-        toast.error(error.response.data.message[field]);
-      });
-    } else {
-      toast.error("Oh no! terjadi kesalahan...");
-    }
-    console.error(error.response.data.message);
+    // if (error.response.data.message) {
+    //   const errorFields = Object.keys(error.response.data.message);
+    //   errorFields.forEach((field) => {
+    //     toast.error(error.response.data.message[field]);
+    //   });
+    // } else {
+    //   toast.error("Oh no! terjadi kesalahan...");
+    // }
+    // console.error(error.response.data.message);
+    console.error(error);
   }
+};
+
+export const pushNotification = async (data: any) => {
+  try {
+    const response = await axiosInstance().post("/push-notification", data);
+
+    if (response.status == 200 || response.status == 201) {
+      toast.success(response.data.message);
+    }
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getBahanBakuUsageByDate = async (data: any) => {
+  const response = await axiosInstance().post("/bahan-baku/laporan", data);
+
+  if (response.status == 200 || response.status == 201) {
+    toast.success(response.data.message);
+  }
+
+  return response;
+};
+
+export const getAllPesananLate = () => {
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    `${process.env.BASE_API}/pesanan/late`,
+    fetcher,
+  );
+
+  if (!isLoading && error) {
+    toast.warning("Database is down! Switching to fakeAPI");
+  }
+
+  return {
+    data: data,
+    isLoading,
+    isError: error,
+    isValidating,
+    mutate,
+  };
 };

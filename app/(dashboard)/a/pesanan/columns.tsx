@@ -28,7 +28,7 @@ import {
 import { statusPesananBadge, toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import DeleteDialog from "@/components/deleteDialog";
 import { usePathname, useRouter } from "next/navigation";
 import { IPesanan, IPesananv2 } from "@/lib/interfaces";
@@ -36,6 +36,7 @@ import { deleteKaryawanById } from "@/lib/api/karyawan";
 import {
   fetchBahanBaku,
   pesananAcceptedById,
+  pushNotification,
   tolakPesananById,
   updateStatusPesanan,
 } from "@/lib/api/pesanan";
@@ -193,6 +194,20 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
       const [detailPesananDialogOpen, setDetailPesananDialogOpen] =
         useState(false);
+      const [statusDialogOpen, setStatusDialogOpen] = useReducer(
+        (state: any, action: any) => {
+          switch (action.type) {
+            case "OPEN":
+              return { isOpen: true, value: action.value };
+            case "CLOSE":
+              return { isOpen: false, value: undefined };
+            default:
+              return state;
+          }
+        },
+        { isOpen: false, value: undefined },
+      );
+
       const [confirmingAction, setConfirmingAction] = useState<
         "accepted" | "rejected" | null
       >(null);
@@ -300,80 +315,139 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
         }
       };
 
+      const updateStatusPesananHandler = async (status: string) => {
+        try {
+          setIsLoading(true);
+          const response = await updateStatusPesanan({
+            data: { status },
+            id_pesanan: row.getValue("id_pesanan"),
+          });
+
+          if (status == "Sedang dikirim kurir" || status == "Siap dipickup") {
+            const response = await pushNotification({
+              title: `Pesanan ${status}`,
+              description: `Pesanan anda ${status}`,
+              user_id: row.original.id_pelanggan,
+            });
+
+            console.log(response);
+          }
+
+          if (response?.status === 200) {
+            onRefresh!();
+          }
+        } catch (error) {
+          console.error("Error updating status pesanan: ", error);
+        } finally {
+          setIsLoading(false);
+          setStatusDialogOpen({ type: "CLOSE", value: undefined });
+        }
+      };
+
       return (
         <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {currentUser?.akun?.role?.role == "Admin" && (
+          {row.getValue("status") != "Dibatalkan otomatis" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                {currentUser?.akun?.role?.role == "Admin" && (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      router.push(
+                        `${pathname}/verify/${row.getValue("id_pesanan")}`,
+                      )
+                    }
+                  >
+                    Verifikasi pembayaran
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
-                  onClick={() =>
-                    router.push(
-                      `${pathname}/verify/${row.getValue("id_pesanan")}`,
-                    )
-                  }
+                  onClick={() => setDetailPesananDialogOpen(true)}
                 >
-                  Verifikasi pembayaran
+                  Lihat Pesanan
                 </DropdownMenuItem>
-              )}
-              <DropdownMenuItem
-                onClick={() => setDetailPesananDialogOpen(true)}
-              >
-                Lihat Pesanan
-              </DropdownMenuItem>
 
-              {currentUser?.akun?.role?.role == "Manager Operasional" && (
-                <DropdownMenuItem>Batalkan pesanan</DropdownMenuItem>
-              )}
-              {currentUser?.akun?.role?.role == "Admin" && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Truck size={"16"} /> Siap dikirim
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Grab size={"16"} /> Siap dipickup
-                  </DropdownMenuItem>
-                </>
-              )}
+                {currentUser?.akun?.role?.role == "Manager Operasional" && (
+                  <DropdownMenuItem>Batalkan pesanan</DropdownMenuItem>
+                )}
+                {currentUser?.akun?.role?.role == "Admin" && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setStatusDialogOpen({
+                          type: "OPEN",
+                          value: "Sedang dikirim kurir",
+                        });
+                      }}
+                    >
+                      <Truck size={"16"} /> Sedang dikirim kurir
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setStatusDialogOpen({
+                          type: "OPEN",
+                          value: "Siap dipickup",
+                        });
+                      }}
+                    >
+                      <Grab size={"16"} /> Siap dipickup
+                    </DropdownMenuItem>
+                  </>
+                )}
 
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <Check size={"16"} /> Selesai
-              </DropdownMenuItem>
-              {currentUser?.akun?.role?.role == "Manager Operasional" && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setConfirmDialogOpen(true)}>
-                    <Check size={"16"} /> Diterima
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setRejectDialogOpen(true)}>
-                    <X size={"16"} /> Ditolak
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDiprosesDialogOpen(true)}>
-                    <Clock size={"16"} /> Diproses
-                  </DropdownMenuItem>
-                </>
-              )}
-              {row.getValue("status") == "Diterima" && (
-                <DropdownMenuItem onClick={() => setConfirmDialogOpen(true)}>
-                  <Clock size={"16"} /> Diproses
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    setStatusDialogOpen({
+                      type: "OPEN",
+                      value: "Selesai",
+                    });
+                  }}
+                >
+                  <Check size={"16"} /> Selesai
                 </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                {currentUser?.akun?.role?.role == "Manager Operasional" && (
+                  <>
+                    <DropdownMenuSeparator />
+                    {row.getValue("status") == "Pembayaran valid" && (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => setConfirmDialogOpen(true)}
+                        >
+                          <Check size={"16"} /> Diterima
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setRejectDialogOpen(true)}
+                        >
+                          <X size={"16"} /> Ditolak
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
+                    {row.getValue("status") == "Diterima" && (
+                      <DropdownMenuItem
+                        onClick={() => setConfirmDialogOpen(true)}
+                      >
+                        <Clock size={"16"} /> Diproses
+                      </DropdownMenuItem>
+                    )}
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           <ConfirmDialogCustomChildren
             isOpen={detailPesananDialogOpen}
             setIsOpen={setDetailPesananDialogOpen}
             title="Detail Pesanan"
-            // onSubmit={() => console.log("SUBMITTED")}
           >
             {row.original.detail_pesanan?.map((data, index) => (
               <div className="flex items-center justify-between" key={index}>
@@ -383,6 +457,18 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
+          </ConfirmDialogCustomChildren>
+
+          <ConfirmDialogCustomChildren
+            isOpen={statusDialogOpen.isOpen}
+            title={`Ubah status menjadi ${statusDialogOpen.value}`}
+            setIsOpen={(isOpen) =>
+              setStatusDialogOpen({ type: isOpen ? "OPEN" : "CLOSE" })
+            }
+            isLoading={isLoading}
+            onSubmit={() => updateStatusPesananHandler(statusDialogOpen.value)}
+          >
+            <p>Hey {statusDialogOpen.value}</p>
           </ConfirmDialogCustomChildren>
 
           <PesananConfirmDialog
@@ -403,13 +489,6 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
-            {/* {kekuranganData!.map((data: any, index: number) => (
-              <div key={index}>
-                <p>
-                  {data.nama_bahan_baku} {data.total_kekurangan}
-                </p>
-              </div>
-            ))} */}
           </PesananConfirmDialog>
 
           <PesananConfirmDialog
