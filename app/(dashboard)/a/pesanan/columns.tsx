@@ -35,10 +35,12 @@ import { IPesanan, IPesananv2 } from "@/lib/interfaces";
 import { deleteKaryawanById } from "@/lib/api/karyawan";
 import {
   fetchBahanBaku,
+  getBahanBakuUsage,
   pesananAcceptedById,
   pushNotification,
   tolakPesananById,
   updateStatusPesanan,
+  useBahanBaku,
 } from "@/lib/api/pesanan";
 import { useFormStatus } from "react-dom";
 import { axiosInstance } from "@/lib/axiosInstance";
@@ -211,7 +213,9 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       const [confirmingAction, setConfirmingAction] = useState<
         "accepted" | "rejected" | null
       >(null);
-      const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false); // State untuk menampilkan dialog bahan baku
+      const [isBahanBakuDialogOpen, setIsBahanBakuDialogOpen] = useState(false);
+      const [isBahanBakuUsageDialogOpen, setIsBahanBakuUsageDialogOpen] =
+        useState(false);
       const { currentUser } = useCurrentUserStore();
       const handleConfirmation = (action: "accepted" | "rejected") => {
         setConfirmingAction(action);
@@ -219,7 +223,8 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       };
 
       const [kekuranganData, setKekuranganData] = useState([]);
-
+      const [pemakaianData, setPemakaianData] = useState([]);
+      // let bahanBakuData = [{}];
       const onDeleteHandler = async () => {
         try {
           setIsLoading(true);
@@ -228,17 +233,21 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             row.getValue("id_karyawan"),
           );
 
-          // Auto refresh data when success.
           if (response?.status == 200 || response?.status == 201) {
             mutate("/karyawan"); // For auto refresh
           }
         } catch (error: any) {
           console.error("Error deleting karyawan: " + error);
         } finally {
-          setIsLoading(false); //For stop the loading process
-          setIsOpen(false); // For close the dialog
+          setIsLoading(false);
+          setIsOpen(false);
         }
       };
+
+      // useEffect(() => {
+      //   console.log(kekuranganData);
+      //   console.log(isBahanBakuDialogOpen);
+      // }, [kekuranganData, isBahanBakuDialogOpen]);
 
       const handleUpdateStatus = async (
         status: "accepted" | "rejected" | "process",
@@ -246,52 +255,22 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
         try {
           setIsLoading(true);
           const pesananId = row.getValue("id_pesanan") as string;
+
           if (status === "accepted") {
             await pesananAcceptedById(pesananId);
-            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-            // setPesananId(pesananId);
-            // setIsBahanBakuDialogOpen(true);
-
-            // if (
-            //   bahanBakuData &&
-            //   bahanBakuData.data &&
-            //   bahanBakuData.data.total_kekurangan_per_bahan_baku
-            // ) {
-            //   const kekuranganBahanBaku =
-            //     bahanBakuData.data.total_kekurangan_per_bahan_baku;
-
-            //   const bahanBakuList = kekuranganBahanBaku.map(
-            //     (bahan: { nama_bahan_baku: any; total_kekurangan: any }) => ({
-            //       nama: bahan.nama_bahan_baku,
-            //       kekurangan: bahan.total_kekurangan,
-            //     }),
-            //   );
-
-            //   if (bahanBakuList.length > 0) {
-            //     // Tampilkan informasi dalam satu toast
-            //     const message = `${bahanBakuData.message}:<br />${bahanBakuList
-            //       .map(
-            //         (bahan: { nama: any; kekurangan: any }) => `
-            //           &nbsp;&nbsp;&nbsp;&nbsp;  - Nama bahan baku: ${bahan.nama}<br />
-            //           &nbsp;&nbsp; &nbsp; &nbsp;&nbsp;    Total kekurangan: ${bahan.kekurangan}`,
-            //       )
-            //       .join("<br /><br />")}`;
-            //     toast.info(message);
-            //   } else {
-            //     console.error("Data bahan baku tidak dalam format yang benar.");
-            //   }
-            // } else {
-            //   console.error("Data bahan baku sudah lengkap.");
-            // }
           } else if (status === "rejected") {
             await tolakPesananById(pesananId);
           } else {
-            // const bahanBakuData = await fetchBahanBaku(pesananId.toString());
-            // console.log(bahanBakuData);
-            await updateStatusPesanan({
-              data: { status: "Diproses" },
-              id_pesanan: pesananId,
-            });
+            const data = await fetchBahanBaku(pesananId);
+            if (data.data.length == 0) {
+              await updateStatusPesanan({
+                data: { status: "Diproses" },
+                id_pesanan: pesananId,
+              });
+              await useBahanBaku(pesananId);
+            } else {
+              toast.error("Masih ada bahan baku yang kurang!");
+            }
           }
           onRefresh!();
         } catch (error) {
@@ -347,101 +326,181 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
       return (
         <>
           {row.getValue("status") != "Dibatalkan otomatis" && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                {currentUser?.akun?.role?.role == "Admin" && (
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  {/* Verifikasi pembayaran by Admin */}
+                  {currentUser?.akun?.role?.role == "Admin" && (
+                    <DropdownMenuItem
+                      onClick={() =>
+                        router.push(
+                          `${pathname}/verify/${row.getValue("id_pesanan")}`,
+                        )
+                      }
+                    >
+                      Verifikasi pembayaran
+                    </DropdownMenuItem>
+                  )}
+                  {/* Lihat pesanan by ALL */}
                   <DropdownMenuItem
-                    onClick={() =>
-                      router.push(
-                        `${pathname}/verify/${row.getValue("id_pesanan")}`,
-                      )
-                    }
+                    onClick={() => setDetailPesananDialogOpen(true)}
                   >
-                    Verifikasi pembayaran
+                    Lihat Pesanan
                   </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  onClick={() => setDetailPesananDialogOpen(true)}
-                >
-                  Lihat Pesanan
-                </DropdownMenuItem>
 
-                {currentUser?.akun?.role?.role == "Manager Operasional" && (
-                  <DropdownMenuItem>Batalkan pesanan</DropdownMenuItem>
-                )}
-                {currentUser?.akun?.role?.role == "Admin" && (
-                  <>
-                    <DropdownMenuSeparator />
+                  {/* Lihat kekurangan bahan baku setelah Diterima */}
+                  {row.getValue("status") == "Diterima" && (
                     <DropdownMenuItem
-                      onClick={() => {
-                        setStatusDialogOpen({
-                          type: "OPEN",
-                          value: "Sedang dikirim kurir",
-                        });
+                      onClick={async () => {
+                        const bahanBakuData = await fetchBahanBaku(
+                          row.getValue("id_pesanan"),
+                        );
+                        setKekuranganData(bahanBakuData.data);
+                        setIsBahanBakuDialogOpen(true);
                       }}
                     >
-                      <Truck size={"16"} /> Sedang dikirim kurir
+                      Lihat Kekurangan Bahan Baku
                     </DropdownMenuItem>
+                  )}
+
+                  {/* Lihat Pemakaian bahan baku */}
+                  {(row.getValue("status") == "Diproses" ||
+                    row.getValue("status") == "Siap dipickup" ||
+                    row.getValue("status") == "Sedang dikirim kurir" ||
+                    row.getValue("status") == "Sudah dipickup" ||
+                    row.getValue("status") == "Selesai") && (
                     <DropdownMenuItem
-                      onClick={() => {
-                        setStatusDialogOpen({
-                          type: "OPEN",
-                          value: "Siap dipickup",
-                        });
+                      onClick={async () => {
+                        const bahanBakuData: any = await getBahanBakuUsage(
+                          row.getValue("id_pesanan"),
+                        );
+                        setPemakaianData(bahanBakuData.data);
+                        setIsBahanBakuUsageDialogOpen(true);
                       }}
                     >
-                      <Grab size={"16"} /> Siap dipickup
+                      Lihat Pemakaian Bahan Baku
                     </DropdownMenuItem>
-                  </>
-                )}
+                  )}
 
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    setStatusDialogOpen({
-                      type: "OPEN",
-                      value: "Selesai",
-                    });
-                  }}
-                >
-                  <Check size={"16"} /> Selesai
-                </DropdownMenuItem>
-                {currentUser?.akun?.role?.role == "Manager Operasional" && (
-                  <>
-                    <DropdownMenuSeparator />
-                    {row.getValue("status") == "Pembayaran valid" && (
+                  {/* Ubah status pesanan ADMIN ONLY: sedang dikirim kurir, siap dipickup*/}
+                  {currentUser?.akun?.role?.role == "Admin" &&
+                    row.getValue("status") != "Selesai" && (
                       <>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={() => setConfirmDialogOpen(true)}
+                          onClick={() => {
+                            setStatusDialogOpen({
+                              type: "OPEN",
+                              value: "Sedang dikirim kurir",
+                            });
+                          }}
                         >
-                          <Check size={"16"} /> Diterima
+                          <Truck size={"16"} /> Sedang dikirim kurir
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => setRejectDialogOpen(true)}
+                          onClick={() => {
+                            setStatusDialogOpen({
+                              type: "OPEN",
+                              value: "Siap dipickup",
+                            });
+                          }}
                         >
-                          <X size={"16"} /> Ditolak
+                          <Grab size={"16"} /> Siap dipickup
                         </DropdownMenuItem>
                       </>
                     )}
 
-                    {row.getValue("status") == "Diterima" && (
-                      <DropdownMenuItem
-                        onClick={() => setConfirmDialogOpen(true)}
-                      >
-                        <Clock size={"16"} /> Diproses
-                      </DropdownMenuItem>
+                  {/* Ubah status pesanan ADMIN ONLY: SELESAI */}
+                  {(row.getValue("status") == "Sudah dipickup" ||
+                    row.getValue("status") == "Sedang dikirim kurir") &&
+                    currentUser?.akun?.role?.role == "Admin" && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setStatusDialogOpen({
+                              type: "OPEN",
+                              value: "Selesai",
+                            });
+                          }}
+                        >
+                          <Check size={"16"} /> Selesai
+                        </DropdownMenuItem>
+                      </>
                     )}
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+
+                  {/* MO: Diterima/ditolak
+                  {currentUser?.akun?.role?.role == "Manager Operasional" && (
+                    <>
+                      <DropdownMenuSeparator />
+                      {row.getValue("status") !== "Ditolak" &&
+                        row.getValue("status") !== "Diterima" &&
+                        row.getValue("status") !== "Diproses" &&
+                        row.getValue("status") !== "Siap dipickup" &&
+                        row.getValue("status") !== "Sedang dikirim kurir" &&
+                        row.getValue("status") !== "Sudah dipickup" &&
+                        row.getValue("status") !== "Selesai" && (
+                          <>
+                            <DropdownMenuItem
+                              onClick={() => setConfirmDialogOpen(true)}
+                            >
+                              <Check size={"16"} /> Diterima
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => setRejectDialogOpen(true)}
+                            >
+                              <X size={"16"} /> Ditolak
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      {row.getValue("status") == "Diterima" && (
+                        <DropdownMenuItem
+                          onClick={() => setDiprosesDialogOpen(true)}
+                        >
+                          <Clock size={"16"} /> Diproses
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  )} */}
+                  <DropdownMenuSeparator />
+
+                  {currentUser?.akun?.role?.role == "Manager Operasional" && (
+                    <>
+                      <DropdownMenuSeparator />
+                      {row.getValue("status") == "Pembayaran valid" && (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() => setConfirmDialogOpen(true)}
+                          >
+                            <Check size={"16"} /> Diterima
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setRejectDialogOpen(true)}
+                          >
+                            <X size={"16"} /> Ditolak
+                          </DropdownMenuItem>
+                        </>
+                      )}
+
+                      {row.getValue("status") == "Diterima" && (
+                        <DropdownMenuItem
+                          onClick={() => setConfirmDialogOpen(true)}
+                        >
+                          <Clock size={"16"} /> Diproses
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
 
           <ConfirmDialogCustomChildren
@@ -509,6 +568,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
+            {kekuranganData.length && <p>Showing</p>}
           </PesananConfirmDialog>
 
           <TolakDialog
@@ -525,6 +585,20 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             description="Tindakkan ini tidak dapat diulang ketika anda menekan Hapus."
             onSubmit={onDeleteHandler}
             isLoading={isLoading}
+          />
+
+          <BahanBakuDialog
+            isOpen={isBahanBakuDialogOpen}
+            setIsOpen={setIsBahanBakuDialogOpen}
+            title="Kekurangan Bahan Baku"
+            bahanBakuData={kekuranganData as []}
+          />
+
+          <BahanBakuDialog
+            isOpen={isBahanBakuUsageDialogOpen}
+            setIsOpen={setIsBahanBakuUsageDialogOpen}
+            title="Pemakaian Bahan Baku"
+            bahanBakuData={pemakaianData as []}
           />
         </>
       );
