@@ -61,6 +61,7 @@ const PROTECTED_ROUTES = [
       "/a/pengeluaran-lainnya",
       "/a/profile",
       // "/a/dashboard",
+      "/a/penarikan-saldo",
     ],
   },
   {
