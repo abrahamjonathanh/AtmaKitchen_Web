@@ -26,6 +26,7 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import PemasukkanPengeluaranReport from "@/app/_components/pemasukkanPengeluaranReport";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,7 +40,7 @@ export function DataTable<TData, TValue>({
   const pathname = usePathname();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -59,7 +60,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between gap-4 items-center">
+      <div className="flex items-center justify-between gap-4">
         <Input
           placeholder="Cari berdasarkan nama transaksi..."
           value={(table.getColumn("nama")?.getFilterValue() as string) ?? ""}
@@ -68,16 +69,20 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <Link
-          href={pathname + "/create"}
-          className={cn(
-            "flex items-center gap-1",
-            buttonVariants({ variant: "default" })
-          )}
-        >
-          Tambah
-          <Plus className="text-white" size={"16"} />
-        </Link>
+        <div>
+          <PemasukkanPengeluaranReport />
+
+          <Link
+            href={pathname + "/create"}
+            className={cn(
+              "flex items-center gap-1",
+              buttonVariants({ variant: "default" }),
+            )}
+          >
+            Tambah
+            <Plus className="text-white" size={"16"} />
+          </Link>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -98,7 +103,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -117,7 +122,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -138,7 +143,7 @@ export function DataTable<TData, TValue>({
       </div>
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <p className="text-slate-500 text-body">
+        <p className="text-body text-slate-500">
           Menampilkan {table.getFilteredRowModel().rows.length} dari{" "}
           {columns.length} data.
         </p>
@@ -147,7 +152,7 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            className="flex gap-2 items-center"
+            className="flex items-center gap-2"
             disabled={!table.getCanPreviousPage()}
           >
             <ChevronLeft size={"16"} /> Previous
@@ -156,7 +161,7 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            className="flex gap-2 items-center"
+            className="flex items-center gap-2"
             disabled={!table.getCanNextPage()}
           >
             Next <ChevronRight size={"16"} />

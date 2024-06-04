@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useSWR from "swr";
-import axios from "axios";
+import axios from "axios"; // Import axios
 
 import {
   Select,
@@ -25,21 +25,23 @@ import {
 import { Input } from "@/components/ui/input";
 
 type ReportDataType = {
-  bulan: string;
-  tahun: string;
   tanggal_cetak: string;
-  laporan: {
-    nama: string;
-    jumlah_hadir: number;
-    jumlah_bolos: number;
-    honor_harian: number;
-    bonus_rajin: number;
-    total: number;
-  }[];
-  total_keseluruhan_gaji: number;
+  bulan_tahun: {
+    bulan: string;
+    tahun: string;
+  };
+  pemasukkan: {
+    penjualan: number;
+    tip: number;
+  };
+  pengeluaran: {
+    [key: string]: number;
+  };
+  total_pemasukkan: number;
+  total_pengeluaran: number;
 };
 
-export default function PresensiReport() {
+export default function PemasukkanPengeluaranReport() {
   const componentRef = useRef<HTMLDivElement>(null);
   const { currentUser } = useCurrentUserStore();
 
@@ -57,9 +59,10 @@ export default function PresensiReport() {
     setSelectedYear(year);
   };
 
+  // Fetch data using axios
   const { data, error } = useSWR(
     selectedMonth &&
-      `${process.env.BASE_API}/laporan-presensi/${selectedYear}/${selectedMonth}`,
+      `${process.env.BASE_API}/laporan-pengeluaran-pemasukkan/${selectedYear}/${selectedMonth}`,
     async (url: string) => {
       const response = await axios.get<ReportDataType>(url);
       return response.data;
@@ -74,11 +77,12 @@ export default function PresensiReport() {
     }
   };
 
+  // Log route here
   useEffect(() => {
     console.log(
       "SWR Route:",
       selectedMonth
-        ? `${process.env.BASE_API}/laporan-presensi/${selectedYear}/${selectedMonth}`
+        ? `${process.env.BASE_API}/laporan-pengeluaran-pemasukkan/${selectedYear}/${selectedMonth}`
         : null,
     );
   }, [selectedMonth, selectedYear]);
@@ -126,9 +130,7 @@ export default function PresensiReport() {
             </Button>
           )}
           content={() => componentRef.current}
-          documentTitle={`Presensi Report ${toIndonesiaDate(
-            new Date().toString(),
-          )}`}
+          documentTitle={`Arus Kas Report ${toIndonesiaDate(new Date().toString())}`}
         />
       </div>
 
@@ -143,7 +145,7 @@ export default function PresensiReport() {
               <p>Jln. Centralpark No.10 Yogyakarta</p>
             </div>
             <div>
-              <p className="font-bold underline">LAPORAN PRESENSI</p>
+              <p className="font-bold underline">LAPORAN ARUS KAS</p>
               <p>Bulan : {selectedMonth}</p>
               <p>Tahun : {selectedYear}</p>
               <p>Tanggal cetak: {toIndonesiaDate(reportData.tanggal_cetak)}</p>
@@ -151,39 +153,40 @@ export default function PresensiReport() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableCell className="text-black">Nama</TableCell>
-                  <TableCell className="text-black">Jumlah Hadir</TableCell>
-                  <TableCell className="text-black">Jumlah Bolos</TableCell>
-                  <TableCell className="text-black">Honor Harian</TableCell>
-                  <TableCell className="text-black">Bonus Rajin</TableCell>
-                  <TableCell className="text-black">Total</TableCell>
+                  <TableCell className="text-black">Kategori</TableCell>
+                  <TableCell className="text-black">Pemasukkan</TableCell>
+                  <TableCell className="text-black">Pengeluaran</TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reportData.laporan.map((data, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="py-2 font-normal">
-                      {data.nama}
-                    </TableCell>
-                    <TableCell className="py-2">{data.jumlah_hadir}</TableCell>
-                    <TableCell className="py-2">{data.jumlah_bolos}</TableCell>
-                    <TableCell className="py-2">
-                      {toRupiah(data.honor_harian)}
-                    </TableCell>
-                    <TableCell className="py-2">
-                      {toRupiah(data.bonus_rajin)}
-                    </TableCell>
-                    <TableCell className="py-2">
-                      {toRupiah(data.total)}
-                    </TableCell>
+                <TableRow>
+                  <TableCell className="py-2">Penjualan</TableCell>
+                  <TableCell className="py-2">
+                    {toRupiah(reportData.pemasukkan.penjualan)}
+                  </TableCell>
+                  <TableCell className="py-2">-</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="py-2">Tip</TableCell>
+                  <TableCell className="py-2">
+                    {toRupiah(reportData.pemasukkan.tip)}
+                  </TableCell>
+                  <TableCell className="py-2">-</TableCell>
+                </TableRow>
+                {Object.entries(reportData.pengeluaran).map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell className="py-2">{key}</TableCell>
+                    <TableCell className="py-2">-</TableCell>
+                    <TableCell className="py-2">{toRupiah(value)}</TableCell>
                   </TableRow>
                 ))}
                 <TableRow>
+                  <TableCell className="py-2 font-bold">Total</TableCell>
                   <TableCell className="py-2 font-bold">
-                    Total Keseluruhan
+                    {toRupiah(reportData.total_pemasukkan)}
                   </TableCell>
                   <TableCell className="py-2 font-bold">
-                    {toRupiah(reportData.total_keseluruhan_gaji)}
+                    {toRupiah(reportData.total_pengeluaran)}
                   </TableCell>
                 </TableRow>
               </TableBody>
