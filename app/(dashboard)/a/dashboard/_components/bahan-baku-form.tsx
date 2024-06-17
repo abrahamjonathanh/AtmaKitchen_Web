@@ -37,6 +37,7 @@ const formSchema = z.object({
 export default function BahanBakuInputForm() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
@@ -45,9 +46,10 @@ export default function BahanBakuInputForm() {
     try {
       setIsLoading(true);
       const response = await getBahanBakuUsageByDate({
-        start_date: values.date.from.toISOString().split("T")[0],
-        end_date: values.date.to.toISOString().split("T")[0],
+        start_date: addDays(values.date.from, 1).toISOString().split("T")[0],
+        end_date: addDays(values.date.to, 1).toISOString().split("T")[0],
       });
+      console.log(values.date.from.toISOString().split("T")[0]);
       setData(response.data.data);
     } catch (error) {
     } finally {

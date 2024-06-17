@@ -48,7 +48,7 @@ const ProfileTabs = () => {
 export default function Page() {
   useTitle("AtmaKitchen | Profile");
   const { data, isLoading } = getCurrentUser();
-
+  console.log(data);
   return (
     <UserWrapper className="flex flex-col gap-4 lg:flex-row">
       <div className="h-max w-full space-y-4 rounded-lg border border-slate-200 p-4 lg:w-1/3">
@@ -81,7 +81,9 @@ export default function Page() {
                   <Wallet2 />
                   <p>Saldo Refund</p>
                 </span>
-                <p className="font-medium">{toRupiah(1500000)}</p>
+                <p className="font-medium">
+                  {toRupiah(data.saldo?.total_saldo || 0)}
+                </p>
               </div>
               <div className="flex items-start justify-between">
                 <span className="flex items-start gap-2 text-slate-500">

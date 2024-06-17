@@ -36,11 +36,6 @@ type ReportDataType = {
 
 export default function PenitipReport() {
   const componentRef = useRef<HTMLDivElement>(null);
-  const { currentUser } = useCurrentUserStore();
-
-  const [componentRefs, setComponentRefs] = useState<
-    Array<React.RefObject<HTMLDivElement>>
-  >([]);
 
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<number>(
@@ -75,6 +70,7 @@ export default function PenitipReport() {
         : null,
     );
   }, [selectedMonth, selectedYear]);
+
   const handlePrintReport = async () => {
     if (selectedMonth) {
       const url = `${process.env.BASE_API}/laporan-penitip/${selectedYear}/${selectedMonth}`;
@@ -96,7 +92,7 @@ export default function PenitipReport() {
 
   return (
     <>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <Input
           type="number"
           placeholder="Year"
@@ -138,7 +134,10 @@ export default function PenitipReport() {
       <div ref={componentRef}>
         {reportData?.map((penitip: ReportDataType, index: number) => (
           // <div key={index} ref={componentRefs[index]}>
-          <div className="relative mx-auto flex w-full flex-col gap-4 bg-white p-16 pb-32">
+          <div
+            className="relative mx-auto flex w-full flex-col gap-4 bg-white p-16 pb-32"
+            key={index}
+          >
             <div>
               <p className="font-semibold">Atma Kitchen</p>
               <p>Jln. Centralpark No.10 Yogyakarta</p>

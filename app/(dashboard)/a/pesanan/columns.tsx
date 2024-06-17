@@ -301,7 +301,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             data: { status },
             id_pesanan: row.getValue("id_pesanan"),
           });
-
+          console.log(response);
           if (status == "Sedang dikirim kurir" || status == "Siap dipickup") {
             const response = await pushNotification({
               title: `Pesanan ${status}`,
@@ -337,17 +337,18 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                   {/* Verifikasi pembayaran by Admin */}
-                  {currentUser?.akun?.role?.role == "Admin" && (
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(
-                          `${pathname}/verify/${row.getValue("id_pesanan")}`,
-                        )
-                      }
-                    >
-                      Verifikasi pembayaran
-                    </DropdownMenuItem>
-                  )}
+                  {currentUser?.akun?.role?.role == "Admin" &&
+                    row.getValue("status") == "Sudah dibayar" && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          router.push(
+                            `${pathname}/verify/${row.getValue("id_pesanan")}`,
+                          )
+                        }
+                      >
+                        Verifikasi pembayaran
+                      </DropdownMenuItem>
+                    )}
                   {/* Lihat pesanan by ALL */}
                   <DropdownMenuItem
                     onClick={() => setDetailPesananDialogOpen(true)}
@@ -391,34 +392,41 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
 
                   {/* Ubah status pesanan ADMIN ONLY: sedang dikirim kurir, siap dipickup*/}
                   {currentUser?.akun?.role?.role == "Admin" &&
-                    row.getValue("status") != "Selesai" && (
+                    row.getValue("status") == "Diproses" && (
                       <>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setStatusDialogOpen({
-                              type: "OPEN",
-                              value: "Sedang dikirim kurir",
-                            });
-                          }}
-                        >
-                          <Truck size={"16"} /> Sedang dikirim kurir
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setStatusDialogOpen({
-                              type: "OPEN",
-                              value: "Siap dipickup",
-                            });
-                          }}
-                        >
-                          <Grab size={"16"} /> Siap dipickup
-                        </DropdownMenuItem>
+                        {row.getValue("jenis_pengiriman") !=
+                          "Ambil Sendiri" && (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setStatusDialogOpen({
+                                type: "OPEN",
+                                value: "Sedang dikirim kurir",
+                              });
+                            }}
+                          >
+                            <Truck size={"16"} /> Sedang dikirim kurir
+                          </DropdownMenuItem>
+                        )}
+
+                        {row.getValue("jenis_pengiriman") ==
+                          "Ambil Sendiri" && (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setStatusDialogOpen({
+                                type: "OPEN",
+                                value: "Siap dipickup",
+                              });
+                            }}
+                          >
+                            <Grab size={"16"} /> Siap dipickup
+                          </DropdownMenuItem>
+                        )}
                       </>
                     )}
 
                   {/* Ubah status pesanan ADMIN ONLY: SELESAI */}
-                  {(row.getValue("status") == "Sudah dipickup" ||
+                  {(row.getValue("status") == "Siap dipickup" ||
                     row.getValue("status") == "Sedang dikirim kurir") &&
                     currentUser?.akun?.role?.role == "Admin" && (
                       <>
@@ -436,39 +444,6 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                       </>
                     )}
 
-                  {/* MO: Diterima/ditolak
-                  {currentUser?.akun?.role?.role == "Manager Operasional" && (
-                    <>
-                      <DropdownMenuSeparator />
-                      {row.getValue("status") !== "Ditolak" &&
-                        row.getValue("status") !== "Diterima" &&
-                        row.getValue("status") !== "Diproses" &&
-                        row.getValue("status") !== "Siap dipickup" &&
-                        row.getValue("status") !== "Sedang dikirim kurir" &&
-                        row.getValue("status") !== "Sudah dipickup" &&
-                        row.getValue("status") !== "Selesai" && (
-                          <>
-                            <DropdownMenuItem
-                              onClick={() => setConfirmDialogOpen(true)}
-                            >
-                              <Check size={"16"} /> Diterima
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => setRejectDialogOpen(true)}
-                            >
-                              <X size={"16"} /> Ditolak
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      {row.getValue("status") == "Diterima" && (
-                        <DropdownMenuItem
-                          onClick={() => setDiprosesDialogOpen(true)}
-                        >
-                          <Clock size={"16"} /> Diproses
-                        </DropdownMenuItem>
-                      )}
-                    </>
-                  )} */}
                   <DropdownMenuSeparator />
 
                   {currentUser?.akun?.role?.role == "Manager Operasional" && (
@@ -491,7 +466,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
 
                       {row.getValue("status") == "Diterima" && (
                         <DropdownMenuItem
-                          onClick={() => setConfirmDialogOpen(true)}
+                          onClick={() => setDiprosesDialogOpen(true)}
                         >
                           <Clock size={"16"} /> Diproses
                         </DropdownMenuItem>
@@ -527,7 +502,10 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
             isLoading={isLoading}
             onSubmit={() => updateStatusPesananHandler(statusDialogOpen.value)}
           >
-            <p>Hey {statusDialogOpen.value}</p>
+            <p>
+              Apakah anda yakin untuk mengubah status menjadi{" "}
+              {statusDialogOpen.value}?
+            </p>
           </ConfirmDialogCustomChildren>
 
           <PesananConfirmDialog
@@ -568,7 +546,6 @@ export const columns = (onRefresh?: () => void): ColumnDef<IPesananv2>[] => [
                 </p>
               </div>
             ))}
-            {kekuranganData.length && <p>Showing</p>}
           </PesananConfirmDialog>
 
           <TolakDialog

@@ -381,8 +381,8 @@ export const pesananAcceptedById = async (id_pesanan: string) => {
       return response;
     }
 
+    toast.success(response?.data?.message);
     return response.data;
-    // toast.success(response?.data?.message);
 
     // const ambilBahanBakuResponse = await axiosInstance().get(
     //   `/pesanan/${id_pesanan}/bahan-baku`,
@@ -657,7 +657,7 @@ export const pushNotification = async (data: any) => {
     const response = await axiosInstance().post("/push-notification", data);
 
     if (response.status == 200 || response.status == 201) {
-      toast.success(response.data.message);
+      toast.success("Notifikasi dikirim");
     }
 
     return response;
@@ -668,7 +668,7 @@ export const pushNotification = async (data: any) => {
 
 export const getBahanBakuUsageByDate = async (data: any) => {
   const response = await axiosInstance().post("/bahan-baku/laporan", data);
-
+  console.log(data);
   if (response.status == 200 || response.status == 201) {
     toast.success(response.data.message);
   }

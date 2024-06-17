@@ -122,8 +122,18 @@ export default function ProductQuantityCard({
           </div>
           <Separator />
           <div className="flex items-center justify-between gap-4">
-            <Button type="submit" className="flex w-full gap-2">
-              Keranjang <ShoppingCart size={"16"} />
+            <Button
+              type="submit"
+              className="flex w-full gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loading />
+              ) : (
+                <>
+                  Keranjang <ShoppingCart size={"16"} />
+                </>
+              )}
             </Button>
           </div>
         </form>

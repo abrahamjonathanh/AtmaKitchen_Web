@@ -17,6 +17,7 @@ import DetailTransaksiDialog from "./detail-transaksi-dialog";
 import { IDetailPesanan, IPesananv2 } from "@/lib/interfaces";
 import { updateStatusPesanan } from "@/lib/api/pesanan";
 import { ConfirmDialogCustomChildren } from "@/components/confirmDialog";
+import NotAvailable from "@/public/products/Not Available.png";
 
 export default function UserHistoryCard({
   data,
@@ -69,7 +70,7 @@ export default function UserHistoryCard({
           <ShoppingBag size={"16"} />
           <p className="text-body font-medium">Belanja</p>
           <p className="text-body text-slate-500">
-            {toIndonesiaDate(data.created_at!)}
+            {toIndonesiaDate(data.tgl_order!)}
           </p>
           <p className="text-body font-medium">#{data.id_pesanan}</p>
         </span>
@@ -85,10 +86,18 @@ export default function UserHistoryCard({
       </div>
       <div className="space-y-4">
         {data.detail_pesanan?.map((item: IDetailPesanan, index: number) => (
-          <div className="flex w-full items-start gap-4" key={index}>
+          <Link
+            href={`${item.id_produk ? "/u/produk" : "/u/hampers"}/${item.id_produk ?? item.id_produk_hampers}`}
+            className="flex w-full items-start gap-4"
+            key={index}
+          >
             <Image
-              src={item.produk?.thumbnail?.image || item.hampers?.image || ""}
-              alt={item.produk?.nama!}
+              src={
+                item.produk?.thumbnail?.image ||
+                item.hampers?.image ||
+                NotAvailable
+              }
+              alt={item.produk?.nama || item.hampers?.nama || "Produk"}
               className="h-16 w-16 rounded-lg object-cover"
               width={"72"}
               height={"72"}
@@ -107,7 +116,7 @@ export default function UserHistoryCard({
                 {toRupiah(parseInt(item.jumlah) * parseInt(item.harga))}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       <Separator className="bg-slate-200" />

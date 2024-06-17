@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <div>
+        <div className="flex gap-2">
           <PenitipReport />
 
           <Link

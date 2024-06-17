@@ -20,7 +20,7 @@ export default function UserHistory({ id_user }: { id_user: string }) {
   return data && !isLoading ? (
     <div className="space-y-4">
       <p className="text-h4">Riwayat Pesanan Saya</p>
-      <UserListHistory data={data} onRefresh={mutate} />
+      <UserListHistory data={data.pesanan} onRefresh={mutate} />
     </div>
   ) : (
     <Loading />

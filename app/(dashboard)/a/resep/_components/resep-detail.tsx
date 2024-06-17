@@ -7,7 +7,7 @@ import { Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import Brownies from "@/public/products/Brownies.png";
+import NotAvailable from "@/public/products/Not Available.png";
 import { useSWRConfig } from "swr";
 import { useRouter } from "next/navigation";
 
@@ -61,7 +61,7 @@ export default function ResepDetail({
     <div className="flex flex-col gap-4 sm:flex-row">
       {/* <p>{data.resep[0].id}</p> */}
       <Image
-        src={data.images.length ? data.images[0].image : Brownies}
+        src={data.images.length ? data.images[0].image : NotAvailable}
         alt={data.nama}
         className="w-full rounded-lg sm:w-1/2 md:w-1/3"
         width={"720"}

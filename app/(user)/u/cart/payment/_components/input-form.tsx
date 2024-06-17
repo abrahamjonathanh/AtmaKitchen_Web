@@ -8,6 +8,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import NotAvailable from "@/public/products/Not Available.png";
@@ -42,59 +43,66 @@ export default function PaymentForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-4"
+          className="flex w-full gap-4"
           encType="multipart/form-data"
         >
-          <p className="text-h4">Upload Bukti Pembayaran</p>
-          {!selectedImages ? (
-            <Image
-              src={NotAvailable}
-              alt="Brownies"
-              className="aspect-square h-max w-full rounded-lg object-cover"
-            />
-          ) : (
-            <Image
-              src={URL.createObjectURL(selectedImages)}
-              alt="Selected Image"
-              className="aspect-square h-max w-full rounded-lg object-cover"
-              width={500}
-              height={500}
-            />
-          )}
-
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field: { onChange } }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input
-                    type="file"
-                    multiple
-                    onChange={(e) => {
-                      const files = Array.from(e.target.files ?? []) as File[];
-                      setSelectedImages(files[0]);
-                      onChange(selectedImages);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+          <div className="flex w-1/3 flex-col gap-4">
+            <p className="text-h4">Upload Bukti Pembayaran</p>
+            {!selectedImages ? (
+              <Image
+                src={NotAvailable}
+                alt="Brownies"
+                className="aspect-square h-max w-full rounded-lg object-cover"
+              />
+            ) : (
+              <Image
+                src={URL.createObjectURL(selectedImages)}
+                alt="Selected Image"
+                className="aspect-square h-max w-full rounded-lg object-cover"
+                width={500}
+                height={500}
+              />
             )}
-          />
+          </div>
 
-          <p className="text-body text-slate-500">
-            Besar file: maksimum 10.240.000 bytes (10 Megabytes). Ekstensi file
-            yang diperbolehkan: .JPG .JPEG .PNG.
-          </p>
+          <div className="flex w-2/3 flex-col gap-4">
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { onChange } }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Upload bukti pembayaran</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      multiple
+                      onChange={(e) => {
+                        const files = Array.from(
+                          e.target.files ?? [],
+                        ) as File[];
+                        setSelectedImages(files[0]);
+                        onChange(selectedImages);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <ConfirmDialog
-            title="Upload Bukti Pembayaran"
-            onSubmit={() => onSubmit(form.getValues())}
-            isLoading={isLoading}
-          >
-            <Button type="button">Upload</Button>
-          </ConfirmDialog>
+            <p className="text-body text-slate-500">
+              Besar file: maksimum 10.240.000 bytes (10 Megabytes). Ekstensi
+              file yang diperbolehkan: .JPG .JPEG .PNG.
+            </p>
+
+            <ConfirmDialog
+              title="Upload Bukti Pembayaran"
+              onSubmit={() => onSubmit(form.getValues())}
+              isLoading={isLoading}
+            >
+              <Button type="button">Upload</Button>
+            </ConfirmDialog>
+          </div>
         </form>
       </Form>
     </div>

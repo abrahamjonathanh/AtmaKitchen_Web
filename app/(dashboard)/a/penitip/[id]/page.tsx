@@ -4,9 +4,8 @@ import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import ProdukList from "./_components/produk-list";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 import InfoCard from "./_components/info-card";
-import { Phone, MapPin, TrendingDown, TrendingUp } from "lucide-react";
-import { toIndonesiaDate, toRupiah } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { Phone, MapPin } from "lucide-react";
+import { toIndonesiaDate } from "@/lib/utils";
 import Loading from "@/components/ui/loading";
 import { useTitle } from "@/lib/hooks";
 
@@ -14,7 +13,7 @@ export default function page({ params }: { params: { id: string } }) {
   useTitle("AtmaKitchen | Penitip");
 
   const { data, isLoading } = getPenitipById(params.id);
-  console.log(data);
+
   return (
     <DashboardWrapper navTitle="Detail Penitip">
       <BreadcrumbWithSeparator
@@ -44,7 +43,7 @@ export default function page({ params }: { params: { id: string } }) {
                 </div>
               </InfoCard>
 
-              <InfoCard>
+              {/* <InfoCard>
                 <p className="text-large font-semibold">Pendapatan Bulan Ini</p>
                 <div className="flex flex-wrap items-center space-x-2">
                   <p className="text-h3">{toRupiah(2159382)} </p>
@@ -72,7 +71,7 @@ export default function page({ params }: { params: { id: string } }) {
                 <p className="text-body text-slate-500">
                   Transaksi bulan ini menurun 5,22% dari bulan lalu.
                 </p>
-              </InfoCard>
+              </InfoCard> */}
             </div>
           </>
         ) : (

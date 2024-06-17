@@ -12,7 +12,7 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 import { getCurrentUserWithToken } from "@/lib/api/auth";
 import { useCurrentUserStore } from "@/lib/state/user-store";
-
+import NotAvailable from "@/public/products/Not Available.png";
 export default function ProductCart({
   data,
   onRefresh,
@@ -74,12 +74,14 @@ export default function ProductCart({
     <div className="flex w-full gap-3.5 rounded-lg border border-slate-200 bg-white p-4 ">
       <Image
         src={
-          data.produk ? data.produk?.thumbnail?.image! : data.hampers?.image!
+          data.produk
+            ? data.produk?.thumbnail?.image ?? NotAvailable
+            : data.hampers?.image ?? NotAvailable
         }
         alt="Brownies"
-        className="aspect-square max-w-20 rounded"
-        width={"240"}
-        height={"240"}
+        className="aspect-square max-w-20 rounded object-cover"
+        width={240}
+        height={240}
       />
       <div className="flex w-full flex-col gap-4">
         <div className="flex items-center justify-between">

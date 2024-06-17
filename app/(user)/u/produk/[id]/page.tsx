@@ -16,6 +16,7 @@ import { createKeranjang } from "@/lib/api/keranjang";
 import { useCurrentUserStore } from "@/lib/state/user-store";
 import { getCurrentUserWithToken } from "@/lib/api/auth";
 import Cookies from "js-cookie";
+import NotAvailable from "@/public/products/Not Available.png";
 
 export default function Page({ params }: { params: { id: number } }) {
   const { currentUser, refresh } = useCurrentUserStore();
@@ -62,7 +63,7 @@ export default function Page({ params }: { params: { id: number } }) {
           {/* Image display */}
           <div className="flex h-max flex-col gap-4 sm:flex-row md:h-max md:flex-col lg:h-max lg:w-1/4">
             <Image
-              src={data?.thumbnail?.image}
+              src={data?.thumbnail?.image ?? NotAvailable}
               alt={data.nama}
               className="aspect-square h-full max-h-96 w-full rounded-lg object-cover sm:w-4/5 md:w-full"
               width={"500"}
