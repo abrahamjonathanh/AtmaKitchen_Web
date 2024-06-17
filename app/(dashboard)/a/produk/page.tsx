@@ -5,10 +5,20 @@ import { DataTable } from "./data-table";
 import { BreadcrumbWithSeparator } from "@/components/breadcrumb";
 import DashboardWrapper from "@/components/dashboard-wrapper";
 import Loading from "@/components/ui/loading";
-import { getAllProduk } from "@/lib/api/produk";
+import { getAllProdukByDate } from "@/lib/api/produk";
 
-export default function page() {
-  const { data, isLoading, mutate } = getAllProduk();
+// Function to format date to yyyy-mm-dd
+function getFormattedDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export default function Page() {
+  const formattedDate = getFormattedDate();
+  const { data, isLoading, mutate } = getAllProdukByDate(formattedDate);
 
   return (
     // Boiler template for dashboard
