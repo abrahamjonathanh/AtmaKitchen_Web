@@ -26,10 +26,11 @@ ChartJS.register(
   BarElement,
 );
 
-export default function SampleChart({ data }: { data: any }) {
-  //   const { data, mutate, isLoading } = getAllPendapatanBulananByYear(2024);
-  console.log(data);
-
+export default function SampleChart({
+  data,
+}: {
+  data: { month: string; total_orders: number; total_sales: number }[];
+}) {
   const options = {
     plugins: {
       title: {
@@ -49,11 +50,11 @@ export default function SampleChart({ data }: { data: any }) {
   };
 
   const chartData = {
-    labels: ["1", "2"].map((data) => data),
+    labels: data.map((data) => data.month),
     datasets: [
       {
         label: "Total Incomes",
-        data: [1, 2].map((data) => data),
+        data: data.map((data) => data.total_sales),
         backgroundColor: [
           "#F05252",
           "#C27803",
@@ -69,5 +70,9 @@ export default function SampleChart({ data }: { data: any }) {
     ],
   };
 
-  return <Bar options={options} data={data} />;
+  return (
+    <div className="bg-white p-2">
+      <Bar options={options} data={chartData} />
+    </div>
+  );
 }

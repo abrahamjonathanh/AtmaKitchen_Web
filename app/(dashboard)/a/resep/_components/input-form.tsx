@@ -111,14 +111,14 @@ export default function ResepForm({
 
   return !resep.isLoading && !bahan_baku.isLoading && !produk.isLoading ? (
     <div className="flex flex-col gap-4 md:flex-row">
-      <Image
+      {/* <Image
         src={data?.images?.length ? data?.images[0].image : Brownies}
         alt="Brownies"
         className="h-max w-full rounded-lg md:w-1/3"
         width={"480"}
         height={"480"}
         // placeholder="blur"
-      />
+      /> */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

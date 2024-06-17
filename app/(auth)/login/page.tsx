@@ -49,13 +49,13 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       const response = await login(values);
-      console.log(response);
+
       if (response?.status === 200 || response?.status === 201) {
-        router.push("/a/karyawan");
+        console.log("Login success");
+        router.push("/a/pesanan");
       }
       const user = await getCurrentUserWithToken(response?.data.access_token);
       currentUser.login(user?.data.data);
-      console.log(user);
     } catch (error: any) {
       console.error("Error sign in akun: ", error);
     } finally {

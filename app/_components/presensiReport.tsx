@@ -2,22 +2,18 @@ import { Button } from "@/components/ui/button";
 import ReactToPrint from "react-to-print";
 
 import React, { useEffect, useRef, useState } from "react";
-import { IBahanBaku, IPesananv2 } from "@/lib/interfaces";
-import { fetcher, toIndonesiaDate, toRupiah, toThousand } from "@/lib/utils";
+import { toIndonesiaDate, toRupiah } from "@/lib/utils";
 import { Printer } from "lucide-react";
 import { useCurrentUserStore } from "@/lib/state/user-store";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getPesananByMonth } from "@/lib/api/pesanan";
 import useSWR from "swr";
+import axios from "axios";
 
 import {
   Select,
@@ -28,17 +24,26 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-export default function PenjualanBulananReport() {
+type ReportDataType = {
+  bulan: string;
+  tahun: string;
+  tanggal_cetak: string;
+  laporan: {
+    nama: string;
+    jumlah_hadir: number;
+    jumlah_bolos: number;
+    honor_harian: number;
+    bonus_rajin: number;
+    total: number;
+  }[];
+  total_keseluruhan_gaji: number;
+};
+
+export default function PresensiReport() {
   const componentRef = useRef<HTMLDivElement>(null);
   const { currentUser } = useCurrentUserStore();
 
   const [selectedMonth, setSelectedMonth] = useState<string>("");
-  const [reportData, setReportData] = useState<{
-    data: any;
-    isLoading: boolean;
-    isError: any;
-    isValidating: boolean;
-  }>({ data: [], isLoading: false, isError: null, isValidating: false });
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear(),
   );
@@ -47,35 +52,36 @@ export default function PenjualanBulananReport() {
     setSelectedMonth(value);
   };
 
-  useEffect(() => {}, [selectedMonth]);
-
   const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const year = parseInt(event.target.value);
     setSelectedYear(year);
   };
 
-  useEffect(() => {}, [selectedYear]);
-
-  const { data, error, isLoading, isValidating } = useSWR(
-    selectedMonth
-      ? `${process.env.BASE_API}/pesanan/laporan/${selectedYear}-${selectedMonth}-01`
-      : null,
-    fetcher,
+  const { data, error } = useSWR(
+    selectedMonth &&
+      `${process.env.BASE_API}/laporan-presensi/${selectedYear}/${selectedMonth}`,
+    async (url: string) => {
+      const response = await axios.get<ReportDataType>(url);
+      return response.data;
+    },
   );
 
-  useEffect(() => {
-    if (data) {
-      setReportData({ data, isLoading, isError: error, isValidating });
-    }
-  }, [data, error, isLoading, isValidating]);
+  const reportData: ReportDataType | null = data || null;
 
   const handlePrintReport = () => {
-    if (selectedMonth) {
-      console.log(data);
-      setReportData({ data, isLoading, isError: error, isValidating });
-      console.log(reportData);
+    if (selectedMonth && reportData) {
+      console.log("Report Data:", reportData);
     }
   };
+
+  useEffect(() => {
+    console.log(
+      "SWR Route:",
+      selectedMonth
+        ? `${process.env.BASE_API}/laporan-presensi/${selectedYear}/${selectedMonth}`
+        : null,
+    );
+  }, [selectedMonth, selectedYear]);
 
   const yearsOptions = [];
   const currentYear = new Date().getFullYear();
@@ -85,7 +91,7 @@ export default function PenjualanBulananReport() {
 
   return (
     <>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <Input
           type="number"
           placeholder="Year"
@@ -120,11 +126,13 @@ export default function PenjualanBulananReport() {
             </Button>
           )}
           content={() => componentRef.current}
-          documentTitle={`Bahan Baku Report ${toIndonesiaDate(new Date().toString())}`}
+          documentTitle={`Presensi Report ${toIndonesiaDate(
+            new Date().toString(),
+          )}`}
         />
       </div>
 
-      {!reportData.isLoading && reportData.data && (
+      {reportData && (
         <div className="hidden">
           <div
             className={`relative mx-auto flex w-full flex-col gap-4 bg-white p-16 pb-32 `}
@@ -135,35 +143,49 @@ export default function PenjualanBulananReport() {
               <p>Jln. Centralpark No.10 Yogyakarta</p>
             </div>
             <div>
-              <p className="font-bold underline">LAPORAN PENJUALAN BULANAN</p>
-              <p>Bulan : {toIndonesiaDate(selectedMonth, { month: "long" })}</p>
-              <p>Tahun : {selectedYear.toString()}</p>
-              <p>Tanggal cetak: {toIndonesiaDate(new Date().toString())}</p>
+              <p className="font-bold underline">LAPORAN PRESENSI</p>
+              <p>Bulan : {selectedMonth}</p>
+              <p>Tahun : {selectedYear}</p>
+              <p>Tanggal cetak: {toIndonesiaDate(reportData.tanggal_cetak)}</p>
             </div>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-black">Produk</TableHead>
-                  <TableHead className="text-black">Kuantitas</TableHead>
-                  <TableHead className="text-black">Harga</TableHead>
-                  <TableHead className="text-black">Jumlah Uang</TableHead>
+                  <TableCell className="text-black">Nama</TableCell>
+                  <TableCell className="text-black">Jumlah Hadir</TableCell>
+                  <TableCell className="text-black">Jumlah Bolos</TableCell>
+                  <TableCell className="text-black">Honor Harian</TableCell>
+                  <TableCell className="text-black">Bonus Rajin</TableCell>
+                  <TableCell className="text-black">Total</TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reportData.data.map((data: any, index: number) => (
+                {reportData.laporan.map((data, index) => (
                   <TableRow key={index}>
                     <TableCell className="py-2 font-normal">
-                      {data.produk}
+                      {data.nama}
                     </TableCell>
-                    <TableCell className="py-2">{data.kuantitas}</TableCell>
+                    <TableCell className="py-2">{data.jumlah_hadir}</TableCell>
+                    <TableCell className="py-2">{data.jumlah_bolos}</TableCell>
                     <TableCell className="py-2">
-                      {toRupiah(parseInt(data.harga))}
+                      {toRupiah(data.honor_harian)}
                     </TableCell>
                     <TableCell className="py-2">
-                      {toRupiah(parseInt(data.jumlah_uang))}
+                      {toRupiah(data.bonus_rajin)}
+                    </TableCell>
+                    <TableCell className="py-2">
+                      {toRupiah(data.total)}
                     </TableCell>
                   </TableRow>
                 ))}
+                <TableRow>
+                  <TableCell className="py-2 font-bold">
+                    Total Keseluruhan
+                  </TableCell>
+                  <TableCell className="py-2 font-bold">
+                    {toRupiah(reportData.total_keseluruhan_gaji)}
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           </div>

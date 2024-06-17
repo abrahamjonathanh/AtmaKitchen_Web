@@ -26,7 +26,6 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import PemasukkanPengeluaranReport from "@/app/_components/pemasukkanPengeluaranReport";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -62,27 +61,13 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <Input
-          placeholder="Cari berdasarkan nama transaksi..."
+          placeholder="Cari berdasarkan nama pelanggan..."
           value={(table.getColumn("nama")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("nama")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <div className="flex gap-4">
-          <PemasukkanPengeluaranReport />
-
-          <Link
-            href={pathname + "/create"}
-            className={cn(
-              "flex items-center gap-1",
-              buttonVariants({ variant: "default" }),
-            )}
-          >
-            Tambah
-            <Plus className="text-white" size={"16"} />
-          </Link>
-        </div>
       </div>
       <div className="rounded-md border">
         <Table>

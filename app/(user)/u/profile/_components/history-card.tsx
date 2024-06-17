@@ -1,9 +1,8 @@
-// components/UserHistoryCard.tsx
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useReducer } from "react";
 import {
   cn,
   statusPesananBadge,
@@ -16,14 +15,54 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import DetailTransaksiDialog from "./detail-transaksi-dialog";
 import { IDetailPesanan, IPesananv2 } from "@/lib/interfaces";
+import { updateStatusPesanan } from "@/lib/api/pesanan";
+import { ConfirmDialogCustomChildren } from "@/components/confirmDialog";
+import NotAvailable from "@/public/products/Not Available.png";
 
 export default function UserHistoryCard({
   data,
   isAdmin,
+  onRefresh,
 }: {
   data: IPesananv2;
   isAdmin: boolean;
+  onRefresh?: () => void;
 }) {
+  const [isDialogOpen, setIsDialogOpen] = useReducer(
+    (state: any, action: any) => {
+      switch (action.type) {
+        case "OPEN":
+          return {
+            isOpen: true,
+            value: action.value,
+            isLoading: action.isLoading,
+          };
+        case "CLOSE":
+          return { isOpen: false, value: undefined, isLoading: false };
+        default:
+          return state;
+      }
+    },
+    { isOpen: false, value: undefined, isLoading: false },
+  );
+
+  const onAcceptPesanan = async () => {
+    try {
+      setIsDialogOpen({ type: "OPEN", isLoading: true });
+      const response = await updateStatusPesanan({
+        data: { status: "Diterima" },
+        id_pesanan: data.id_pesanan,
+      });
+
+      if (response?.status == 200 || response?.status == 201) {
+        onRefresh!();
+      }
+    } catch (error) {
+    } finally {
+      setIsDialogOpen({ type: "CLOSE" });
+    }
+  };
+
   return (
     <div className="space-y-4 rounded-lg border border-slate-200 p-4">
       <div className="flex items-center justify-between">
@@ -31,7 +70,7 @@ export default function UserHistoryCard({
           <ShoppingBag size={"16"} />
           <p className="text-body font-medium">Belanja</p>
           <p className="text-body text-slate-500">
-            {toIndonesiaDate(data.created_at!)}
+            {toIndonesiaDate(data.tgl_order!)}
           </p>
           <p className="text-body font-medium">#{data.id_pesanan}</p>
         </span>
@@ -47,10 +86,18 @@ export default function UserHistoryCard({
       </div>
       <div className="space-y-4">
         {data.detail_pesanan?.map((item: IDetailPesanan, index: number) => (
-          <div className="flex w-full items-start gap-4" key={index}>
+          <Link
+            href={`${item.id_produk ? "/u/produk" : "/u/hampers"}/${item.id_produk ?? item.id_produk_hampers}`}
+            className="flex w-full items-start gap-4"
+            key={index}
+          >
             <Image
-              src={item.produk?.thumbnail?.image || item.hampers?.image || ""}
-              alt={item.produk?.nama!}
+              src={
+                item.produk?.thumbnail?.image ||
+                item.hampers?.image ||
+                NotAvailable
+              }
+              alt={item.produk?.nama || item.hampers?.nama || "Produk"}
               className="h-16 w-16 rounded-lg object-cover"
               width={"72"}
               height={"72"}
@@ -69,7 +116,7 @@ export default function UserHistoryCard({
                 {toRupiah(parseInt(item.jumlah) * parseInt(item.harga))}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       <Separator className="bg-slate-200" />
@@ -113,8 +160,27 @@ export default function UserHistoryCard({
             !data.accepted_at &&
             (data.status_pesanan_latest?.status == "Sedang dikirim kurir" ||
               data.status_pesanan_latest?.status == "Sudah Dipickup") && (
-              <Button>Terima Pesanan</Button>
+              <Button
+                type="button"
+                onClick={() =>
+                  setIsDialogOpen({ type: "OPEN", isLoading: false })
+                }
+              >
+                Terima Pesanan
+              </Button>
             )}
+          <ConfirmDialogCustomChildren
+            isLoading={isDialogOpen.isLoading}
+            isOpen={isDialogOpen.isOpen}
+            setIsOpen={(isOpen) =>
+              setIsDialogOpen({ type: isOpen ? "OPEN" : "CLOSE" })
+            }
+            title="Terima pesanan"
+            description="Apakah pesanan Anda sudah diterima dengan baik?"
+            onSubmit={onAcceptPesanan}
+          >
+            <p>HEY</p>
+          </ConfirmDialogCustomChildren>
         </div>
       </div>
     </div>

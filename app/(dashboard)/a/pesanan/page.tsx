@@ -7,7 +7,9 @@ import { columns } from "./columns";
 import Loading from "@/components/ui/loading";
 import {
   getAllPesanan,
+  getAllPesananConfirmation,
   getAllPesananInProcess,
+  getAllPesananLate,
   getAllPesananNeedConfirmPayment,
   getAllPesananPaymentVerified,
   getPesananToday,
@@ -15,11 +17,13 @@ import {
 } from "@/lib/api/pesanan";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTitle } from "@/lib/hooks";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 export default function page() {
   useTitle("AtmaKitchen | Pesanan");
   const allPesanan = getAllPesanan();
   // const { data, isLoading } = getAllPesanan();
+  const { currentUser } = useCurrentUserStore();
   const needConfirm = getAllPesananNeedConfirmPayment();
   const paymentVerified = getAllPesananPaymentVerified();
   const processedToday = getPesananToday();
@@ -27,7 +31,7 @@ export default function page() {
   const process = getAllPesananInProcess();
   // const rejected = getAllPesananRejected();
   // const paymentVerified = getAllPesananPaymentVerified();
-
+  const confirmation = getAllPesananConfirmation();
   return (
     <DashboardWrapper navTitle="Pesanan">
       <BreadcrumbWithSeparator currentPage="Pesanan" />
@@ -38,12 +42,16 @@ export default function page() {
           {/* <TabsTrigger value="payment">Menunggu Pembayaran</TabsTrigger> */}
           {/* <TabsTrigger value="delivery">Menunggu Ongkir</TabsTrigger> */}
           <TabsTrigger value="paymentverified">Pembayaran Diterima</TabsTrigger>
-          <TabsTrigger value="process">Dalam Proses</TabsTrigger>
+          {currentUser?.akun.role?.role == "Admin" && (
+            <TabsTrigger value="process">Dalam Proses</TabsTrigger>
+          )}
           {/* <TabsTrigger value="process">Diproses</TabsTrigger>
           <TabsTrigger value="accepted">Diterima</TabsTrigger>
           <TabsTrigger value="sent">Dikirim</TabsTrigger>
           <TabsTrigger value="rejected">Ditolak</TabsTrigger> */}
-          <TabsTrigger value="processedToday">Diproses Hari Ini</TabsTrigger>
+          {currentUser?.akun?.role?.role == "Manager Operasional" && (
+            <TabsTrigger value="processedToday">Diproses Hari Ini</TabsTrigger>
+          )}{" "}
         </TabsList>
         <TabsContent value="semua">
           {allPesanan.data && !allPesanan.isLoading ? (
@@ -65,6 +73,7 @@ export default function page() {
             <Loading />
           )}
         </TabsContent>
+
         <TabsContent value="paymentverified">
           {paymentVerified.data && !paymentVerified.isLoading ? (
             <DataTable

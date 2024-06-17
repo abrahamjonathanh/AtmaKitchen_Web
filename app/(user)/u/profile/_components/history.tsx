@@ -15,12 +15,12 @@ const formSchema = z.object({
 });
 
 export default function UserHistory({ id_user }: { id_user: string }) {
-  const { data, isLoading } = getPelangganById(parseInt(id_user));
+  const { data, isLoading, mutate } = getPelangganById(parseInt(id_user));
 
   return data && !isLoading ? (
     <div className="space-y-4">
       <p className="text-h4">Riwayat Pesanan Saya</p>
-      <UserListHistory data={data} />
+      <UserListHistory data={data.pesanan} onRefresh={mutate} />
     </div>
   ) : (
     <Loading />
@@ -30,9 +30,11 @@ export default function UserHistory({ id_user }: { id_user: string }) {
 export const UserListHistory = ({
   data,
   isAdmin = false,
+  onRefresh,
 }: {
   data: IPesananv2[];
   isAdmin?: boolean;
+  onRefresh?: () => void;
 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,7 +86,12 @@ export const UserListHistory = ({
       <div className="space-y-4">
         {filteredData.length > 0 ? (
           filteredData.map((data, index: number) => (
-            <UserHistoryCard key={index} data={data!} isAdmin={isAdmin} />
+            <UserHistoryCard
+              key={index}
+              data={data!}
+              isAdmin={isAdmin}
+              onRefresh={onRefresh!}
+            />
           ))
         ) : (
           <p className=" text-slate-500">

@@ -68,7 +68,7 @@ export default function VerifikasiForm({
           <p className="text-large">
             {data?.pelanggan?.nama}{" "}
             <Link
-              href={data?.bukti_pembayaran!}
+              href={data?.bukti_pembayaran ?? ""}
               target="_blank"
               className={buttonVariants({ variant: "link" })}
             >
@@ -143,8 +143,8 @@ export default function VerifikasiForm({
             <UpdateDialog
               isOpen={isOpen}
               setIsOpen={setIsOpen}
-              title={isEditable ? "Ubah" : "Tambah"}
-              description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Ubah" : "Tambah"}.`}
+              title={isEditable ? "Verifikasi Pembayaran" : "Tambah"}
+              description={`Tindakkan ini tidak dapat diulang ketika anda menekan ${isEditable ? "Verifikasi" : "Tambah"}.`}
               onSubmit={() => onSubmit(form.getValues())}
               isLoading={isLoading}
             />

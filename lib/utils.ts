@@ -82,6 +82,9 @@ export const statusPesananBadge = (value: string): BadgeProps => {
       | "Sedang dikirim kurir"
       | "Sudah dipickup"
       | "Selesai"
+      | "selesai"
+      | "ditolak"
+      | "menunggu"
       | "Unknown";
     variant:
       | "lime"
@@ -108,6 +111,9 @@ export const statusPesananBadge = (value: string): BadgeProps => {
     { code: "Sedang dikirim kurir", variant: "emerald" },
     { code: "Sudah dipickup", variant: "emerald" },
     { code: "Selesai", variant: "success" },
+    { code: "selesai", variant: "success" },
+    { code: "ditolak", variant: "failed" },
+    { code: "menunggu", variant: "alert" },
   ];
 
   const statusBadge = statusBadges.find((badge) => badge.code == value);

@@ -19,10 +19,10 @@ import { useCurrentUserStore } from "@/lib/state/user-store";
 export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
   const { currentUser } = useCurrentUserStore();
   // const getPoin = getPoinByTotalHarga(data?.total_pesanan);
-  const poinUser = getPoinByIdPesanan(
-    currentUser?.id_pelanggan!,
-    data?.id_pesanan!,
-  );
+  // const poinUser = getPoinByIdPesanan(
+  //   currentUser?.id_pelanggan!,
+  //   data?.id_pesanan!,
+  // );
 
   return (
     <Dialog>
@@ -150,7 +150,7 @@ export default function DetailTransaksiDialog({ data }: { data?: IPesananv2 }) {
                   <UserInvoice
                     data={data!}
                     // poin={getPoin.data}
-                    poinUser={poinUser.data}
+                    poinUser={data.points?.poin!}
                   />
                 )}
             </div>

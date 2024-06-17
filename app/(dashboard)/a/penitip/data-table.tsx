@@ -26,6 +26,7 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import PenitipReport from "@/app/_components/penitipReport";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -69,16 +70,20 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <Link
-          href={pathname + "/create"}
-          className={cn(
-            "flex items-center gap-1",
-            buttonVariants({ variant: "default" }),
-          )}
-        >
-          Tambah
-          <Plus className="text-white" size={"16"} />
-        </Link>
+        <div className="flex gap-2">
+          <PenitipReport />
+
+          <Link
+            href={pathname + "/create"}
+            className={cn(
+              "flex items-center gap-1",
+              buttonVariants({ variant: "default" }),
+            )}
+          >
+            Tambah
+            <Plus className="text-white" size={"16"} />
+          </Link>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>

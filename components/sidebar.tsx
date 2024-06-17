@@ -23,15 +23,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useCurrentUserStore } from "@/lib/state/user-store";
 
 interface ContentType {
   title: string;
   icon?: ReactNode;
   link: string;
   more?: ContentType[];
+  access_role?: string[];
 }
 
 interface SidebarType {
@@ -40,112 +42,147 @@ interface SidebarType {
 }
 
 export function Sidebar({ className }: { className?: string }) {
-  const sidebarData: SidebarType[] = [
-    {
-      title: "Toko",
-      content: [
-        {
-          title: "Beranda",
-          icon: <Home size={"16"} />,
-          link: "",
-        },
-        {
-          title: "Produk",
-          icon: <Box size={"16"} />,
-          link: "",
-          more: [
-            { title: "Produk Biasa", link: "/a/produk" },
-            { title: "Produk Hampers", link: "/a/hampers" },
-          ],
-        },
-        {
-          title: "Promo",
-          icon: <BadgePercent size={"16"} />,
-          link: "/a/promo",
-        },
-        { title: "Jabatan", icon: <UserCog size={"16"} />, link: "/a/jabatan" },
-      ],
-    },
-    {
-      title: "Pesanan",
-      content: [
-        {
-          title: "Pesanan",
-          icon: <ScrollText size={"16"} />,
-          link: "/a/pesanan",
-        },
-        {
-          title: "Jarak Kirim",
-          icon: <Truck size={"16"} />,
-          link: "/a/jarak-kirim",
-        },
-      ],
-    },
-    {
-      title: "Pengguna",
-      content: [
-        {
-          title: "Pengguna",
-          icon: <User2 size={"16"} />,
-          link: "",
-          more: [
-            {
-              title: "Semua Akun",
-              link: "/a/akun",
-            },
-            {
-              title: "Karyawan",
-              link: "/a/karyawan",
-            },
-            {
-              title: "Penitip",
-              link: "/a/penitip",
-            },
-            {
-              title: "Pelanggan",
-              link: "/a/pelanggan",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "Operasional",
-      content: [
-        {
-          title: "Bahan Baku",
-          icon: <Warehouse size={"16"} />,
-          link: "/a/bahan-baku",
-        },
-        {
-          title: "Pemesanan Bahan Baku",
-          icon: <Boxes size={"16"} />,
-          link: "/a/pemesanan-bahan-baku",
-        },
-        { title: "Resep", icon: <BookOpen size={"16"} />, link: "/a/resep" },
-      ],
-    },
-    {
-      title: "Keuangan",
-      content: [
-        {
-          title: "Arus Kas",
-          icon: <AreaChart size={"16"} />,
-          link: "/a/pengeluaran-lainnya",
-        },
-        {
-          title: "Pembayaran Gaji",
-          icon: <DollarSign size={"16"} />,
-          link: "",
-        },
-        {
-          title: "Penarikan Saldo",
-          icon: <CreditCard size={"16"} />,
-          link: "",
-        },
-      ],
-    },
-  ];
+  const { currentUser } = useCurrentUserStore();
+
+  const sidebarData: SidebarType[] = useMemo(
+    () => [
+      {
+        title: "Toko",
+        content: [
+          {
+            title: "Beranda",
+            icon: <Home size={"16"} />,
+            link: "/a/dashboard",
+            access_role: ["Owner", "Manager Operasional"],
+          },
+          {
+            title: "Produk",
+            icon: <Box size={"16"} />,
+            link: "",
+            more: [
+              {
+                title: "Produk Biasa",
+                link: "/a/produk",
+                access_role: ["Admin"],
+              },
+              {
+                title: "Produk Hampers",
+                link: "/a/hampers",
+                access_role: ["Admin"],
+              },
+            ],
+          },
+          // {
+          //   title: "Promo",
+          //   icon: <BadgePercent size={"16"} />,
+          //   link: "/a/promo",
+          // },
+          {
+            title: "Jabatan",
+            icon: <UserCog size={"16"} />,
+            link: "/a/jabatan",
+            access_role: ["Manager Operasional"],
+          },
+        ],
+      },
+      {
+        title: "Pesanan",
+        content: [
+          {
+            title: "Pesanan",
+            icon: <ScrollText size={"16"} />,
+            link: "/a/pesanan",
+            access_role: ["Admin", "Manager Operasional"],
+          },
+          {
+            title: "Jarak Kirim",
+            icon: <Truck size={"16"} />,
+            link: "/a/jarak-kirim",
+            access_role: ["Admin"],
+          },
+        ],
+      },
+      {
+        title: "Pengguna",
+        content: [
+          {
+            title: "Pengguna",
+            icon: <User2 size={"16"} />,
+            link: "",
+            more: [
+              {
+                title: "Semua Akun",
+                link: "/a/akun",
+              },
+              {
+                title: "Karyawan",
+                link: "/a/karyawan",
+                access_role: ["Manager Operasional", "Owner"],
+              },
+              {
+                title: "Penitip",
+                link: "/a/penitip",
+                access_role: ["Manager Operasional"],
+              },
+              {
+                title: "Pelanggan",
+                link: "/a/pelanggan",
+                access_role: ["Admin"],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Operasional",
+        content: [
+          {
+            title: "Bahan Baku",
+            icon: <Warehouse size={"16"} />,
+            link: "/a/bahan-baku",
+            access_role: ["Admin"],
+          },
+          {
+            title: "Pemesanan Bahan Baku",
+            icon: <Boxes size={"16"} />,
+            link: "/a/pemesanan-bahan-baku",
+            access_role: ["Manager Operasional"],
+          },
+          {
+            title: "Resep",
+            icon: <BookOpen size={"16"} />,
+            link: "/a/resep",
+            access_role: ["Admin"],
+          },
+        ],
+      },
+      {
+        title: "Keuangan",
+        content: [
+          {
+            title: "Arus Kas",
+            icon: <AreaChart size={"16"} />,
+            link: "/a/pengeluaran-lainnya",
+            access_role: ["Manager Operasional"],
+          },
+          // {
+          //   title: "Pembayaran Gaji",
+          //   icon: <DollarSign size={"16"} />,
+          //   link: "",
+          // },
+          {
+            title: "Penarikan Saldo",
+            icon: <CreditCard size={"16"} />,
+            link: "/a/penarikan-saldo",
+            access_role: ["Admin"],
+          },
+        ],
+      },
+    ],
+    [],
+  );
+
+  console.log(currentUser?.akun.role?.role);
   return (
     <div
       className={cn(
@@ -162,59 +199,67 @@ export function Sidebar({ className }: { className?: string }) {
           </Link>
 
           {/* Links */}
-          {sidebarData.map((sidebar, index) => (
+          {sidebarData.map((data, index) => (
             <div className="space-y-2" key={index}>
-              <p className="font-medium text-slate-500">{sidebar.title}</p>
+              <p className="font-medium text-slate-500">{data.title}</p>
               <div className="flex flex-col gap-1">
-                {sidebar.content.map((data, index) => (
-                  <div key={index}>
-                    {data.more ? (
-                      <Collapsible key={index}>
-                        <CollapsibleTrigger
+                {data.content
+                  .filter(
+                    (content) =>
+                      !content.access_role ||
+                      content.access_role.includes(
+                        currentUser?.akun.role?.role!,
+                      ),
+                  )
+                  .map((content, index) => (
+                    <div key={index}>
+                      {content.more ? (
+                        <Collapsible key={index}>
+                          <CollapsibleTrigger
+                            className={buttonVariants({
+                              variant: "ghost",
+                              className:
+                                "flex w-full items-center justify-between text-sm text-black",
+                            })}
+                          >
+                            <span className="flex justify-start gap-4">
+                              {content.icon}
+                              {content.title}
+                            </span>
+
+                            <ChevronsUpDown size={"16"} />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            {content.more.map((moreData, moreIndex) => (
+                              <Link href={moreData.link} key={moreIndex}>
+                                <Button
+                                  variant={"ghost"}
+                                  size={"default"}
+                                  className="flex w-full justify-start pl-12 text-sm text-black"
+                                >
+                                  {moreData.title}
+                                </Button>
+                              </Link>
+                            ))}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ) : (
+                        <Link
+                          href={content?.link}
+                          key={index}
                           className={buttonVariants({
                             variant: "ghost",
-                            className:
-                              "flex w-full items-center justify-between text-sm text-black",
+                            className: "w-full",
                           })}
                         >
-                          <span className="flex justify-start gap-4">
-                            {data.icon}
-                            {data.title}
+                          <span className="flex w-full justify-start gap-4 text-sm text-black">
+                            {content.icon}
+                            {content.title}
                           </span>
-
-                          <ChevronsUpDown size={"16"} />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          {data.more.map((moreData, moreIndex) => (
-                            <Link href={moreData.link} key={moreIndex}>
-                              <Button
-                                variant={"ghost"}
-                                size={"default"}
-                                className="flex w-full justify-start pl-12 text-sm text-black"
-                              >
-                                {moreData.title}
-                              </Button>
-                            </Link>
-                          ))}
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ) : (
-                      <Link
-                        href={data?.link}
-                        key={index}
-                        className={buttonVariants({
-                          variant: "ghost",
-                          className: "w-full",
-                        })}
-                      >
-                        <span className="flex w-full justify-start gap-4 text-sm text-black">
-                          {data.icon}
-                          {data.title}
-                        </span>
-                      </Link>
-                    )}
-                  </div>
-                ))}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
           ))}

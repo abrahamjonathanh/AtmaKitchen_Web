@@ -17,7 +17,7 @@ export default function PelangganDetailPage({
 }) {
   useTitle("AtmaKitchen | Pelanggan");
   const { data, isLoading } = getPelangganById(params.id);
-
+  console.log(data);
   return (
     <DashboardWrapper navTitle={`Detail Pelanggan`}>
       <BreadcrumbWithSeparator
@@ -28,19 +28,19 @@ export default function PelangganDetailPage({
       <div className="space-y-4">
         {data && !isLoading ? (
           <div className="space-y-1 rounded-lg border border-slate-200 bg-white p-4">
-            <p className="text-large font-semibold">{data.pelanggan.nama}</p>
+            <p className="text-large font-semibold">{data.nama}</p>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Mail size={16} />
-                <p>{data.pelanggan.id_akun.email}</p>
+                <p>{data.id_akun.email}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar size={16} />
-                <p>{toIndonesiaDate(data.pelanggan.tgl_lahir)}</p>
+                <p>{toIndonesiaDate(data.tgl_lahir)}</p>
               </div>
               <p className="text-body text-slate-500">
                 Tanggal bergabung:{" "}
-                {toIndonesiaDate(data.pelanggan.created_at, {
+                {toIndonesiaDate(data.created_at, {
                   day: "numeric",
                   month: "short",
                   year: "numeric",
@@ -55,9 +55,7 @@ export default function PelangganDetailPage({
           <Loading />
         )}
 
-        {data && !isLoading && (
-          <UserListHistory data={data.histori_pesanan} isAdmin />
-        )}
+        {data && !isLoading && <UserListHistory data={data.pesanan} isAdmin />}
       </div>
     </DashboardWrapper>
   );
