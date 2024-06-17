@@ -31,7 +31,8 @@ export const columns = (
     header: "# ID",
   },
   {
-    accessorKey: "akun.email",
+    accessorKey: "email",
+    accessorFn: (row) => row.akun?.email,
     header: ({ column }) => {
       return (
         <Button
@@ -44,9 +45,7 @@ export const columns = (
       );
     },
     cell: ({ row }) => (
-      <div className="w-full px-4 font-medium">
-        {row.original.akun && row.original.akun.email}
-      </div>
+      <div className="w-full px-4 font-medium">{row.getValue("email")}</div>
     ),
   },
   {

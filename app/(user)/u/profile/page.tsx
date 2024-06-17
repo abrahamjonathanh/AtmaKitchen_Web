@@ -98,15 +98,6 @@ export default function Page() {
                 </p>
               </div>
             </div>
-            <Separator />
-            <Link
-              href={""}
-              className={cn(
-                buttonVariants({ variant: "default", className: "w-full" }),
-              )}
-            >
-              Tarik Saldo
-            </Link>
           </>
         ) : (
           <Loading />

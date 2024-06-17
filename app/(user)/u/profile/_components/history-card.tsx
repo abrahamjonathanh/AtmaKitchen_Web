@@ -50,7 +50,7 @@ export default function UserHistoryCard({
     try {
       setIsDialogOpen({ type: "OPEN", isLoading: true });
       const response = await updateStatusPesanan({
-        data: { status: "Diterima" },
+        data: { status: "Selesai" },
         id_pesanan: data.id_pesanan,
       });
 
@@ -179,7 +179,9 @@ export default function UserHistoryCard({
             description="Apakah pesanan Anda sudah diterima dengan baik?"
             onSubmit={onAcceptPesanan}
           >
-            <p>HEY</p>
+            <p className="text-sm text-slate-500">
+              Tindakan ini tidak dapat diulang.
+            </p>
           </ConfirmDialogCustomChildren>
         </div>
       </div>
