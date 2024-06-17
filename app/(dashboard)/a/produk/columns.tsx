@@ -48,7 +48,7 @@ export const columns = (onRefresh?: () => void): ColumnDef<IProduk>[] => [
     ),
   },
   {
-    accessorKey: "Ready_Stock",
+    accessorKey: "ready_stock",
     header: () => <div>Ready Stock</div>,
   },
   {
