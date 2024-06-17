@@ -27,6 +27,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import PenjualanBulananReport from "@/app/_components/penjualanBulananReport";
+import { updateAllDiterimaToDiproses } from "@/lib/api/pesanan";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -79,6 +80,13 @@ export function DataTable<TData, TValue>({
         />
 
         <PenjualanBulananReport />
+        <Button
+          onClick={() => {
+            updateAllDiterimaToDiproses();
+          }}
+        >
+          Proses Pesanan Diterima
+        </Button>
         {/* <Link
           href={pathname + "/create"}
           className={cn(

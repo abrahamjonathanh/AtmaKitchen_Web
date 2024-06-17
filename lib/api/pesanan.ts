@@ -654,6 +654,42 @@ export const updateStatusPesanan = async ({
   }
 };
 
+export const updateAllDiterimaToDiproses = async () => {
+  try {
+    // Boiler template for fetching api
+    // You can use `${process.env.BASE_API}/YOUR_ROUTE` for fetching real api
+    const response = await axiosInstance().post(
+      `/pesanan/diterima-to-diproses`
+    );
+
+    // Check if the database down
+    if (response.status === 500) {
+      toast.warning("Database is down! Switching to fakeAPI");
+
+      const response = await axios.post(
+        `https://fakestoreapi.com/products/`,
+      );
+
+      return response;
+    }
+
+    // ✅ Use toast when its done
+    toast.success(response?.data?.message);
+
+    return response;
+  } catch (error: any) {
+    if (error.response.data.message) {
+      const errorFields = Object.keys(error.response.data.message);
+      errorFields.forEach((field) => {
+        toast.error(error.response.data.message[field]);
+      });
+    } else {
+      toast.error("Oh no! terjadi kesalahan...");
+    }
+    console.error(error.response.data.message);
+  }
+};
+
 export const getBahanBakuUsage = async (id: string) => {
   try {
     const response = await axiosInstance().get(
