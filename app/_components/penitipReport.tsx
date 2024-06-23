@@ -131,92 +131,108 @@ export default function PenitipReport() {
         />
       </div>
 
-      <div ref={componentRef}>
-        {reportData?.map((penitip: ReportDataType, index: number) => (
-          // <div key={index} ref={componentRefs[index]}>
-          <div
-            className="relative mx-auto flex w-full flex-col gap-4 bg-white p-16 pb-32"
-            key={index}
-          >
-            <div>
-              <p className="font-semibold">Atma Kitchen</p>
-              <p>Jln. Centralpark No.10 Yogyakarta</p>
-            </div>
-            <div>
-              <p className="font-bold underline">LAPORAN PENJUALAN BULANAN</p>
-              <p>Bulan : {penitip.bulan}</p>
-              <p>Tahun : {penitip.tahun}</p>
-              <p>Tanggal cetak: {toIndonesiaDate(penitip.tanggal_cetak)}</p>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-black">ID Penitip</TableHead>
-                  <TableHead className="text-black">Nama Penitip</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="py-2 font-normal">
-                    {penitip.id_penitip}
-                  </TableCell>
-                  <TableCell className="py-2">{penitip.nama_penitip}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-            {penitip.transaksi.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-black">Nama Produk</TableHead>
-                    <TableHead className="text-black">Qty</TableHead>
-                    <TableHead className="text-black">Harga Jual</TableHead>
-                    <TableHead className="text-black">Total</TableHead>
-                    <TableHead className="text-black">Komisi</TableHead>
-                    <TableHead className="text-black">Yang Diterima</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {penitip.transaksi.map((transaksi: any, index: number) => (
-                    <TableRow key={index}>
+      {reportData && (
+        <div className="hidden">
+          <div className="relative" ref={componentRef}>
+            {reportData?.map((penitip: ReportDataType, index: number) => (
+              // <div key={index} ref={componentRefs[index]}>
+              <div
+                className="relative mx-auto flex w-full flex-col gap-4 bg-white p-16 pb-32"
+                key={index}
+              >
+                <div>
+                  <p className="font-semibold">Atma Kitchen</p>
+                  <p>Jln. Centralpark No.10 Yogyakarta</p>
+                </div>
+                <div>
+                  <p className="font-bold underline">
+                    LAPORAN PENJUALAN BULANAN
+                  </p>
+                  <p>Bulan : {penitip.bulan}</p>
+                  <p>Tahun : {penitip.tahun}</p>
+                  <p>Tanggal cetak: {toIndonesiaDate(penitip.tanggal_cetak)}</p>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-black">ID Penitip</TableHead>
+                      <TableHead className="text-black">Nama Penitip</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
                       <TableCell className="py-2 font-normal">
-                        {transaksi.nama_produk}
-                      </TableCell>
-                      <TableCell className="py-2">{transaksi.qty}</TableCell>
-                      <TableCell className="py-2">
-                        {toRupiah(transaksi.harga_jual)}
+                        {penitip.id_penitip}
                       </TableCell>
                       <TableCell className="py-2">
-                        {toRupiah(transaksi.total)}
-                      </TableCell>
-                      <TableCell className="py-2">
-                        {toRupiah(transaksi.komisi)}
-                      </TableCell>
-                      <TableCell className="py-2">
-                        {toRupiah(transaksi.yang_diterima)}
+                        {penitip.nama_penitip}
                       </TableCell>
                     </TableRow>
-                  ))}
-                  <TableRow>
-                    <TableCell colSpan={4} className="py-2 text-right">
-                      <b>Total Diterima:</b>
-                    </TableCell>
-                    <TableCell colSpan={2} className="py-2">
-                      <b>{toRupiah(penitip.total_diterima)}</b>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            ) : (
-              <p>Tidak ada transaksi</p>
-            )}
-            {/* </div> */}
-            {index < reportData.length - 1 && (
-              <div className="page-break"></div>
-            )}
+                  </TableBody>
+                </Table>
+                {penitip.transaksi.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-black">
+                          Nama Produk
+                        </TableHead>
+                        <TableHead className="text-black">Qty</TableHead>
+                        <TableHead className="text-black">Harga Jual</TableHead>
+                        <TableHead className="text-black">Total</TableHead>
+                        <TableHead className="text-black">Komisi</TableHead>
+                        <TableHead className="text-black">
+                          Yang Diterima
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {penitip.transaksi.map(
+                        (transaksi: any, index: number) => (
+                          <TableRow key={index}>
+                            <TableCell className="py-2 font-normal">
+                              {transaksi.nama_produk}
+                            </TableCell>
+                            <TableCell className="py-2">
+                              {transaksi.qty}
+                            </TableCell>
+                            <TableCell className="py-2">
+                              {toRupiah(transaksi.harga_jual)}
+                            </TableCell>
+                            <TableCell className="py-2">
+                              {toRupiah(transaksi.total)}
+                            </TableCell>
+                            <TableCell className="py-2">
+                              {toRupiah(transaksi.komisi)}
+                            </TableCell>
+                            <TableCell className="py-2">
+                              {toRupiah(transaksi.yang_diterima)}
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
+                      <TableRow>
+                        <TableCell colSpan={4} className="py-2 text-right">
+                          <b>Total Diterima:</b>
+                        </TableCell>
+                        <TableCell colSpan={2} className="py-2">
+                          <b>{toRupiah(penitip.total_diterima)}</b>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <p>Tidak ada transaksi</p>
+                )}
+                {/* </div> */}
+                {index < reportData.length - 1 && (
+                  <div className="page-break"></div>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </>
   );
 }
